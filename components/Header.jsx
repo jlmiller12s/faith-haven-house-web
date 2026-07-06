@@ -32,7 +32,24 @@ const DONATE_URL =
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const timeoutRef = useRef(null);
   const pathname = usePathname();
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setDropdownOpen(false);
+    }, 220); // 220ms grace period so mouse movement down never closes dropdown
+  };
+
+  const handleLinkClick = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setDropdownOpen(false);
+  };
 
   return (
     <>
@@ -56,8 +73,8 @@ export default function Header() {
                   <div
                     key={item.label}
                     className="nav-dropdown-wrapper"
-                    onMouseEnter={() => setDropdownOpen(true)}
-                    onMouseLeave={() => setDropdownOpen(false)}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <Link
                       href={item.href}
@@ -72,7 +89,11 @@ export default function Header() {
                     </Link>
 
                     {dropdownOpen && (
-                      <div className="nav-dropdown-menu">
+                      <div
+                        className="nav-dropdown-menu"
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         {item.submenu.map((sub) => {
                           const isActive = pathname === sub.href;
                           return (
@@ -82,6 +103,7 @@ export default function Header() {
                               className={`nav-dropdown-item${
                                 isActive ? " active" : ""
                               }`}
+                              onClick={handleLinkClick}
                             >
                               {sub.label}
                             </Link>
