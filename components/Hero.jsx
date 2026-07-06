@@ -8,8 +8,16 @@ const DONATE_URL =
 
 export default function Hero() {
   const ref = useRef(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch((err) => {
+        console.warn("Hero video autoplay status:", err);
+      });
+    }
+
     const container = ref.current;
     if (!container) return;
 
@@ -38,6 +46,7 @@ export default function Hero() {
     <section className="hero-fullvideo" id="hero" ref={ref}>
       {/* Background Video */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
@@ -45,7 +54,7 @@ export default function Hero() {
         className="hero-video-bg"
       >
         <source
-          src="/assets/hero-video.mp4"
+          src="/assets/hero-video-optimized.mp4"
           type="video/mp4"
         />
       </video>
