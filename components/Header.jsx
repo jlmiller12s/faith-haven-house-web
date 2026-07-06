@@ -162,9 +162,12 @@ export default function Header() {
                     <li key={item.label} className="mobile-menu-has-sub">
                       <Link
                         href={item.href}
+                        className={`mobile-menu-parent-link${
+                          pathname === item.href ? " active" : ""
+                        }`}
                         onClick={() => setMobileOpen(false)}
                       >
-                        {item.label}
+                        {item.label} ▾
                       </Link>
                       <ul className="mobile-submenu-list">
                         {item.submenu.map((sub) => (
