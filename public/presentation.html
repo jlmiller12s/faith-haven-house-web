@@ -943,6 +943,208 @@
       color: var(--ivory);
     }
 
+    /* Mobile Responsive Stylesheet (Collapses fixed scaling into dynamic scrolling sheets) */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 0 !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+      }
+
+      .deck-shell {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+        filter: none !important;
+        box-shadow: none !important;
+      }
+
+      .deck {
+        position: relative !important;
+        width: 100% !important;
+        height: 100% !important;
+        transform: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+      }
+
+      .slide {
+        padding: 2.25rem 1.25rem 5.5rem !important;
+        overflow-y: auto !important;
+        height: 100% !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Typography scale reduction */
+      .main-title {
+        font-size: 2.15rem !important;
+        margin-bottom: 0.85rem !important;
+      }
+
+      .main-subtitle {
+        font-size: 0.95rem !important;
+        margin-bottom: 2rem !important;
+        line-height: 1.55 !important;
+      }
+
+      .slide-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+        line-height: 1.25 !important;
+      }
+
+      .slide-subtitle {
+        font-size: 0.88rem !important;
+        line-height: 1.45 !important;
+      }
+
+      .eyebrow {
+        font-size: 0.7rem !important;
+        margin-bottom: 0.45rem !important;
+      }
+
+      /* Grid collapses */
+      .grid-2, .grid-3, .grid-4, .closing-grid, .memorial-tribute-box {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+      }
+
+      .slide-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+        margin-bottom: 1.25rem !important;
+      }
+
+      .slide-logo-container {
+        align-self: flex-start !important;
+      }
+
+      .slide-content {
+        margin-top: 0.5rem !important;
+        flex: none !important;
+      }
+
+      /* Slide-specific responsive overrides */
+      /* Slide 1 Cover */
+      .title-logo-img {
+        max-height: 55px !important;
+      }
+
+      .title-meta {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin-top: 1.5rem !important;
+      }
+
+      .title-meta-item {
+        border-left: 2px solid var(--border);
+        padding-left: 0.75rem;
+      }
+
+      .slide.dark .title-meta-item {
+        border-left-color: rgba(248, 246, 241, 0.15);
+      }
+
+      /* Slide 3 Journey Pipeline - Convert horizontal line map to vertical node list */
+      .journey-track {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: stretch !important;
+        margin-top: 0.75rem !important;
+        padding-left: 0.5rem;
+      }
+
+      .journey-track::before {
+        left: 20px !important;
+        top: 1.5rem !important;
+        bottom: 1.5rem !important;
+        width: 2px !important;
+        height: auto !important;
+        transform: none !important;
+        right: auto !important;
+      }
+
+      .journey-node {
+        width: 100% !important;
+        padding: 0.75rem 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 1rem !important;
+        box-sizing: border-box;
+      }
+
+      .journey-num {
+        font-size: 1.25rem !important;
+        margin-bottom: 0 !important;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .journey-node h4 {
+        margin-bottom: 0.1rem !important;
+        font-size: 0.88rem !important;
+      }
+
+      .journey-node p {
+        display: none !important; /* Hide node descriptions on mobile to save vertical scrolling length */
+      }
+
+      .journey-notes {
+        margin-top: 1.25rem !important;
+      }
+
+      /* Slide 4 Form Mockup */
+      .intake-mockup-card {
+        padding: 1.25rem !important;
+      }
+
+      /* Slide 5 Portrait */
+      .memorial-portrait-frame {
+        height: 200px !important;
+      }
+
+      /* Slide 8 Icon Pack */
+      .icon-pack-display {
+        height: 200px !important;
+      }
+
+      /* Controls & Floating Navigation Positioning */
+      .controls-nav {
+        bottom: 0.75rem !important;
+        width: 90% !important;
+        max-width: 380px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        height: 3.25rem !important;
+        padding: 0 0.5rem !important;
+        box-sizing: border-box;
+        border-radius: var(--radius-md) !important;
+        box-shadow: 0 10px 25px rgba(23, 50, 71, 0.25) !important;
+        z-index: 100 !important;
+      }
+
+      /* Dynamic Footer Positioning collapse */
+      .slide-footer {
+        position: static !important;
+        margin-top: 2rem !important;
+        padding-top: 1rem !important;
+        padding-bottom: 0.5rem !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        border-top: 1px solid rgba(41, 76, 96, 0.08) !important;
+      }
+
+      .slide.dark .slide-footer {
+        border-top-color: rgba(248, 246, 241, 0.1) !important;
+      }
+    }
+
     /* Print Stylesheet (Clean layout, full visibility, landscape) */
     @media print {
       @page {
