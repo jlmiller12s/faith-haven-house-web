@@ -54,6 +54,10 @@ export default function Hero() {
         className="hero-video-bg"
       >
         <source
+          src="/assets/hero-video-web.mp4"
+          type="video/mp4"
+        />
+        <source
           src="/assets/hero-video-optimized.mp4"
           type="video/mp4"
         />
