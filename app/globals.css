@@ -6077,8 +6077,56 @@ footer {
 }
 
 /* =====================================================
+/* =====================================================
    ADMISSIONS CRM PORTAL DESIGN SYSTEM
    ===================================================== */
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: max-content;
+}
+
+.portal-brand__icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.portal-brand__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1;
+}
+
+.portal-brand__title {
+  color: #faf8ef;
+  font-size: clamp(1.2rem, 1.5vw, 1.5rem);
+  font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.portal-brand__subtitle {
+  margin-top: 0.15rem;
+  color: rgba(250, 248, 239, 0.72);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .portal-brand__subtitle {
+    display: none; /* Hide subtitle on mobile to avoid layout collisions */
+  }
+}
+
 .crm-container {
   padding: 2.5rem 3rem;
   font-family: var(--font-sans);

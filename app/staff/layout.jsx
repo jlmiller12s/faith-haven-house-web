@@ -123,9 +123,25 @@ export default function StaffLayout({ children }) {
           boxShadow: "var(--shadow-sm)"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
-            <Link href="/staff" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
-              <CrmIcon name="monogram" style={{ width: "2rem", height: "2rem" }} />
-              <strong style={{ fontSize: "1.25rem", color: "var(--color-ivory)", letterSpacing: "-0.01em" }}>FHH CRM Portal</strong>
+            <Link 
+              href="/staff" 
+              style={{ textDecoration: "none" }}
+              aria-label="RAP Portal dashboard"
+            >
+              <div className="portal-brand">
+                <img
+                  src="/assets/fhh-logo-standalone-icon.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="portal-brand__icon"
+                />
+                <div className="portal-brand__text">
+                  <div className="portal-brand__title">RAP Portal</div>
+                  <div className="portal-brand__subtitle">
+                    Resident Admissions Portal
+                  </div>
+                </div>
+              </div>
             </Link>
             <nav style={{ display: "flex", gap: "1.5rem" }}>
               <Link href="/staff" style={{ color: pathname === "/staff" ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
