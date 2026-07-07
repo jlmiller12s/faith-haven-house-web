@@ -176,6 +176,20 @@ export default function ReviewSubmission({ formData, setStep, acks, setAcks, ack
         </div>
       </div>
 
+      {/* Admissions Document Fit Note */}
+      <div className="admissions-fit-clarification" style={{
+        backgroundColor: "rgba(41, 76, 96, 0.05)",
+        borderLeft: "4px solid var(--color-slate)",
+        padding: "1.25rem",
+        borderRadius: "var(--radius-sm)",
+        margin: "2rem 0",
+        fontSize: "0.92rem",
+        color: "var(--color-charcoal)",
+        lineHeight: "1.5"
+      }}>
+        <strong>Note on Next Steps:</strong> If Faith Haven House determines that the program may be a potential fit, a team member will contact you about the secure admissions documents and next steps.
+      </div>
+
       {/* Acknowledgements */}
       <div className="acknowledgements-box">
         <h4>Required Acknowledgements</h4>

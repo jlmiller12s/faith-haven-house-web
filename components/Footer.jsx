@@ -39,6 +39,7 @@ export default function Footer() {
             <h4>Get Involved &amp; Connect</h4>
             <ul>
               <li><Link href="/get-help">Get Help / Pre-Screen</Link></li>
+              <li><Link href="/admissions">Admissions Process</Link></li>
               <li><Link href="/volunteer">Volunteer Opportunities</Link></li>
               <li><Link href="/partners">Community Partners</Link></li>
               <li><Link href="/blog">Blog &amp; Journal</Link></li>

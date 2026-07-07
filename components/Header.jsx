@@ -16,7 +16,14 @@ const NAV_ITEMS = [
     ],
   },
   { label: "Roadmap", href: "/roadmap" },
-  { label: "Get Help", href: "/get-help" },
+  {
+    label: "Get Help",
+    href: "/get-help",
+    submenu: [
+      { label: "Initial Pre-Screen", href: "/get-help" },
+      { label: "Admissions Process", href: "/admissions" },
+    ],
+  },
   { label: "Volunteer", href: "/volunteer" },
   { label: "Stories", href: "/stories" },
   { label: "One Away", href: "/one-away" },
@@ -31,24 +38,24 @@ const DONATE_URL =
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const timeoutRef = useRef(null);
   const pathname = usePathname();
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (label) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setDropdownOpen(true);
+    setOpenDropdown(label);
   };
 
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
-      setDropdownOpen(false);
+      setOpenDropdown(null);
     }, 220); // 220ms grace period so mouse movement down never closes dropdown
   };
 
   const handleLinkClick = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setDropdownOpen(false);
+    setOpenDropdown(null);
   };
 
   return (
@@ -73,7 +80,7 @@ export default function Header() {
                   <div
                     key={item.label}
                     className="nav-dropdown-wrapper"
-                    onMouseEnter={handleMouseEnter}
+                    onMouseEnter={() => handleMouseEnter(item.label)}
                     onMouseLeave={handleMouseLeave}
                   >
                     <Link
@@ -88,10 +95,10 @@ export default function Header() {
                       </span>
                     </Link>
 
-                    {dropdownOpen && (
+                    {openDropdown === item.label && (
                       <div
                         className="nav-dropdown-menu"
-                        onMouseEnter={handleMouseEnter}
+                        onMouseEnter={() => handleMouseEnter(item.label)}
                         onMouseLeave={handleMouseLeave}
                       >
                         {item.submenu.map((sub) => {
