@@ -6,18 +6,16 @@ export default function SettingsPlaceholderPage() {
   const { activeStaff } = useStaffSession();
 
   return (
-    <main style={{ padding: "2.5rem 3rem" }}>
+    <main className="crm-container">
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", color: "var(--color-slate)", fontWeight: "800", letterSpacing: "-0.01em" }}>
-          CRM Settings & Parameter Configuration
-        </h1>
-        <p style={{ color: "var(--color-steel)" }}>
+        <h1 className="crm-title">CRM Settings & Parameter Configuration</h1>
+        <p className="crm-subtitle">
           Configure workflow checklist items, document upload thresholds, and compliance retention details.
         </p>
       </div>
 
-      <div style={{ backgroundColor: "#FFFFFF", padding: "2.5rem", borderRadius: "10px", boxShadow: "var(--shadow-sm)" }}>
-        <h3 style={{ fontSize: "1.25rem", color: "var(--color-slate)", fontWeight: "700", marginBottom: "1rem" }}>
+      <div className="crm-card" style={{ padding: "2.5rem" }}>
+        <h3 className="crm-card-title">
           Workflow Settings Placeholder
         </h3>
         <p style={{ color: "var(--color-steel)", marginBottom: "2rem", fontSize: "0.95rem" }}>
@@ -25,20 +23,20 @@ export default function SettingsPlaceholderPage() {
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ border: "1px solid var(--color-border)", borderRadius: "6px", padding: "1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ border: "1px solid var(--color-border)", borderRadius: "6px", padding: "1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "var(--color-ivory)" }}>
             <div>
-              <strong>Secure Documents Retention Limits</strong>
-              <p style={{ fontSize: "0.8rem", color: "var(--color-steel)" }}>Purge old intake scans after 7 years.</p>
+              <strong style={{ color: "var(--color-slate-dark)" }}>Secure Documents Retention Limits</strong>
+              <p style={{ fontSize: "0.8rem", color: "var(--color-steel)", margin: "0.15rem 0 0 0" }}>Purge old intake scans after 7 years.</p>
             </div>
             <button className="btn btn-outline" disabled style={{ opacity: 0.5, cursor: "not-allowed" }}>
               Active (7 Years)
             </button>
           </div>
 
-          <div style={{ border: "1px solid var(--color-border)", borderRadius: "6px", padding: "1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ border: "1px solid var(--color-border)", borderRadius: "6px", padding: "1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "var(--color-ivory)" }}>
             <div>
-              <strong>Inactivity Logout Timer</strong>
-              <p style={{ fontSize: "0.8rem", color: "var(--color-steel)" }}>Force log out after 15 minutes of inactivity.</p>
+              <strong style={{ color: "var(--color-slate-dark)" }}>Inactivity Logout Timer</strong>
+              <p style={{ fontSize: "0.8rem", color: "var(--color-steel)", margin: "0.15rem 0 0 0" }}>Force log out after 15 minutes of inactivity.</p>
             </div>
             <button className="btn btn-outline" disabled style={{ opacity: 0.5, cursor: "not-allowed" }}>
               Active (15 Min)

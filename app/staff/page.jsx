@@ -50,14 +50,14 @@ export default function StaffDashboard() {
   const myTasks = cases.flatMap(c => c.tasks || []).filter(t => t.assigned_to === activeStaff?.id && t.status !== "completed");
 
   return (
-    <main style={{ padding: "2.5rem 3rem" }}>
+    <main className="crm-container">
       
       {/* Header and Welcome */}
       <div style={{ marginBottom: "2.5rem" }}>
-        <h1 style={{ fontSize: "2.25rem", color: "var(--color-slate)", fontWeight: "800", letterSpacing: "-0.02em" }}>
+        <h1 className="crm-title">
           Welcome back, {activeStaff?.first_name}
         </h1>
-        <p style={{ color: "var(--color-steel)", fontSize: "1.05rem" }}>
+        <p className="crm-subtitle">
           Here is your transitional living workflow status snapshot.
         </p>
       </div>
@@ -72,37 +72,42 @@ export default function StaffDashboard() {
         {[
           { label: "New Pre-Screens", count: preScreenCount, color: "var(--color-teal)" },
           { label: "Staff Follow-Up", count: followUpCount, color: "var(--color-terracotta)" },
-          { label: "Documents Requested", count: docsPendingCount, color: "var(--color-slate-blue)" },
-          { label: "Interviews Pending", count: interviewCount, color: "#D78A2A" },
-          { label: "Committee Review", count: committeeCount, color: "var(--deep-navy)" },
-          { label: "Welcome Days Scheduled", count: welcomeCount, color: "#548235" }
-        ].map((card, idx) => (
-          <div 
-            key={idx} 
-            style={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "10px",
-              padding: "1.5rem",
-              boxShadow: "var(--shadow-sm)",
-              borderTop: `4px solid ${card.color}`
-            }}
-          >
-            <span style={{ fontSize: "0.82rem", textTransform: "uppercase", fontWeight: "700", color: "var(--color-steel)", display: "block", marginBottom: "0.5rem" }}>
-              {card.label}
-            </span>
-            <span style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-charcoal)", lineHeight: 1 }}>
-              {card.count}
-            </span>
-          </div>
-        ))}
+          { label: "Documents Requested", count: "var(--color-slate-dark)", countVal: docsPendingCount },
+          { label: "Interviews Pending", count: "#D78A2A" },
+          { label: "Committee Review", count: "var(--color-slate)" },
+          { label: "Welcome Days Scheduled", count: "var(--color-teal)" }
+        ].map((card, idx) => {
+          const cardColor = card.color || "var(--color-slate)";
+          const countValue = card.countVal !== undefined ? card.countVal : (
+            idx === 3 ? interviewCount : (idx === 4 ? committeeCount : welcomeCount)
+          );
+          return (
+            <div 
+              key={idx} 
+              className="crm-card"
+              style={{
+                padding: "1.5rem",
+                borderTop: `4px solid ${cardColor}`,
+                borderRadius: "8px"
+              }}
+            >
+              <span style={{ fontSize: "0.78rem", textTransform: "uppercase", fontWeight: "700", color: "var(--color-steel)", display: "block", marginBottom: "0.5rem", letterSpacing: "0.03em" }}>
+                {card.label}
+              </span>
+              <span style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-charcoal)", lineHeight: 1 }}>
+                {countValue}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Grid: My Work & Pending Timelines */}
       <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "2rem", alignItems: "start" }}>
         
         {/* Left: My Work List */}
-        <div style={{ backgroundColor: "#FFFFFF", padding: "2rem", borderRadius: "10px", boxShadow: "var(--shadow-sm)" }}>
-          <h2 style={{ fontSize: "1.25rem", color: "var(--color-slate)", fontWeight: "700", marginBottom: "1.25rem" }}>
+        <div className="crm-card" style={{ padding: "2rem" }}>
+          <h2 className="crm-card-title">
             📂 My Assigned Cases ({myAssignedCases.length})
           </h2>
 
@@ -121,7 +126,8 @@ export default function StaffDashboard() {
                     padding: "1.25rem",
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center"
+                    alignItems: "center",
+                    backgroundColor: "var(--color-ivory)"
                   }}
                 >
                   <div>
@@ -132,19 +138,12 @@ export default function StaffDashboard() {
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "600", color: "var(--color-charcoal)", margin: "0.2rem 0" }}>
                       {activeStaff?.role === "read_only_auditor" ? "Redacted Profile" : `${c.applicant?.legal_first_name} ${c.applicant?.legal_last_name}`}
                     </h3>
-                    <span style={{
-                      fontSize: "0.72rem",
-                      fontWeight: "700",
-                      padding: "0.2rem 0.5rem",
-                      borderRadius: "10px",
-                      backgroundColor: "var(--color-cloud)",
-                      color: "var(--color-slate)"
-                    }}>
+                    <span className="crm-badge slate">
                       {c.case.status.replace(/_/g, " ").toUpperCase()}
                     </span>
                   </div>
 
-                  <Link href={`/staff/admissions/${c.case.id}`} className="btn btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", cursor: "pointer" }}>
+                  <Link href={`/staff/admissions/${c.case.id}`} className="btn btn-outline" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
                     Manage Case &rarr;
                   </Link>
                 </div>
@@ -154,8 +153,8 @@ export default function StaffDashboard() {
         </div>
 
         {/* Right: Assigned Follow-up Tasks */}
-        <div style={{ backgroundColor: "#FFFFFF", padding: "2rem", borderRadius: "10px", boxShadow: "var(--shadow-sm)" }}>
-          <h2 style={{ fontSize: "1.25rem", color: "var(--color-slate)", fontWeight: "700", marginBottom: "1.25rem" }}>
+        <div className="crm-card" style={{ padding: "2rem" }}>
+          <h2 className="crm-card-title">
             📋 My Tasks ({myTasks.length})
           </h2>
 
@@ -176,19 +175,13 @@ export default function StaffDashboard() {
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.25rem" }}>
-                    <h4 style={{ fontSize: "0.95rem", fontWeight: "600", color: "var(--color-charcoal)" }}>{t.title}</h4>
-                    <span style={{
-                      fontSize: "0.65rem",
-                      padding: "0.1rem 0.4rem",
-                      borderRadius: "4px",
-                      backgroundColor: t.priority === "high" ? "#FCE8E6" : "#FAF8EF",
-                      color: t.priority === "high" ? "#A83232" : "var(--color-slate)"
-                    }}>
+                    <h4 style={{ fontSize: "0.95rem", fontWeight: "600", color: "var(--color-charcoal)", margin: 0 }}>{t.title}</h4>
+                    <span className={`crm-badge ${t.priority === "high" ? "terracotta" : "slate"}`}>
                       {t.priority}
                     </span>
                   </div>
-                  <p style={{ fontSize: "0.82rem", color: "var(--color-steel)", marginBottom: "0.5rem" }}>{t.description}</p>
-                  <Link href={`/staff/admissions/${t.admissions_case_id}`} style={{ fontSize: "0.78rem", color: "var(--color-teal)", fontWeight: "600" }}>
+                  <p style={{ fontSize: "0.82rem", color: "var(--color-steel)", marginBottom: "0.5rem", marginTop: "0.25rem" }}>{t.description}</p>
+                  <Link href={`/staff/admissions/${t.admissions_case_id}`} style={{ fontSize: "0.78rem", color: "var(--color-teal)", fontWeight: "600", textDecoration: "none" }}>
                     Go to Case file &rarr;
                   </Link>
                 </div>

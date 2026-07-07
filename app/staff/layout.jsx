@@ -87,38 +87,16 @@ export default function StaffLayout({ children }) {
         
         {/* DEVELOPER DIAGNOSTIC TOOLBAR */}
         {isMockMode && (
-          <div style={{
-            backgroundColor: "#E2F0D9",
-            borderBottom: "1px solid #C5E0B4",
-            padding: "0.5rem 1rem",
-            fontSize: "0.85rem",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-            position: "sticky",
-            top: 0,
-            zIndex: 10000
-          }}>
+          <div className="crm-dev-toolbar">
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <span style={{ fontSize: "1rem" }}>🧪</span>
-              <strong style={{ color: "#385723" }}>Developer CRM Sandbox Preview</strong>
-              <span style={{ color: "#7F7F7F" }}>|</span>
+              <strong style={{ color: "var(--color-slate-dark)" }}>Developer CRM Sandbox Preview</strong>
+              <span style={{ color: "var(--color-steel)", opacity: 0.5 }}>|</span>
               <span style={{ color: "var(--color-slate-dark)" }}>Current Active User:</span>
               <select 
                 value={activeStaff?.id || ""} 
                 onChange={(e) => handleSwitchProfile(e.target.value)}
-                style={{
-                  padding: "0.2rem 0.6rem",
-                  fontSize: "0.8rem",
-                  borderRadius: "4px",
-                  border: "1px solid #A6C893",
-                  backgroundColor: "#FFFFFF",
-                  fontWeight: "600",
-                  color: "var(--color-charcoal)",
-                  cursor: "pointer"
-                }}
+                className="crm-dev-select"
               >
                 {profiles.map(p => (
                   <option key={p.id} value={p.id}>
@@ -127,7 +105,7 @@ export default function StaffLayout({ children }) {
                 ))}
               </select>
             </div>
-            <div style={{ fontSize: "0.78rem", color: "#548235", fontWeight: "600" }}>
+            <div style={{ fontSize: "0.78rem", color: "var(--color-slate-dark)", fontWeight: "600", opacity: 0.8 }}>
               Toggle role dropdown to test tab permissions & field redactions instantly
             </div>
           </div>

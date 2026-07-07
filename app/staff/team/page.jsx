@@ -37,62 +37,63 @@ export default function TeamManagementPage() {
 
   if (!isSuperAdmin) {
     return (
-      <main style={{ padding: "3rem", textAlign: "center" }}>
-        <h2 style={{ color: "#A83232" }}>🔒 Access Denied</h2>
-        <p style={{ color: "var(--color-steel)", marginTop: "0.5rem" }}>
-          You do not have the super_admin privileges required to inspect or modify CRM staff roles.
-        </p>
+      <main className="crm-container" style={{ textAlign: "center", paddingTop: "5rem" }}>
+        <div className="crm-alert-banner warning" style={{ display: "inline-block", maxWidth: "500px" }}>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: "700", margin: "0 0 0.5rem 0", color: "var(--color-terracotta-dark)" }}>🔒 Access Denied</h2>
+          <p style={{ margin: 0 }}>
+            You do not have the super_admin privileges required to inspect or modify CRM staff roles.
+          </p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main style={{ padding: "2.5rem 3rem" }}>
+    <main className="crm-container">
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", color: "var(--color-slate)", fontWeight: "800", letterSpacing: "-0.01em" }}>
-          Team & Role Management
-        </h1>
-        <p style={{ color: "var(--color-steel)" }}>
+        <h1 className="crm-title">Team & Role Management</h1>
+        <p className="crm-subtitle">
           Manage access controls and roles for admissions staff profiles.
         </p>
       </div>
 
       {message && (
-        <div style={{ backgroundColor: "#F2F9F2", color: "#2E5B2E", padding: "0.75rem 1rem", borderRadius: "6px", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+        <div className="crm-alert-banner info" style={{ marginBottom: "1.5rem" }}>
           {message}
         </div>
       )}
 
-      <div style={{ backgroundColor: "#FFFFFF", borderRadius: "10px", boxShadow: "var(--shadow-sm)", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+      <div className="crm-table-wrapper">
+        <table className="crm-table">
           <thead>
-            <tr style={{ backgroundColor: "var(--color-cloud)", borderBottom: "2px solid var(--color-border)", color: "var(--color-slate)", fontWeight: "700" }}>
-              <th style={{ padding: "1rem" }}>Staff Member</th>
-              <th style={{ padding: "1rem" }}>Email Address</th>
-              <th style={{ padding: "1rem" }}>Assigned Role</th>
-              <th style={{ padding: "1rem" }}>Status</th>
-              <th style={{ padding: "1rem", textAlign: "right" }}>Actions</th>
+            <tr>
+              <th>Staff Member</th>
+              <th>Email Address</th>
+              <th>Assigned Role</th>
+              <th>Status</th>
+              <th style={{ textAlign: "right" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {profiles.map(p => (
-              <tr key={p.id} style={{ borderBottom: "1px solid var(--color-border)", fontSize: "0.9rem" }}>
-                <td style={{ padding: "1rem", fontWeight: "600" }}>{p.first_name} {p.last_name}</td>
-                <td style={{ padding: "1rem", color: "var(--color-steel)" }}>{p.email}</td>
-                <td style={{ padding: "1rem", fontWeight: "600", color: "var(--color-teal)" }}>
+              <tr key={p.id}>
+                <td style={{ fontWeight: "600" }}>{p.first_name} {p.last_name}</td>
+                <td style={{ color: "var(--color-steel)" }}>{p.email}</td>
+                <td style={{ fontWeight: "600", color: "var(--color-teal)" }}>
                   {p.role.replace(/_/g, " ").toUpperCase()}
                 </td>
-                <td style={{ padding: "1rem" }}>
-                  <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.4rem", borderRadius: "4px", backgroundColor: "#E2F0D9", color: "#385723", fontWeight: "700" }}>
+                <td>
+                  <span className="crm-badge teal">
                     ACTIVE
                   </span>
                 </td>
-                <td style={{ padding: "1rem", textAlign: "right" }}>
+                <td style={{ textAlign: "right" }}>
                   {p.id !== activeStaff.id ? (
                     <select
                       value={p.role}
                       onChange={(e) => handleRoleChange(p.id, e.target.value)}
-                      style={{ padding: "0.35rem 0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)", fontSize: "0.82rem" }}
+                      className="crm-select"
+                      style={{ padding: "0.35rem 0.5rem", fontSize: "0.82rem", width: "auto", display: "inline-block" }}
                     >
                       <option value="super_admin">Super Admin</option>
                       <option value="executive_director">Executive Director</option>

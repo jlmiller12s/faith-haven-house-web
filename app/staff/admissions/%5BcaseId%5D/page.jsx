@@ -99,7 +99,7 @@ export default function CaseDetailsPage({ params }) {
   if (!data) {
     return (
       <div style={{ padding: "3rem", textAlign: "center" }}>
-        <h2 style={{ color: "var(--color-slate)" }}>Case file not found</h2>
+        <h2 style={{ color: "var(--color-slate)", fontFamily: "var(--font-serif)" }}>Case file not found</h2>
         <p style={{ color: "var(--color-steel)", marginBottom: "1.5rem" }}>The requested application reference id does not exist.</p>
         <Link href="/staff/admissions" className="btn btn-outline">Back to Queue</Link>
       </div>
@@ -251,31 +251,24 @@ export default function CaseDetailsPage({ params }) {
   });
 
   return (
-    <main style={{ padding: "2.5rem 3rem" }}>
+    <main className="crm-container">
       
       {/* Back button & Title header */}
       <div style={{ marginBottom: "2rem" }}>
         <Link href="/staff/admissions" style={{ textDecoration: "none", color: "var(--color-teal)", fontWeight: "600", fontSize: "0.9rem" }}>
           &larr; Back to Admissions Queue
         </Link>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem", flexWrap: "wrap", gap: "1.5rem" }}>
           <div>
-            <span style={{ fontSize: "0.8rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)", display: "block" }}>
+            <span style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)", display: "block" }}>
               Case File reference ID: {caseObj.id}
             </span>
-            <h1 style={{ fontSize: "2rem", color: "var(--color-slate)", fontWeight: "800", margin: "0.25rem 0 0.5rem 0", letterSpacing: "-0.01em" }}>
+            <h1 className="crm-title" style={{ margin: "0.25rem 0 0.5rem 0" }}>
               {isAuditor ? "Candidate Case ID: " + caseObj.caseNumber : `${applicant.legal_first_name} ${applicant.legal_last_name}`}
             </h1>
             <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-              <span style={{
-                fontSize: "0.72rem",
-                fontWeight: "700",
-                padding: "0.25rem 0.6rem",
-                borderRadius: "20px",
-                backgroundColor: "var(--color-slate)",
-                color: "var(--color-ivory)"
-              }}>
-                STAGE: {caseObj.status.replace(/_/g, " ").toUpperCase()}
+              <span className="crm-badge slate">
+                STAGE: {caseObj.status.replace(/_/g, " ")}
               </span>
               <span style={{ fontSize: "0.85rem", color: "var(--color-steel)" }}>
                 Opened on {new Date(caseObj.createdAt).toLocaleDateString()}
@@ -286,14 +279,13 @@ export default function CaseDetailsPage({ params }) {
           {/* Actions panel */}
           {canModifyCase && (
             <div style={{ display: "flex", gap: "1rem" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "0.7rem", fontWeight: "700", color: "var(--color-steel)", textTransform: "uppercase" }}>
-                  Coordinator
-                </label>
+              <div className="crm-form-group" style={{ marginBottom: 0 }}>
+                <label className="crm-label" style={{ fontSize: "0.68rem" }}>Coordinator</label>
                 <select
                   value={caseObj.assignedCoordinatorId || ""}
                   onChange={(e) => handleAssignmentChange("coordinator", e.target.value)}
-                  style={{ padding: "0.4rem 0.6rem", borderRadius: "6px", fontSize: "0.82rem", border: "1px solid var(--color-border)" }}
+                  className="crm-select"
+                  style={{ padding: "0.4rem 0.6rem", fontSize: "0.82rem", minWidth: "160px" }}
                 >
                   <option value="">Unassigned</option>
                   {profiles.filter(p => p.role === "admissions_coordinator").map(p => (
@@ -301,14 +293,13 @@ export default function CaseDetailsPage({ params }) {
                   ))}
                 </select>
               </div>
-              <div>
-                <label style={{ display: "block", fontSize: "0.7rem", fontWeight: "700", color: "var(--color-steel)", textTransform: "uppercase" }}>
-                  Interviewer
-                </label>
+              <div className="crm-form-group" style={{ marginBottom: 0 }}>
+                <label className="crm-label" style={{ fontSize: "0.68rem" }}>Interviewer</label>
                 <select
                   value={caseObj.assignedInterviewerId || ""}
                   onChange={(e) => handleAssignmentChange("interviewer", e.target.value)}
-                  style={{ padding: "0.4rem 0.6rem", borderRadius: "6px", fontSize: "0.82rem", border: "1px solid var(--color-border)" }}
+                  className="crm-select"
+                  style={{ padding: "0.4rem 0.6rem", fontSize: "0.82rem", minWidth: "160px" }}
                 >
                   <option value="">Unassigned</option>
                   {profiles.filter(p => p.role === "admissions_interviewer").map(p => (
@@ -322,13 +313,7 @@ export default function CaseDetailsPage({ params }) {
       </div>
 
       {/* Tab Selector Links */}
-      <div style={{
-        display: "flex",
-        borderBottom: "1px solid var(--color-border)",
-        gap: "0.5rem",
-        marginBottom: "2rem",
-        overflowX: "auto"
-      }}>
+      <div className="crm-tabs-nav">
         {[
           { id: "overview", label: "Overview" },
           { id: "workflow", label: "Workflow Status", roleGate: ["super_admin", "executive_director", "admissions_coordinator"] },
@@ -342,19 +327,7 @@ export default function CaseDetailsPage({ params }) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: "0.75rem 1.25rem",
-              fontSize: "0.9rem",
-              fontWeight: "600",
-              color: activeTab === tab.id ? "var(--color-slate)" : "var(--color-steel)",
-              backgroundColor: activeTab === tab.id ? "#FFFFFF" : "transparent",
-              border: "1px solid transparent",
-              borderBottomColor: activeTab === tab.id ? "transparent" : "var(--color-border)",
-              borderTopLeftRadius: "6px",
-              borderTopRightRadius: "6px",
-              cursor: "pointer",
-              marginBottom: "-1px"
-            }}
+            className={`crm-tab-btn ${activeTab === tab.id ? "active" : ""}`}
           >
             {tab.label}
           </button>
@@ -362,57 +335,57 @@ export default function CaseDetailsPage({ params }) {
       </div>
 
       {/* TABS CONTAINER */}
-      <div style={{ backgroundColor: "#FFFFFF", padding: "2.5rem", borderRadius: "10px", boxShadow: "var(--shadow-sm)" }}>
+      <div className="crm-card">
         
         {/* TAB 1: OVERVIEW */}
         {activeTab === "overview" && (
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "2.5rem" }}>
               <div>
-                <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate)" }}>
+                <h3 className="crm-card-title">
                   Applicant Contact & Background Summary
                 </h3>
 
                 {isAuditor ? (
-                  <div style={{ padding: "1.5rem", backgroundColor: "var(--color-cloud)", borderRadius: "6px", color: "var(--color-steel)", fontSize: "0.9rem" }}>
+                  <div className="crm-alert-banner info">
                     🔒 <strong>Privacy Redaction:</strong> Applicant names, phone numbers, and email coordinates are redacted under Read-Only Auditor logs compliance.
                   </div>
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "2rem" }}>
                     <div>
-                      <strong>Preferred Contact:</strong> {applicant.preferred_name || applicant.legal_first_name} via {applicant.preferred_contact_method}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Preferred Contact:</strong> {applicant.preferred_name || applicant.legal_first_name} via {applicant.preferred_contact_method}
                     </div>
                     <div>
-                      <strong>Phone Number:</strong> {applicant.phone}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Phone Number:</strong> {applicant.phone}
                     </div>
                     <div>
-                      <strong>Email Address:</strong> {applicant.email}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Email Address:</strong> {applicant.email}
                     </div>
                     <div>
-                      <strong>Referral Channel:</strong> {applicant.referral_source || "None"}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Referral Channel:</strong> {applicant.referral_source || "None"}
                     </div>
                     <div>
-                      <strong>Current Shelter:</strong> {applicant.current_housing_situation}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Current Shelter:</strong> {applicant.current_housing_situation}
                     </div>
                     <div>
-                      <strong>Urgency:</strong> {applicant.housing_urgency.toUpperCase()}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Urgency:</strong> {applicant.housing_urgency.toUpperCase()}
                     </div>
                   </div>
                 )}
 
-                <h4 style={{ fontSize: "1rem", fontWeight: "700", marginTop: "2rem", marginBottom: "1rem", color: "var(--color-slate)" }}>
+                <h4 className="crm-card-title" style={{ fontSize: "1.15rem", marginTop: "2rem" }}>
                   Public Pre-Screen Form Responses
                 </h4>
                 {prescreen ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <div>
-                      <strong>Primary Challenges & Objectives:</strong>
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Primary Challenges & Objectives:</strong>
                       <p style={{ color: "var(--color-charcoal)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
                         {prescreen.primary_challenge} (Goal: {prescreen.six_to_twelve_month_goal})
                       </p>
                     </div>
                     <div>
-                      <strong>Program Readiness & Commitment:</strong>
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Program Readiness & Commitment:</strong>
                       <p style={{ color: "var(--color-charcoal)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
                         Agrees to substance-free guidelines: {prescreen.substance_free_environment_readiness}. Ready for structure: {prescreen.structured_program_readiness}.
                       </p>
@@ -425,24 +398,24 @@ export default function CaseDetailsPage({ params }) {
 
               {/* Activity event timeline */}
               <div>
-                <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate)" }}>
+                <h3 className="crm-card-title">
                   Activity timeline history
                 </h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", borderLeft: "2px solid var(--color-border)", paddingLeft: "1rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", borderLeft: "2px solid var(--color-border)", paddingLeft: "1.25rem" }}>
                   {timeline.map(event => (
                     <div key={event.id} style={{ position: "relative" }}>
                       <span style={{
                         position: "absolute",
-                        left: "-1.35rem",
+                        left: "-1.6rem",
                         top: "0.25rem",
                         width: "8px",
                         height: "8px",
                         borderRadius: "50%",
                         backgroundColor: "var(--color-teal)"
                       }} />
-                      <strong style={{ fontSize: "0.85rem", color: "var(--color-slate-dark)" }}>{event.title}</strong>
-                      <p style={{ fontSize: "0.78rem", color: "var(--color-steel)", margin: "0.15rem 0" }}>{event.summary}</p>
-                      <span style={{ fontSize: "0.7rem", color: "var(--color-steel)", opacity: 0.8 }}>
+                      <strong style={{ fontSize: "0.88rem", color: "var(--color-slate-dark)" }}>{event.title}</strong>
+                      <p style={{ fontSize: "0.8rem", color: "var(--color-steel)", margin: "0.15rem 0" }}>{event.summary}</p>
+                      <span style={{ fontSize: "0.72rem", color: "var(--color-steel)", opacity: 0.8 }}>
                         {new Date(event.created_at).toLocaleString()}
                       </span>
                     </div>
@@ -456,7 +429,7 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 2: WORKFLOW STATUS */}
         {activeTab === "workflow" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.25rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Manage Admissions Progress Stage Transitions
             </h3>
             <p style={{ color: "var(--color-steel)", marginBottom: "2rem" }}>
@@ -465,7 +438,7 @@ export default function CaseDetailsPage({ params }) {
 
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "3rem" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", color: "var(--color-charcoal)", marginBottom: "0.5rem" }}>
+                <label className="crm-label">
                   Select Next Target Workflow Stage
                 </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
@@ -496,7 +469,8 @@ export default function CaseDetailsPage({ params }) {
                         border: "1px solid var(--color-border)",
                         backgroundColor: caseObj.status === stage ? "var(--color-slate)" : "#FFFFFF",
                         color: caseObj.status === stage ? "#FFFFFF" : "var(--color-charcoal)",
-                        cursor: "pointer"
+                        cursor: "pointer",
+                        transition: "var(--transition)"
                       }}
                     >
                       {stage.replace(/_/g, " ").toUpperCase()}
@@ -504,8 +478,8 @@ export default function CaseDetailsPage({ params }) {
                   ))}
                 </div>
 
-                <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", color: "var(--color-charcoal)", marginBottom: "0.35rem" }}>
+                <div className="crm-form-group">
+                  <label className="crm-label">
                     Reason / Notes on Status Modification (Optional)
                   </label>
                   <textarea 
@@ -513,16 +487,16 @@ export default function CaseDetailsPage({ params }) {
                     onChange={(e) => setStatusUpdateNote(e.target.value)}
                     placeholder="Enter context on status transition..."
                     rows={3}
-                    style={{ width: "100%", padding: "0.5rem", borderRadius: "6px", border: "1px solid var(--color-border)" }}
+                    className="crm-textarea"
                   />
                 </div>
               </div>
 
-              <div style={{ backgroundColor: "var(--color-cloud)", padding: "1.5rem", borderRadius: "8px" }}>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", marginBottom: "0.5rem", color: "var(--color-slate-dark)" }}>
+              <div className="crm-card" style={{ padding: "1.5rem", height: "fit-content", backgroundColor: "var(--color-cloud)" }}>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", marginBottom: "0.75rem", color: "var(--color-slate-dark)" }}>
                   Current State Summary
                 </h4>
-                <ul style={{ paddingLeft: "1.25rem", fontSize: "0.85rem", color: "var(--color-steel)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <ul style={{ paddingLeft: "1.25rem", fontSize: "0.85rem", color: "var(--color-steel)", display: "flex", flexDirection: "column", gap: "0.5rem", margin: 0 }}>
                   <li>Current Status: <strong>{caseObj.status.replace(/_/g, " ").toUpperCase()}</strong></li>
                   <li>Assigned Coordinator: <strong>{caseObj.assignedCoordinatorId ? "Assigned" : "Unassigned"}</strong></li>
                   <li>Assigned Interviewer: <strong>{caseObj.assignedInterviewerId ? "Assigned" : "Unassigned"}</strong></li>
@@ -536,12 +510,12 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 3: DOCUMENTS */}
         {activeTab === "documents" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.5rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Applicant Intake Documents Checklist
             </h3>
 
             {isAuditor ? (
-              <div style={{ padding: "1.5rem", backgroundColor: "var(--color-cloud)", borderRadius: "6px", color: "var(--color-steel)", fontSize: "0.9rem" }}>
+              <div className="crm-alert-banner info">
                 🔒 <strong>Privacy Redaction:</strong> Secure files are redacted under Read-Only Auditor logs compliance.
               </div>
             ) : (
@@ -573,21 +547,13 @@ export default function CaseDetailsPage({ params }) {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        backgroundColor: status === "complete" ? "#F5FAF5" : "#FFFFFF"
+                        backgroundColor: status === "complete" ? "rgba(92, 158, 173, 0.05)" : "#FFFFFF"
                       }}
                     >
                       <div>
                         <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.25rem", alignItems: "center" }}>
-                          <span style={{ fontSize: "0.7rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)" }}>{dt.number}</span>
-                          <span style={{
-                            fontSize: "0.62rem",
-                            fontWeight: "700",
-                            padding: "0.1rem 0.4rem",
-                            borderRadius: "4px",
-                            backgroundColor: dt.sens === "clinical" ? "#FCE8E6" : "var(--color-cloud)",
-                            color: dt.sens === "clinical" ? "#A83232" : "var(--color-slate-dark)",
-                            textTransform: "uppercase"
-                          }}>
+                          <span style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)" }}>{dt.number}</span>
+                          <span className={`crm-badge ${dt.sens === "clinical" ? "terracotta" : "slate"}`}>
                             {dt.sens}
                           </span>
                         </div>
@@ -598,19 +564,14 @@ export default function CaseDetailsPage({ params }) {
                       </div>
 
                       <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-                        <span style={{
-                          fontSize: "0.75rem",
-                          fontWeight: "700",
-                          color: status === "complete" ? "#385723" : "var(--color-steel)",
-                          textTransform: "uppercase"
-                        }}>
+                        <span className={`crm-badge ${status === "complete" ? "success" : "slate"}`}>
                           {status.replace(/_/g, " ")}
                         </span>
                         
                         {canModifyCase && (
                           <div style={{ display: "flex", gap: "0.35rem" }}>
-                            <button onClick={() => handleDocStatusUpdate(dt.id, "requested")} style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem", cursor: "pointer" }} className="btn btn-outline">Request</button>
-                            <button onClick={() => handleDocStatusUpdate(dt.id, "complete")} style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem", cursor: "pointer" }} className="btn btn-primary">Complete</button>
+                            <button onClick={() => handleDocStatusUpdate(dt.id, "requested")} className="btn btn-outline" style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}>Request</button>
+                            <button onClick={() => handleDocStatusUpdate(dt.id, "complete")} className="btn btn-primary" style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}>Complete</button>
                           </div>
                         )}
                       </div>
@@ -625,7 +586,7 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 4: TASKS */}
         {activeTab === "tasks" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.5rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Case Follow-Up Tasks
             </h3>
 
@@ -642,11 +603,11 @@ export default function CaseDetailsPage({ params }) {
                         style={{
                           border: "1px solid var(--color-border)",
                           borderRadius: "8px",
-                          padding: "1rem",
+                          padding: "1.25rem",
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          backgroundColor: task.status === "completed" ? "#F5FAF5" : "#FFFFFF"
+                          backgroundColor: task.status === "completed" ? "rgba(92, 158, 173, 0.05)" : "#FFFFFF"
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
@@ -658,19 +619,20 @@ export default function CaseDetailsPage({ params }) {
                           />
                           <div>
                             <h4 style={{
-                              fontSize: "0.95rem",
+                              fontSize: "1rem",
                               fontWeight: "600",
                               color: task.status === "completed" ? "var(--color-steel)" : "var(--color-charcoal)",
-                              textDecoration: task.status === "completed" ? "line-through" : "none"
+                              textDecoration: task.status === "completed" ? "line-through" : "none",
+                              margin: 0
                             }}>
                               {task.title}
                             </h4>
-                            <p style={{ fontSize: "0.82rem", color: "var(--color-steel)" }}>{task.description}</p>
+                            <p style={{ fontSize: "0.85rem", color: "var(--color-steel)", margin: "0.15rem 0 0 0" }}>{task.description}</p>
                           </div>
                         </div>
 
-                        <span style={{ fontSize: "0.75rem", color: "var(--color-steel)", fontWeight: "600" }}>
-                          Priority: {task.priority}
+                        <span className={`crm-badge ${task.priority === "high" ? "terracotta" : "slate"}`}>
+                          {task.priority}
                         </span>
                       </div>
                     ))
@@ -679,40 +641,40 @@ export default function CaseDetailsPage({ params }) {
               </div>
 
               {/* Add Task Form */}
-              <div>
-                <h4 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate-dark)" }}>
+              <div className="crm-card" style={{ padding: "1.75rem", backgroundColor: "var(--color-cloud)" }}>
+                <h4 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1.25rem", color: "var(--color-slate-dark)" }}>
                   Create Follow-Up Task
                 </h4>
                 <form onSubmit={handleAddTaskSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Title</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Title</label>
                     <input 
                       type="text" 
                       required 
                       value={newTaskTitle}
                       onChange={(e) => setNewTaskTitle(e.target.value)}
                       placeholder="Task action summary..."
-                      style={{ width: "100%", padding: "0.4rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-input"
                     />
                   </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Description</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Description</label>
                     <textarea 
                       value={newTaskDesc}
                       onChange={(e) => setNewTaskDesc(e.target.value)}
                       placeholder="Add details..."
                       rows={2}
-                      style={{ width: "100%", padding: "0.4rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-textarea"
                     />
                   </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Assign To</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Assign To</label>
                     <select
                       value={newTaskAssigned}
                       onChange={(e) => setNewTaskAssigned(e.target.value)}
-                      style={{ width: "100%", padding: "0.4rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-select"
                     >
                       <option value="">Unassigned</option>
                       {profiles.map(p => (
@@ -721,12 +683,12 @@ export default function CaseDetailsPage({ params }) {
                     </select>
                   </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Priority</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Priority</label>
                     <select
                       value={newTaskPriority}
                       onChange={(e) => setNewTaskPriority(e.target.value)}
-                      style={{ width: "100%", padding: "0.4rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-select"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -734,7 +696,7 @@ export default function CaseDetailsPage({ params }) {
                     </select>
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ padding: "0.55rem", fontSize: "0.85rem", cursor: "pointer" }}>
+                  <button type="submit" className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
                     Add Task to File
                   </button>
                 </form>
@@ -746,12 +708,12 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 5: NOTES */}
         {activeTab === "notes" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.5rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Internal Note Logs
             </h3>
 
             {noteStatusMessage && (
-              <div style={{ backgroundColor: "#F2F9F2", color: "#2E5B2E", padding: "0.5rem 1rem", borderRadius: "4px", fontSize: "0.85rem", marginBottom: "1rem" }}>
+              <div className="crm-alert-banner info" style={{ padding: "0.75rem 1rem", marginBottom: "1rem" }}>
                 {noteStatusMessage}
               </div>
             )}
@@ -772,26 +734,18 @@ export default function CaseDetailsPage({ params }) {
                             border: "1px solid var(--color-border)",
                             borderRadius: "8px",
                             padding: "1.25rem",
-                            backgroundColor: note.visibility === "general_staff" ? "#FFFFFF" : "#FFF9F2"
+                            backgroundColor: note.visibility === "general_staff" ? "#FFFFFF" : "rgba(200, 107, 74, 0.03)"
                           }}
                         >
                           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                             <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--color-slate-dark)" }}>
                               {author ? `${author.first_name} ${author.last_name}` : "System"}
                             </span>
-                            <span style={{
-                              fontSize: "0.68rem",
-                              fontWeight: "700",
-                              padding: "0.1rem 0.4rem",
-                              borderRadius: "4px",
-                              backgroundColor: note.visibility === "general_staff" ? "var(--color-cloud)" : "#FFE6CC",
-                              color: note.visibility === "general_staff" ? "var(--color-slate)" : "#B25E00",
-                              textTransform: "uppercase"
-                            }}>
+                            <span className="crm-badge slate">
                               {note.visibility.replace(/_/g, " ")}
                             </span>
                           </div>
-                          <p style={{ fontSize: "0.9rem", color: "var(--color-charcoal)", lineHeight: "1.5" }}>{note.content}</p>
+                          <p style={{ fontSize: "0.9rem", color: "var(--color-charcoal)", lineHeight: "1.5", margin: 0 }}>{note.content}</p>
                           <span style={{ fontSize: "0.72rem", color: "var(--color-steel)", display: "block", marginTop: "0.5rem" }}>
                             {new Date(note.created_at).toLocaleString()}
                           </span>
@@ -803,31 +757,22 @@ export default function CaseDetailsPage({ params }) {
               </div>
 
               {/* Add Note form */}
-              <div>
+              <div className="crm-card" style={{ padding: "1.75rem", backgroundColor: "var(--color-cloud)" }}>
                 <h4 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate-dark)" }}>
                   Log Internal Context Note
                 </h4>
 
-                <div style={{
-                  backgroundColor: "#FFF9F2",
-                  border: "1px solid #FFE6CC",
-                  padding: "0.85rem",
-                  borderRadius: "6px",
-                  fontSize: "0.78rem",
-                  color: "#B25E00",
-                  marginBottom: "1.25rem",
-                  lineHeight: "1.4"
-                }}>
+                <div className="crm-alert-banner warning" style={{ padding: "0.85rem", fontSize: "0.78rem", marginBottom: "1.25rem" }}>
                   ⚠️ <strong>Privacy Warning:</strong> Only include information necessary for the assigned scope. Do not duplicate sensitive information that already exists in an approved secure document.
                 </div>
 
                 <form onSubmit={handleAddNoteSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Visibility Scope</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Visibility Scope</label>
                     <select
                       value={newNoteVisibility}
                       onChange={(e) => setNewNoteVisibility(e.target.value)}
-                      style={{ width: "100%", padding: "0.4rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-select"
                     >
                       <option value="general_staff">General Staff (All Staff)</option>
                       <option value="restricted_admissions">Restricted Admissions Coordinator/Admin</option>
@@ -840,19 +785,19 @@ export default function CaseDetailsPage({ params }) {
                     </select>
                   </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.8rem", fontWeight: "600", marginBottom: "0.25rem" }}>Content Note</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Content Note</label>
                     <textarea 
                       required
                       value={newNoteContent}
                       onChange={(e) => setNewNoteContent(e.target.value)}
                       placeholder="Add summary note details..."
                       rows={4}
-                      style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-textarea"
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ padding: "0.55rem", fontSize: "0.85rem", cursor: "pointer" }}>
+                  <button type="submit" className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
                     Add Note to File
                   </button>
                 </form>
@@ -864,57 +809,57 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 6: COMMITTEE REVIEW */}
         {activeTab === "committee" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.5rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Admissions Committee Packet & Decision Formulation
             </h3>
 
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "3.5rem" }}>
               <div>
-                <h4 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate-dark)" }}>
+                <h4 className="crm-card-title" style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
                   Committee Packet Checklist
                 </h4>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "2rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>General intake profile validation</span>
-                    <strong style={{ color: "#385723" }}>✓ VERIFIED</strong>
+                    <strong style={{ color: "var(--color-teal)" }}>✓ VERIFIED</strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>Required documents status check (4/4 complete)</span>
-                    <strong style={{ color: "#385723" }}>✓ COMPLETE</strong>
+                    <strong style={{ color: "var(--color-teal)" }}>✓ COMPLETE</strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>Clinical health assessment checklist outcome</span>
-                    <strong>{clinical ? clinical.readiness_outcome.replace(/_/g, " ").toUpperCase() : "PENDING"}</strong>
+                    <strong style={{ textTransform: "uppercase" }}>{clinical ? clinical.readiness_outcome.replace(/_/g, " ") : "PENDING"}</strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>Admissions interview recommendation</span>
-                    <strong>{interview ? interview.recommendation.replace(/_/g, " ").toUpperCase() : "PENDING"}</strong>
+                    <strong style={{ textTransform: "uppercase" }}>{interview ? interview.recommendation.replace(/_/g, " ") : "PENDING"}</strong>
                   </div>
                 </div>
 
                 {decision ? (
-                  <div style={{ backgroundColor: "#F2F9F2", border: "1px solid #C5E0B4", padding: "1.5rem", borderRadius: "8px" }}>
-                    <h4 style={{ fontSize: "1.05rem", fontWeight: "700", color: "#385723", marginBottom: "0.5rem" }}>
+                  <div className="crm-alert-banner info" style={{ padding: "1.5rem" }}>
+                    <h4 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--color-slate-dark)", marginBottom: "0.5rem", marginTop: 0 }}>
                       ✓ Committee Decision Recorded
                     </h4>
-                    <p style={{ fontSize: "0.9rem" }}>
+                    <p style={{ fontSize: "0.9rem", margin: 0 }}>
                       Decision outcome: <strong>{decision.decision.replace(/_/g, " ").toUpperCase()}</strong>
                     </p>
                     {decision.conditions_of_admission && (
-                      <p style={{ fontSize: "0.85rem", color: "var(--color-steel)", marginTop: "0.5rem" }}>
+                      <p style={{ fontSize: "0.85rem", color: "var(--color-steel)", marginTop: "0.5rem", marginBottom: 0 }}>
                         Conditions: {decision.conditions_of_admission}
                       </p>
                     )}
                   </div>
                 ) : (
                   <form onSubmit={handleCommitteeSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.35rem" }}>Committee Decision</label>
+                    <div className="crm-form-group">
+                      <label className="crm-label">Committee Decision</label>
                       <select
                         value={commDecision}
                         onChange={(e) => setCommDecision(e.target.value)}
-                        style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                        className="crm-select"
                       >
                         <option value="admit">Admit Candidate</option>
                         <option value="admit_with_conditions">Admit with Conditions</option>
@@ -924,40 +869,40 @@ export default function CaseDetailsPage({ params }) {
                       </select>
                     </div>
 
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.35rem" }}>Conditions of Admission (Optional)</label>
+                    <div className="crm-form-group">
+                      <label className="crm-label">Conditions of Admission (Optional)</label>
                       <textarea
                         value={commConditions}
                         onChange={(e) => setCommConditions(e.target.value)}
                         placeholder="Add required targets (e.g. checkups, support program links)..."
                         rows={2}
-                        style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                        className="crm-textarea"
                       />
                     </div>
 
-                    <div>
-                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.35rem" }}>Committee Comments</label>
+                    <div className="crm-form-group">
+                      <label className="crm-label">Committee Comments</label>
                       <textarea
                         value={commComments}
                         onChange={(e) => setCommComments(e.target.value)}
                         placeholder="Add committee findings summary..."
                         rows={3}
-                        style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                        className="crm-textarea"
                       />
                     </div>
 
-                    <button type="submit" className="btn btn-primary" style={{ padding: "0.75rem", fontSize: "0.9rem", cursor: "pointer" }}>
+                    <button type="submit" className="btn btn-primary" style={{ padding: "0.75rem", fontSize: "0.9rem", width: "100%" }}>
                       Record Official Committee Decision
                     </button>
                   </form>
                 )}
               </div>
 
-              <div style={{ backgroundColor: "#FFF9F2", padding: "1.5rem", borderRadius: "8px", border: "1px solid #FFE6CC", height: "fit-content" }}>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#B25E00", marginBottom: "0.5rem" }}>
+              <div className="crm-alert-banner warning" style={{ height: "fit-content", padding: "1.5rem" }}>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", color: "var(--color-terracotta-dark)", marginBottom: "0.5rem", marginTop: 0 }}>
                   ⚠️ Secure Access Warning
                 </h4>
-                <p style={{ fontSize: "0.8rem", color: "#B25E00", lineHeight: "1.4" }}>
+                <p style={{ fontSize: "0.8rem", color: "var(--color-terracotta-dark)", lineHeight: "1.4", margin: 0 }}>
                   Admissions committee members do not have direct access to raw medical records, background check details, or candidate Social Security numbers to respect privacy boundaries.
                 </p>
               </div>
@@ -968,25 +913,25 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 7: WELCOME DAY */}
         {activeTab === "welcome" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.5rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Welcome Day Checklists & Residency Conversion Gateway
             </h3>
 
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "3.5rem" }}>
               <div>
                 <form onSubmit={handleWelcomeDaySubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.35rem" }}>Bedroom Room Assignment</label>
+                  <div className="crm-form-group">
+                    <label className="crm-label">Bedroom Room Assignment</label>
                     <input 
                       type="text" 
                       value={wdRoom}
                       onChange={(e) => setWdRoom(e.target.value)}
                       placeholder="e.g. Room 102"
-                      style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid var(--color-border)" }}
+                      className="crm-input"
                     />
                   </div>
 
-                  <h4 style={{ fontSize: "1rem", fontWeight: "700", margin: "1rem 0 0.5rem 0", color: "var(--color-slate-dark)" }}>
+                  <h4 className="crm-card-title" style={{ fontSize: "1.1rem", margin: "1.5rem 0 0.75rem 0" }}>
                     Onboarding Steps Checklist
                   </h4>
 
@@ -1005,7 +950,7 @@ export default function CaseDetailsPage({ params }) {
                       { key: "prayer", label: "Prayer offered if desired" },
                       { key: "admitted", label: "Mark case file officially ADMITTED to program" }
                     ].map(chk => (
-                      <label key={chk.key} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.9rem", cursor: "pointer" }}>
+                      <label key={chk.key} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.9rem", cursor: "pointer", color: "var(--color-charcoal)" }}>
                         <input 
                           type="checkbox"
                           checked={wdChecks[chk.key]}
@@ -1017,17 +962,17 @@ export default function CaseDetailsPage({ params }) {
                     ))}
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ padding: "0.75rem", fontSize: "0.9rem", cursor: "pointer", marginTop: "1rem" }}>
+                  <button type="submit" className="btn btn-primary" style={{ padding: "0.75rem", fontSize: "0.9rem", marginTop: "1rem", width: "100%" }}>
                     Save Welcome Day Checklist Status
                   </button>
                 </form>
               </div>
 
-              <div style={{ backgroundColor: "var(--color-cloud)", padding: "1.5rem", borderRadius: "8px", height: "fit-content" }}>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", marginBottom: "0.5rem" }}>
+              <div className="crm-card" style={{ padding: "1.5rem", height: "fit-content", backgroundColor: "var(--color-cloud)" }}>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", color: "var(--color-slate-dark)", marginBottom: "0.5rem", marginTop: 0 }}>
                   Residency Transition
                 </h4>
-                <p style={{ fontSize: "0.8rem", color: "var(--color-steel)", lineHeight: "1.4" }}>
+                <p style={{ fontSize: "0.8rem", color: "var(--color-steel)", lineHeight: "1.4", margin: 0 }}>
                   Admitting the candidate locks the admissions case file records as read-only historical context and opens an active resident file. Actual entrance keypad codes are never logged to this CRM database.
                 </p>
               </div>
@@ -1038,22 +983,22 @@ export default function CaseDetailsPage({ params }) {
         {/* TAB 8: AUDIT LOGS */}
         {activeTab === "audit" && (
           <div>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1rem", color: "var(--color-slate)" }}>
+            <h3 className="crm-card-title">
               Case Activity Audit Trail Logs (Immutable logs)
             </h3>
             <p style={{ color: "var(--color-steel)", marginBottom: "2rem" }}>
               Log of operations tracked on this candidate directory. No medical fields, notes, or candidate names are tracked inside raw metadata logs to respect privacy.
             </p>
 
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+            <div className="crm-table-wrapper">
+              <table className="crm-table">
                 <thead>
-                  <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-slate)", fontSize: "0.8rem" }}>
-                    <th style={{ padding: "0.8rem" }}>Timestamp</th>
-                    <th style={{ padding: "0.8rem" }}>Actor</th>
-                    <th style={{ padding: "0.8rem" }}>Action logged</th>
-                    <th style={{ padding: "0.8rem" }}>Target Entity</th>
-                    <th style={{ padding: "0.8rem" }}>Context description</th>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Actor</th>
+                    <th>Action logged</th>
+                    <th>Target Entity</th>
+                    <th>Context description</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1067,28 +1012,30 @@ export default function CaseDetailsPage({ params }) {
                     auditLogs.map(log => {
                       const actor = profiles.find(s => s.id === log.actor_id);
                       return (
-                        <tr key={log.id} style={{ borderBottom: "1px solid var(--color-border)", fontSize: "0.85rem" }}>
-                          <td style={{ padding: "0.8rem", color: "var(--color-steel)" }}>
+                        <tr key={log.id}>
+                          <td style={{ color: "var(--color-steel)" }}>
                             {new Date(log.created_at).toLocaleString()}
                           </td>
-                          <td style={{ padding: "0.8rem", fontWeight: "600" }}>
+                          <td style={{ fontWeight: "600" }}>
                             {actor ? `${actor.first_name} ${actor.last_name}` : "System"}
                           </td>
-                          <td style={{ padding: "0.8rem" }}>
+                          <td>
                             <span style={{
                               fontFamily: "var(--font-mono)",
                               fontSize: "0.75rem",
                               backgroundColor: "var(--color-cloud)",
                               padding: "0.15rem 0.4rem",
-                              borderRadius: "4px"
+                              borderRadius: "4px",
+                              fontWeight: "600",
+                              color: "var(--color-slate-dark)"
                             }}>
                               {log.action}
                             </span>
                           </td>
-                          <td style={{ padding: "0.8rem", color: "var(--color-steel)" }}>
+                          <td style={{ color: "var(--color-steel)" }}>
                             {log.entity_type} ({log.entity_id})
                           </td>
-                          <td style={{ padding: "0.8rem", color: "var(--color-steel)", maxWidth: "300px" }}>
+                          <td style={{ color: "var(--color-steel)", maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {JSON.stringify(log.metadata_safe)}
                           </td>
                         </tr>

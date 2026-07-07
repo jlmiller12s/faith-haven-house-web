@@ -26,36 +26,36 @@ export default function AuditLogsPage() {
 
   if (!isAuthorized) {
     return (
-      <main style={{ padding: "3rem", textAlign: "center" }}>
-        <h2 style={{ color: "#A83232" }}>🔒 Access Denied</h2>
-        <p style={{ color: "var(--color-steel)", marginTop: "0.5rem" }}>
-          You do not have the authorization roles required to inspect the immutable CRM audit trail logs.
-        </p>
+      <main className="crm-container" style={{ textAlign: "center", paddingTop: "5rem" }}>
+        <div className="crm-alert-banner warning" style={{ display: "inline-block", maxWidth: "500px" }}>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: "700", margin: "0 0 0.5rem 0", color: "var(--color-terracotta-dark)" }}>🔒 Access Denied</h2>
+          <p style={{ margin: 0 }}>
+            You do not have the authorization roles required to inspect the immutable CRM audit trail logs.
+          </p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main style={{ padding: "2.5rem 3rem" }}>
+    <main className="crm-container">
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", color: "var(--color-slate)", fontWeight: "800", letterSpacing: "-0.01em" }}>
-          System Audit Trail Logs
-        </h1>
-        <p style={{ color: "var(--color-steel)" }}>
+        <h1 className="crm-title">System Audit Trail Logs</h1>
+        <p className="crm-subtitle">
           Immutable logs of actions (views, downloads, edits, deletions, role updates, logins) recorded across CRM portfolios.
         </p>
       </div>
 
-      <div style={{ backgroundColor: "#FFFFFF", borderRadius: "10px", boxShadow: "var(--shadow-sm)", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+      <div className="crm-table-wrapper">
+        <table className="crm-table">
           <thead>
-            <tr style={{ backgroundColor: "var(--color-cloud)", borderBottom: "2px solid var(--color-border)", color: "var(--color-slate)", fontWeight: "700" }}>
-              <th style={{ padding: "1rem" }}>Timestamp</th>
-              <th style={{ padding: "1rem" }}>Staff Member</th>
-              <th style={{ padding: "1rem" }}>Action Triggered</th>
-              <th style={{ padding: "1rem" }}>Entity Type</th>
-              <th style={{ padding: "1rem" }}>Metadata Safe Summary</th>
-              <th style={{ padding: "1rem" }}>Client IP Hash</th>
+            <tr>
+              <th>Timestamp</th>
+              <th>Staff Member</th>
+              <th>Action Triggered</th>
+              <th>Entity Type</th>
+              <th>Metadata Safe Summary</th>
+              <th>Client IP Hash</th>
             </tr>
           </thead>
           <tbody>
@@ -67,14 +67,14 @@ export default function AuditLogsPage() {
               </tr>
             ) : (
               logs.map(log => (
-                <tr key={log.id} style={{ borderBottom: "1px solid var(--color-border)", fontSize: "0.85rem", verticalAlign: "middle" }}>
-                  <td style={{ padding: "1rem", color: "var(--color-steel)" }}>
+                <tr key={log.id}>
+                  <td style={{ color: "var(--color-steel)" }}>
                     {new Date(log.created_at).toLocaleString()}
                   </td>
-                  <td style={{ padding: "1rem", fontWeight: "600" }}>
+                  <td style={{ fontWeight: "600" }}>
                     {log.actorEmail}
                   </td>
-                  <td style={{ padding: "1rem" }}>
+                  <td>
                     <span style={{
                       fontFamily: "var(--font-mono)",
                       fontSize: "0.75rem",
@@ -87,13 +87,13 @@ export default function AuditLogsPage() {
                       {log.action}
                     </span>
                   </td>
-                  <td style={{ padding: "1rem", color: "var(--color-steel)" }}>
+                  <td style={{ color: "var(--color-steel)" }}>
                     {log.entity_type} ({log.entity_id})
                   </td>
-                  <td style={{ padding: "1rem", color: "var(--color-steel)", maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <td style={{ color: "var(--color-steel)", maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {JSON.stringify(log.metadata_safe)}
                   </td>
-                  <td style={{ padding: "1rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)", fontSize: "0.8rem" }}>
+                  <td style={{ fontFamily: "var(--font-mono)", color: "var(--color-steel)", fontSize: "0.8rem" }}>
                     {log.ip_hash}
                   </td>
                 </tr>
