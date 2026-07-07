@@ -1,5 +1,6 @@
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata = {
   title: "Faith Haven House | Transitional Living Facility for Homeless Men",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         {/* Global Lenis smooth scroll + GSAP ScrollTrigger sync — runs on every page */}
         <SmoothScroll />
         {children}
+        <Analytics />
       </body>
     </html>
   );
