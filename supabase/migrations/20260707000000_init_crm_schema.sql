@@ -560,3 +560,35 @@ VALUES (
     'super_admin',
     true
 ) ON CONFLICT (email) DO NOTHING;
+
+-- Trigger function to automatically create profile on auth signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.staff_profiles (
+        auth_user_id,
+        first_name,
+        last_name,
+        email,
+        role,
+        is_active
+    )
+    VALUES (
+        new.id,
+        coalesce(new.raw_user_meta_data->>'first_name', 'Intake'),
+        coalesce(new.raw_user_meta_data->>'last_name', 'Staff'),
+        new.email,
+        coalesce(new.raw_user_meta_data->>'role', 'admissions_coordinator'),
+        true
+    ) ON CONFLICT (email) DO UPDATE 
+    SET auth_user_id = EXCLUDED.auth_user_id,
+        is_active = true;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger registration
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

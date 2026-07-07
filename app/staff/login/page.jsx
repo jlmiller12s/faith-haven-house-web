@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useStaffSession } from "../layout";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
 
 import { isMockMode, supabase } from "@/lib/supabase";
@@ -135,6 +136,15 @@ export default function StaffLoginPage() {
             Sign In Securely
           </button>
         </form>
+
+        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <span style={{ fontSize: "0.85rem", color: "var(--color-steel)" }}>
+            Need an account?{" "}
+            <Link href="/staff/signup" style={{ color: "var(--color-teal)", fontWeight: "600", textDecoration: "none" }}>
+              Register Here
+            </Link>
+          </span>
+        </div>
 
         {isMockMode && (
           <div style={{
