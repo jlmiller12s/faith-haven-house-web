@@ -30,7 +30,7 @@ export default function CrmIcon({ name, className = "", style = {} }) {
     meals: "/assets/icon-meals.png",
     mentor: "/assets/icon-mentor.png",
     monitor: "/assets/icon-monitor.png",
-    monogram: "/assets/gold_icon.png",
+    monogram: "/assets/fhh-logo-standalone-icon.png",
     logo_full: "/assets/FHH-logo-clean.png"
   };
 
