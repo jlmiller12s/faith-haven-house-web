@@ -5,6 +5,7 @@ import { isMockMode } from "@/lib/supabase";
 import { getStaffProfiles } from "@/lib/crmService";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import CrmIcon from "@/lib/crmIcons";
 
 // Context for Staff Session
 const StaffSessionContext = createContext(null);
@@ -83,13 +84,13 @@ export default function StaffLayout({ children }) {
 
   return (
     <StaffSessionContext.Provider value={{ activeStaff, profiles, setActiveStaff, isMockMode, handleLogout }}>
-      <div style={{ minHeight: "100vh", backgroundColor: "var(--color-cloud)", display: "flex", flexDirection: "column" }}>
+      <div style={{ minHeight: "100vh", backgroundColor: "var(--color-ivory)", display: "flex", flexDirection: "column" }}>
         
         {/* DEVELOPER DIAGNOSTIC TOOLBAR */}
         {isMockMode && (
           <div className="crm-dev-toolbar">
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "1rem" }}>🧪</span>
+              <CrmIcon name="flask" style={{ width: "1.15rem", height: "1.15rem", color: "var(--color-slate-dark)" }} />
               <strong style={{ color: "var(--color-slate-dark)" }}>Developer CRM Sandbox Preview</strong>
               <span style={{ color: "var(--color-steel)", opacity: 0.5 }}>|</span>
               <span style={{ color: "var(--color-slate-dark)" }}>Current Active User:</span>
@@ -115,15 +116,15 @@ export default function StaffLayout({ children }) {
         <header style={{
           backgroundColor: "var(--color-slate)",
           color: "var(--color-ivory)",
-          padding: "1.25rem 2rem",
+          padding: "1rem 2rem",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           boxShadow: "var(--shadow-sm)"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
-            <Link href="/staff" style={{ display: "flex", alignItems: "center", gap: "0.75rem", textDecoration: "none" }}>
-              <span style={{ fontSize: "1.5rem" }}>🏰</span>
+            <Link href="/staff" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
+              <CrmIcon name="monogram" style={{ width: "2rem", height: "2rem" }} />
               <strong style={{ fontSize: "1.25rem", color: "var(--color-ivory)", letterSpacing: "-0.01em" }}>FHH CRM Portal</strong>
             </Link>
             <nav style={{ display: "flex", gap: "1.5rem" }}>

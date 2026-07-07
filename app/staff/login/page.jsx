@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useStaffSession } from "../layout";
 import { useRouter } from "next/navigation";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function StaffLoginPage() {
   const router = useRouter();
@@ -45,8 +46,10 @@ export default function StaffLoginPage() {
       <div className="crm-card" style={{ maxWidth: "440px", width: "100%", padding: "3rem" }}>
         
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <span style={{ fontSize: "3rem", display: "block", marginBottom: "0.5rem" }}>🏰</span>
-          <h1 style={{ fontSize: "1.75rem", color: "var(--color-slate)", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
+          <div style={{ marginBottom: "1rem" }}>
+            <CrmIcon name="monogram" style={{ width: "4rem", height: "4rem" }} />
+          </div>
+          <h1 style={{ fontSize: "1.75rem", color: "var(--color-slate-dark)", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
             Faith Haven House
           </h1>
           <p style={{ fontSize: "0.9rem", color: "var(--color-steel)" }}>Internal CRM Portal - Staff Access Only</p>
@@ -98,8 +101,9 @@ export default function StaffLoginPage() {
             paddingTop: "1.5rem",
             borderTop: "1px dashed var(--color-border)"
           }}>
-            <h3 style={{ fontSize: "0.82rem", fontWeight: "700", textTransform: "uppercase", color: "var(--color-slate)", marginBottom: "0.75rem", letterSpacing: "0.02em" }}>
-              🧪 Sandbox Quick Profiles Logins
+            <h3 style={{ fontSize: "0.82rem", fontWeight: "700", textTransform: "uppercase", color: "var(--color-slate-dark)", marginBottom: "0.75rem", letterSpacing: "0.02em", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+              <CrmIcon name="flask" style={{ width: "1rem", height: "1rem", color: "var(--color-slate)" }} />
+              Sandbox Quick Logins
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {profiles.slice(0, 5).map(p => (

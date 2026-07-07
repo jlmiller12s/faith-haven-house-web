@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useStaffSession } from "../layout";
 import { getStaffProfiles, updateStaffRole } from "@/lib/crmService";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function TeamManagementPage() {
   const { activeStaff } = useStaffSession();
@@ -39,7 +40,10 @@ export default function TeamManagementPage() {
     return (
       <main className="crm-container" style={{ textAlign: "center", paddingTop: "5rem" }}>
         <div className="crm-alert-banner warning" style={{ display: "inline-block", maxWidth: "500px" }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "700", margin: "0 0 0.5rem 0", color: "var(--color-terracotta-dark)" }}>🔒 Access Denied</h2>
+          <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", alignItems: "center", marginBottom: "0.5rem" }}>
+            <CrmIcon name="lock" style={{ width: "1.5rem", height: "1.5rem", color: "var(--color-terracotta-dark)" }} />
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "700", margin: 0, color: "var(--color-terracotta-dark)", fontFamily: "var(--font-serif)" }}>Access Denied</h2>
+          </div>
           <p style={{ margin: 0 }}>
             You do not have the super_admin privileges required to inspect or modify CRM staff roles.
           </p>

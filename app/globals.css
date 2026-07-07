@@ -6083,14 +6083,14 @@ footer {
   padding: 2.5rem 3rem;
   font-family: var(--font-sans);
   color: var(--color-charcoal);
-  background-color: var(--color-cloud);
+  background-color: var(--color-ivory); /* Matches Ivory white from main site */
   min-height: calc(100vh - 80px); /* Clearance for header */
 }
 
 .crm-title {
   font-family: var(--font-serif);
   font-size: 2.25rem;
-  color: var(--color-slate);
+  color: var(--color-slate-dark); /* Matches Deep Navy from main site */
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 0.25rem;
@@ -6099,7 +6099,7 @@ footer {
 .crm-subtitle {
   font-family: var(--font-sans);
   font-size: 1rem;
-  color: var(--color-steel);
+  color: var(--color-slate); /* Matches Slate Blue from main site */
   margin-top: 0;
 }
 
@@ -6133,20 +6133,20 @@ footer {
   color: var(--color-slate-dark);
 }
 
-/* Cards */
+/* Cards (Styled to match the About Us Story Card look) */
 .crm-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--color-border);
+  background-color: #FAF8EF; /* Matches warm Ivory White from About section */
+  border: 1px solid #5E7890; /* Matches Slate Blue border from About section */
   border-radius: var(--radius-lg);
   padding: 2.5rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 6px 24px rgba(23, 50, 71, 0.08); /* Matches shadow from About section */
   transition: var(--transition);
 }
 
 .crm-card-title {
   font-family: var(--font-serif);
   font-size: 1.35rem;
-  color: var(--color-slate);
+  color: var(--color-slate-dark); /* Matches Navy from main site */
   font-weight: 700;
   margin-bottom: 1.25rem;
 }
@@ -6154,10 +6154,10 @@ footer {
 /* Tables */
 .crm-table-wrapper {
   overflow-x: auto;
-  border: 1px solid var(--color-border);
+  border: 1px solid #5E7890; /* Matches About Section border */
   border-radius: var(--radius-md);
-  background-color: #FFFFFF;
-  box-shadow: var(--shadow-sm);
+  background-color: #FAF8EF; /* Warm Ivory background */
+  box-shadow: 0 6px 24px rgba(23, 50, 71, 0.08);
 }
 
 .crm-table {
@@ -6168,9 +6168,9 @@ footer {
 
 .crm-table th {
   padding: 1rem 1.25rem;
-  background-color: var(--color-cloud);
-  border-bottom: 2px solid var(--color-border);
-  color: var(--color-slate);
+  background-color: var(--color-slate); /* Deep Navy header background */
+  border-bottom: 2px solid #5E7890;
+  color: var(--color-ivory); /* Ivory white text */
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -6189,14 +6189,14 @@ footer {
 }
 
 .crm-table tr:hover {
-  background-color: rgba(41, 76, 96, 0.015);
+  background-color: rgba(41, 76, 96, 0.04); /* Soft navy highlight */
 }
 
 /* Tabs Navigation */
 .crm-tabs-nav {
   display: flex;
   gap: 0.25rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid #5E7890; /* Navy Blue divider line */
   margin-bottom: 2rem;
   overflow-x: auto;
 }
@@ -6216,12 +6216,12 @@ footer {
 }
 
 .crm-tab-btn:hover {
-  color: var(--color-slate);
+  color: var(--color-slate-dark);
 }
 
 .crm-tab-btn.active {
-  color: var(--color-slate);
-  border-bottom-color: var(--color-slate);
+  color: var(--color-slate-dark);
+  border-bottom-color: var(--color-slate-dark);
   font-weight: 700;
 }
 
@@ -6236,7 +6236,7 @@ footer {
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--color-slate);
+  color: var(--color-slate-dark); /* Navy blue labels */
   margin-bottom: 0.4rem;
   letter-spacing: 0.02em;
 }
@@ -6245,7 +6245,7 @@ footer {
   width: 100%;
   padding: 0.75rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid #5E7890; /* Navy Blue borders */
   background-color: #FFFFFF;
   font-family: var(--font-sans);
   font-size: 0.92rem;
@@ -6279,12 +6279,12 @@ footer {
 }
 
 .crm-badge.slate {
-  background-color: rgba(41, 76, 96, 0.08);
-  color: var(--color-slate);
+  background-color: rgba(41, 76, 96, 0.1);
+  color: var(--color-slate-dark);
 }
 
 .crm-badge.teal {
-  background-color: rgba(92, 158, 173, 0.12);
+  background-color: rgba(92, 158, 173, 0.15);
   color: var(--color-teal);
 }
 

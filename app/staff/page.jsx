@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useStaffSession } from "./layout";
 import { getAdmissionsQueue, getCaseDetails } from "@/lib/crmService";
 import Link from "next/link";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function StaffDashboard() {
   const { activeStaff } = useStaffSession();
@@ -70,36 +71,35 @@ export default function StaffDashboard() {
         marginBottom: "3rem"
       }}>
         {[
-          { label: "New Pre-Screens", count: preScreenCount, color: "var(--color-teal)" },
-          { label: "Staff Follow-Up", count: followUpCount, color: "var(--color-terracotta)" },
-          { label: "Documents Requested", count: "var(--color-slate-dark)", countVal: docsPendingCount },
-          { label: "Interviews Pending", count: "#D78A2A" },
-          { label: "Committee Review", count: "var(--color-slate)" },
-          { label: "Welcome Days Scheduled", count: "var(--color-teal)" }
-        ].map((card, idx) => {
-          const cardColor = card.color || "var(--color-slate)";
-          const countValue = card.countVal !== undefined ? card.countVal : (
-            idx === 3 ? interviewCount : (idx === 4 ? committeeCount : welcomeCount)
-          );
-          return (
-            <div 
-              key={idx} 
-              className="crm-card"
-              style={{
-                padding: "1.5rem",
-                borderTop: `4px solid ${cardColor}`,
-                borderRadius: "8px"
-              }}
-            >
+          { label: "New Pre-Screens", count: preScreenCount, iconName: "meals" },
+          { label: "Staff Follow-Up", count: followUpCount, iconName: "mentor" },
+          { label: "Documents Requested", count: docsPendingCount, iconName: "accountability" },
+          { label: "Interviews Pending", count: interviewCount, iconName: "monitor" },
+          { label: "Committee Review", count: committeeCount, iconName: "faith" },
+          { label: "Welcome Days Scheduled", count: welcomeCount, iconName: "hope" }
+        ].map((card, idx) => (
+          <div 
+            key={idx} 
+            className="crm-card"
+            style={{
+              padding: "1.5rem",
+              borderRadius: "8px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}
+          >
+            <div>
               <span style={{ fontSize: "0.78rem", textTransform: "uppercase", fontWeight: "700", color: "var(--color-steel)", display: "block", marginBottom: "0.5rem", letterSpacing: "0.03em" }}>
                 {card.label}
               </span>
-              <span style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-charcoal)", lineHeight: 1 }}>
-                {countValue}
+              <span style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-slate-dark)", lineHeight: 1 }}>
+                {card.count}
               </span>
             </div>
-          );
-        })}
+            <CrmIcon name={card.iconName} style={{ width: "2.5rem", height: "2.5rem", opacity: 0.8 }} />
+          </div>
+        ))}
       </div>
 
       {/* Grid: My Work & Pending Timelines */}
@@ -107,8 +107,9 @@ export default function StaffDashboard() {
         
         {/* Left: My Work List */}
         <div className="crm-card" style={{ padding: "2rem" }}>
-          <h2 className="crm-card-title">
-            📂 My Assigned Cases ({myAssignedCases.length})
+          <h2 className="crm-card-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <CrmIcon name="cases" style={{ width: "1.5rem", height: "1.5rem", color: "var(--color-slate-dark)" }} />
+            My Assigned Cases ({myAssignedCases.length})
           </h2>
 
           {myAssignedCases.length === 0 ? (
@@ -154,8 +155,9 @@ export default function StaffDashboard() {
 
         {/* Right: Assigned Follow-up Tasks */}
         <div className="crm-card" style={{ padding: "2rem" }}>
-          <h2 className="crm-card-title">
-            📋 My Tasks ({myTasks.length})
+          <h2 className="crm-card-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <CrmIcon name="tasks" style={{ width: "1.5rem", height: "1.5rem", color: "var(--color-slate-dark)" }} />
+            My Tasks ({myTasks.length})
           </h2>
 
           {myTasks.length === 0 ? (

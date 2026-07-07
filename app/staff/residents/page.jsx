@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getAdmissionsQueue } from "@/lib/crmService";
 import { useStaffSession } from "../layout";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function ActiveResidentsPage() {
   const { activeStaff } = useStaffSession();
@@ -35,8 +36,10 @@ export default function ActiveResidentsPage() {
       <div className="crm-card" style={{ padding: "2.5rem" }}>
         {residents.length === 0 ? (
           <div style={{ padding: "3rem", textAlign: "center", border: "1px dashed var(--color-border)", borderRadius: "8px", color: "var(--color-steel)" }}>
-            <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "1rem" }}>👥</span>
-            <h3 style={{ fontFamily: "var(--font-serif)", color: "var(--color-slate)" }}>No Active Residents</h3>
+            <div style={{ marginBottom: "1rem" }}>
+              <CrmIcon name="team" style={{ width: "2.5rem", height: "2.5rem", color: "var(--color-steel)" }} />
+            </div>
+            <h3 style={{ fontFamily: "var(--font-serif)", color: "var(--color-slate-dark)" }}>No Active Residents</h3>
             <p style={{ fontSize: "0.9rem", color: "var(--color-steel)", marginTop: "0.25rem" }}>
               Admissions cases will appear here once Welcome Day checkups are completed and candidates are marked as Admitted.
             </p>

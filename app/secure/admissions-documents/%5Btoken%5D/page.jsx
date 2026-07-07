@@ -3,6 +3,7 @@
 import { use } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function SecureDocumentGateway({ params }) {
   const resolvedParams = use(params);
@@ -14,26 +15,22 @@ export default function SecureDocumentGateway({ params }) {
       <main className="container" style={{ marginTop: "8rem", marginBottom: "8rem" }}>
         
         {/* Warning Banner */}
-        <div style={{
-          backgroundColor: "#FCE8E6",
-          border: "1px solid #F5C2C1",
-          color: "#A83232",
-          padding: "1.5rem",
-          borderRadius: "8px",
-          marginBottom: "2rem"
-        }}>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: "700", marginBottom: "0.5rem" }}>
-            🔒 Secure Admissions Document Gateway (Inactive)
-          </h2>
-          <p style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>
-            <strong>Developer Warning:</strong> This is a secure document upload gateway placeholder for token <code>{token}</code>. 
-            Do not collect real Social Security Numbers, state ID scans, medical details, background check consent forms, or signature files until secure database storage, 
-            encryption-at-rest (such as AWS KMS or Supabase vault), strict CORS policies, and server-side compliance logs are configured.
-          </p>
+        <div className="crm-alert-banner warning" style={{ display: "flex", gap: "0.5rem", alignItems: "start" }}>
+          <CrmIcon name="lock" style={{ width: "1.25rem", height: "1.25rem", color: "var(--color-terracotta-dark)", marginTop: "0.15rem", flexShrink: 0 }} />
+          <div>
+            <h2 style={{ fontSize: "1.25rem", fontWeight: "700", marginBottom: "0.5rem", margin: 0, fontFamily: "var(--font-serif)" }}>
+              Secure Admissions Document Gateway (Inactive)
+            </h2>
+            <p style={{ fontSize: "0.9rem", lineHeight: "1.5", margin: "0.25rem 0 0 0" }}>
+              <strong>Developer Warning:</strong> This is a secure document upload gateway placeholder for token <code>{token}</code>. 
+              Do not collect real Social Security Numbers, state ID scans, medical details, background check consent forms, or signature files until secure database storage, 
+              encryption-at-rest (such as AWS KMS or Supabase vault), strict CORS policies, and server-side compliance logs are configured.
+            </p>
+          </div>
         </div>
 
-        <div style={{ backgroundColor: "#FFFFFF", padding: "2rem", borderRadius: "12px", boxShadow: "var(--shadow-md)" }}>
-          <h1 style={{ fontSize: "1.75rem", color: "var(--color-slate)", fontWeight: "700", marginBottom: "0.5rem" }}>
+        <div className="crm-card" style={{ padding: "2rem" }}>
+          <h1 className="crm-card-title" style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
             Secure Document Upload Gate
           </h1>
           <p style={{ color: "var(--color-steel)", marginBottom: "2rem" }}>
@@ -41,14 +38,16 @@ export default function SecureDocumentGateway({ params }) {
           </p>
 
           <div style={{
-            border: "2px dashed var(--color-border)",
+            border: "2px dashed #5E7890",
             borderRadius: "8px",
             padding: "3rem 1rem",
             textAlign: "center",
-            backgroundColor: "var(--color-cloud)"
+            backgroundColor: "var(--color-ivory)"
           }}>
-            <span style={{ fontSize: "2rem", marginBottom: "1rem", display: "block" }}>📁</span>
-            <h3 style={{ fontSize: "1.1rem", fontWeight: "600", color: "var(--color-slate)", marginBottom: "0.5rem" }}>
+            <div style={{ marginBottom: "1rem" }}>
+              <CrmIcon name="cases" style={{ width: "2rem", height: "2rem", color: "var(--color-slate)" }} />
+            </div>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: "600", color: "var(--color-slate-dark)", marginBottom: "0.5rem" }}>
               Upload Intake Files
             </h3>
             <p style={{ fontSize: "0.85rem", color: "var(--color-steel)", maxWidth: "400px", margin: "0 auto 1.5rem" }}>

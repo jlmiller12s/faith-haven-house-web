@@ -14,6 +14,7 @@ import {
   updateAssignments
 } from "@/lib/crmService";
 import Link from "next/link";
+import CrmIcon from "@/lib/crmIcons";
 
 export default function CaseDetailsPage({ params }) {
   const resolvedParams = use(params);
@@ -347,8 +348,9 @@ export default function CaseDetailsPage({ params }) {
                 </h3>
 
                 {isAuditor ? (
-                  <div className="crm-alert-banner info">
-                    🔒 <strong>Privacy Redaction:</strong> Applicant names, phone numbers, and email coordinates are redacted under Read-Only Auditor logs compliance.
+                  <div className="crm-alert-banner info" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <CrmIcon name="lock" style={{ width: "1.1rem", height: "1.1rem", color: "var(--color-slate-dark)" }} />
+                    <span><strong>Privacy Redaction:</strong> Applicant names, phone numbers, and email coordinates are redacted under Read-Only Auditor logs compliance.</span>
                   </div>
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "2rem" }}>
@@ -515,8 +517,9 @@ export default function CaseDetailsPage({ params }) {
             </h3>
 
             {isAuditor ? (
-              <div className="crm-alert-banner info">
-                🔒 <strong>Privacy Redaction:</strong> Secure files are redacted under Read-Only Auditor logs compliance.
+              <div className="crm-alert-banner info" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <CrmIcon name="lock" style={{ width: "1.1rem", height: "1.1rem", color: "var(--color-slate-dark)" }} />
+                <span><strong>Privacy Redaction:</strong> Secure files are redacted under Read-Only Auditor logs compliance.</span>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -762,8 +765,9 @@ export default function CaseDetailsPage({ params }) {
                   Log Internal Context Note
                 </h4>
 
-                <div className="crm-alert-banner warning" style={{ padding: "0.85rem", fontSize: "0.78rem", marginBottom: "1.25rem" }}>
-                  ⚠️ <strong>Privacy Warning:</strong> Only include information necessary for the assigned scope. Do not duplicate sensitive information that already exists in an approved secure document.
+                <div className="crm-alert-banner warning" style={{ padding: "0.85rem", fontSize: "0.78rem", marginBottom: "1.25rem", display: "flex", gap: "0.35rem", alignItems: "center" }}>
+                  <CrmIcon name="warning" style={{ width: "1.2rem", height: "1.2rem", color: "var(--color-terracotta-dark)", flexShrink: 0 }} />
+                  <span><strong>Privacy Warning:</strong> Only include information necessary for the assigned scope. Do not duplicate sensitive information that already exists in an approved secure document.</span>
                 </div>
 
                 <form onSubmit={handleAddNoteSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -822,11 +826,17 @@ export default function CaseDetailsPage({ params }) {
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "2rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>General intake profile validation</span>
-                    <strong style={{ color: "var(--color-teal)" }}>✓ VERIFIED</strong>
+                    <strong style={{ color: "var(--color-teal)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <CrmIcon name="check" style={{ width: "1rem", height: "1rem" }} />
+                      VERIFIED
+                    </strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>Required documents status check (4/4 complete)</span>
-                    <strong style={{ color: "var(--color-teal)" }}>✓ COMPLETE</strong>
+                    <strong style={{ color: "var(--color-teal)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <CrmIcon name="check" style={{ width: "1rem", height: "1rem" }} />
+                      COMPLETE
+                    </strong>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--color-border)", paddingBottom: "0.5rem" }}>
                     <span>Clinical health assessment checklist outcome</span>
@@ -840,8 +850,9 @@ export default function CaseDetailsPage({ params }) {
 
                 {decision ? (
                   <div className="crm-alert-banner info" style={{ padding: "1.5rem" }}>
-                    <h4 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--color-slate-dark)", marginBottom: "0.5rem", marginTop: 0 }}>
-                      ✓ Committee Decision Recorded
+                    <h4 style={{ fontSize: "1.05rem", fontWeight: "700", color: "var(--color-slate-dark)", marginBottom: "0.5rem", marginTop: 0, display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <CrmIcon name="check" style={{ width: "1.2rem", height: "1.2rem" }} />
+                      Committee Decision Recorded
                     </h4>
                     <p style={{ fontSize: "0.9rem", margin: 0 }}>
                       Decision outcome: <strong>{decision.decision.replace(/_/g, " ").toUpperCase()}</strong>
@@ -899,8 +910,9 @@ export default function CaseDetailsPage({ params }) {
               </div>
 
               <div className="crm-alert-banner warning" style={{ height: "fit-content", padding: "1.5rem" }}>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", color: "var(--color-terracotta-dark)", marginBottom: "0.5rem", marginTop: 0 }}>
-                  ⚠️ Secure Access Warning
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "700", color: "var(--color-terracotta-dark)", marginBottom: "0.5rem", marginTop: 0, display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <CrmIcon name="warning" style={{ width: "1.1rem", height: "1.1rem", color: "var(--color-terracotta-dark)" }} />
+                  Secure Access Warning
                 </h4>
                 <p style={{ fontSize: "0.8rem", color: "var(--color-terracotta-dark)", lineHeight: "1.4", margin: 0 }}>
                   Admissions committee members do not have direct access to raw medical records, background check details, or candidate Social Security numbers to respect privacy boundaries.
@@ -1023,7 +1035,7 @@ export default function CaseDetailsPage({ params }) {
                             <span style={{
                               fontFamily: "var(--font-mono)",
                               fontSize: "0.75rem",
-                              backgroundColor: "var(--color-cloud)",
+                              backgroundColor: "rgba(41, 76, 96, 0.08)",
                               padding: "0.15rem 0.4rem",
                               borderRadius: "4px",
                               fontWeight: "600",
