@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, createContext, useContext } from "react";
-import { isMockMode } from "@/lib/supabase";
+import { isMockMode, supabase } from "@/lib/supabase";
 import { getStaffProfiles } from "@/lib/crmService";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -24,15 +24,42 @@ export default function StaffLayout({ children }) {
   // Load profiles and active staff profile
   useEffect(() => {
     async function init() {
-      const staffList = await getStaffProfiles();
-      setProfiles(staffList);
+      if (isMockMode) {
+        const staffList = await getStaffProfiles();
+        setProfiles(staffList);
 
-      // Default active profile: super_admin or coordinator for easy initial review
-      const savedStaffId = localStorage.getItem("fhh_crm_active_staff_id");
-      const defaultStaff = staffList.find(s => s.id === savedStaffId) || staffList.find(s => s.role === "super_admin");
-      
-      setActiveStaff(defaultStaff || null);
-      setLoading(false);
+        // Default active profile: super_admin or coordinator for easy initial review
+        const savedStaffId = localStorage.getItem("fhh_crm_active_staff_id");
+        const defaultStaff = staffList.find(s => s.id === savedStaffId) || staffList.find(s => s.role === "super_admin");
+        
+        setActiveStaff(defaultStaff || null);
+        setLoading(false);
+      } else {
+        // Real Supabase Auth user check
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            // Fetch profile linked to authenticated user
+            const { data: profile } = await supabase
+              .from("staff_profiles")
+              .select("*")
+              .eq("auth_user_id", user.id)
+              .single();
+
+            if (profile && profile.is_active) {
+              setActiveStaff(profile);
+            } else {
+              setActiveStaff(null);
+            }
+          } else {
+            setActiveStaff(null);
+          }
+        } catch (e) {
+          console.error("Auth init failed:", e);
+          setActiveStaff(null);
+        }
+        setLoading(false);
+      }
     }
     init();
   }, []);
@@ -49,9 +76,12 @@ export default function StaffLayout({ children }) {
   };
 
   // Log out staff
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("fhh_crm_active_staff_id");
     setActiveStaff(null);
+    if (!isMockMode) {
+      await supabase.auth.signOut();
+    }
     router.push("/staff/login");
   };
 

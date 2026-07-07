@@ -5,26 +5,67 @@ import { useStaffSession } from "../layout";
 import { useRouter } from "next/navigation";
 import CrmIcon from "@/lib/crmIcons";
 
+import { isMockMode, supabase } from "@/lib/supabase";
+
 export default function StaffLoginPage() {
   const router = useRouter();
-  const { profiles, setActiveStaff, isMockMode } = useStaffSession();
+  const { profiles, setActiveStaff } = useStaffSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Simulate login via profiles list matching email
-    const match = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-    
-    if (match) {
-      setActiveStaff(match);
-      localStorage.setItem("fhh_crm_active_staff_id", match.id);
-      router.push("/staff");
+    if (isMockMode) {
+      // Simulate login via profiles list matching email
+      const match = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+      if (match) {
+        setActiveStaff(match);
+        localStorage.setItem("fhh_crm_active_staff_id", match.id);
+        router.push("/staff");
+      } else {
+        setError("Invalid email address or unauthorized staff account. User enumeration checks are active.");
+      }
     } else {
-      setError("Invalid email address or unauthorized staff account. User enumeration checks are active.");
+      // Real Supabase Auth Login Flow
+      try {
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        
+        if (authError) {
+          setError(authError.message);
+          return;
+        }
+
+        if (data?.user) {
+          // Fetch linked public.staff_profiles
+          const { data: profile, error: dbError } = await supabase
+            .from("staff_profiles")
+            .select("*")
+            .eq("auth_user_id", data.user.id)
+            .single();
+
+          if (dbError || !profile) {
+            setError("Authentication successful, but no matching profile exists in staff_profiles. Please contact the administrator.");
+            return;
+          }
+
+          if (!profile.is_active) {
+            setError("This staff profile is currently marked inactive. Access suspended.");
+            return;
+          }
+
+          setActiveStaff(profile);
+          localStorage.setItem("fhh_crm_active_staff_id", profile.id);
+          router.push("/staff");
+        }
+      } catch (err) {
+        setError("Network or database connection error: " + err.message);
+      }
     }
   };
 

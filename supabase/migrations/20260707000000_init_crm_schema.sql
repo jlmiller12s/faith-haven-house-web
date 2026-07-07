@@ -507,3 +507,56 @@ CREATE POLICY audit_read_auditors ON public.audit_logs
     FOR SELECT USING (
         public.get_auth_role() IN ('super_admin', 'read_only_auditor')
     );
+
+-- =====================================================
+-- 4. DEVELOPER SEED / COMPLIANCE ADMIN PROVISIONING
+-- =====================================================
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Provision admin auth user
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+    'authenticated',
+    'authenticated',
+    'admin@faithhavenhouse.org',
+    crypt('AdminPass123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{}',
+    now(),
+    now()
+) ON CONFLICT (id) DO NOTHING;
+
+-- Link public staff profile for the admin auth user
+INSERT INTO public.staff_profiles (
+    id,
+    auth_user_id,
+    first_name,
+    last_name,
+    email,
+    role,
+    is_active
+)
+VALUES (
+    'e6b7d8c9-fa1b-2c3d-4e5f-6a7b8c9d0e1f',
+    'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+    'RAP',
+    'Administrator',
+    'admin@faithhavenhouse.org',
+    'super_admin',
+    true
+) ON CONFLICT (email) DO NOTHING;
