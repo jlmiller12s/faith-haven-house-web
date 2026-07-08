@@ -179,11 +179,12 @@ export default function PreScreenForm() {
         setIsSubmitted(true);
         window.scrollTo({ top: 200, behavior: "smooth" });
       } else {
-        alert("There was an issue submitting your form. Please try again or call us directly at 636-577-5876.");
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || "There was an issue submitting your form. Please try again or call us directly at 636-577-5876.");
       }
     } catch (err) {
       console.error(err);
-      alert("Submission error. Please check your network or call 636-577-5876.");
+      alert(err?.message || "Submission error. Please check your network or call 636-577-5876.");
     } finally {
       setIsSubmitting(false);
     }

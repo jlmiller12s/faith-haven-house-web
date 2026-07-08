@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isMockMode, getMockDb, supabase } from "@/lib/supabase";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { logAuditEvent, logActivityEvent } from "@/lib/crmService";
+import crypto from "crypto";
 
 /**
  * POST /api/prescreen
@@ -63,7 +64,7 @@ export async function POST(request) {
     // 2. Create applicant profile if not exists
     let applicantId = matchedApplicantId;
     if (!applicantId) {
-      applicantId = `app-${Math.random().toString(36).substr(2, 9)}`;
+      applicantId = isMockMode ? `app-${Math.random().toString(36).substr(2, 9)}` : crypto.randomUUID();
       const newApplicant = {
         id: applicantId,
         legal_first_name: firstName,
@@ -92,14 +93,29 @@ export async function POST(request) {
     }
 
     // 3. Create Admissions Case
-    const caseId = `case-${Math.random().toString(36).substr(2, 9)}`;
+    const caseId = isMockMode ? `case-${Math.random().toString(36).substr(2, 9)}` : crypto.randomUUID();
     const caseNumber = `FHH-ADM-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    let coordinatorId = null;
+    if (!isMockMode) {
+      const { data: coordinator } = await adminClient
+        .from("staff_profiles")
+        .select("id")
+        .eq("role", "admissions_coordinator")
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+      if (coordinator) {
+        coordinatorId = coordinator.id;
+      }
+    }
+
     const newCase = {
       id: caseId,
       caseNumber,
       status: "pre_screen_received",
       applicantId: applicantId,
-      assignedCoordinatorId: "staff-3", // Auto assigned to james coordinator
+      assignedCoordinatorId: isMockMode ? "staff-3" : coordinatorId, // james coordinator in mock, dynamic UUID in prod
       assignedInterviewerId: null,
       assignedClinicianId: null,
       createdAt: new Date().toISOString(),
@@ -118,7 +134,7 @@ export async function POST(request) {
         case_number: caseNumber,
         status: "pre_screen_received",
         applicant_id: applicantId,
-        assigned_coordinator_id: "staff-3"
+        assigned_coordinator_id: coordinatorId
       });
       if (caseError) {
         throw new Error(`Failed to insert admissions case: ${caseError.message}`);
@@ -126,7 +142,7 @@ export async function POST(request) {
     }
 
     // 4. Save pre-screen submissions answers
-    const prescreenId = `ps-${Math.random().toString(36).substr(2, 9)}`;
+    const prescreenId = isMockMode ? `ps-${Math.random().toString(36).substr(2, 9)}` : crypto.randomUUID();
     const newPrescreen = {
       id: prescreenId,
       applicant_id: applicantId,
@@ -174,17 +190,17 @@ export async function POST(request) {
     }, adminClient);
 
     // 6. Create default coordinator follow-up task
-    const taskId = `t-${Math.random().toString(36).substr(2, 9)}`;
+    const taskId = isMockMode ? `t-${Math.random().toString(36).substr(2, 9)}` : crypto.randomUUID();
     const newTask = {
       id: taskId,
       admissions_case_id: caseId,
       title: "Review pre-screen answers",
       description: "Review answers from public pre-screen form, complete duplicate verification checks, and initiate staff contact.",
-      assigned_to: "staff-3", // Coordinator
+      assigned_to: isMockMode ? "staff-3" : coordinatorId,
       due_date: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 48 hours out
       status: "todo",
       priority: "high",
-      created_by: "staff-3",
+      created_by: isMockMode ? "staff-3" : coordinatorId,
       completed_at: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -201,7 +217,7 @@ export async function POST(request) {
 
     // 7. Audit Logging (Secure, generic details)
     await logAuditEvent({
-      actorId: "staff-3", // Coordinator auto actor
+      actorId: isMockMode ? "staff-3" : coordinatorId,
       action: "applicant_record_created",
       entityType: "admissions_case",
       entityId: caseId,
