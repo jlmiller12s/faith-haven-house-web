@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const BRAND = {
   background: "#173247",
@@ -31,7 +31,7 @@ export default function MfaSetupPage() {
 
   useEffect(() => {
     async function startEnrollment() {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
 
       // Check if already enrolled
       const { data: factors } = await supabase.auth.mfa.listFactors();
@@ -69,7 +69,7 @@ export default function MfaSetupPage() {
     setSubmitting(true);
 
     try {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
 
       // Create challenge
       const { data: challenge, error: challengeError } =

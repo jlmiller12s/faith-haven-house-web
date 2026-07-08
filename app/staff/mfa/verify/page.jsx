@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const BRAND = {
   background: "#173247",
@@ -29,7 +29,7 @@ export default function MfaVerifyPage() {
 
   useEffect(() => {
     async function loadFactors() {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
       const { data } = await supabase.auth.mfa.listFactors();
       const verified = data?.totp?.filter((f) => f.status === "verified") || [];
       setFactors(verified);
@@ -45,7 +45,7 @@ export default function MfaVerifyPage() {
     setSubmitting(true);
 
     try {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
 
       // Create challenge for selected factor
       const { data: challenge, error: challengeError } =

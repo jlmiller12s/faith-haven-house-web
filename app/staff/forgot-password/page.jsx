@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const BRAND = {
   background: "#173247",
@@ -26,7 +26,7 @@ function ForgotPasswordForm() {
     setSubmitting(true);
 
     try {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
       const siteUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
         "https://faith-haven-house-web.vercel.app";

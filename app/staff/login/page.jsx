@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const BRAND = {
   background: "#173247",
@@ -60,7 +60,7 @@ function LoginForm() {
     setSubmitting(true);
 
     try {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
 
       // 1. Sign in
       const { data, error: authError } = await supabase.auth.signInWithPassword({

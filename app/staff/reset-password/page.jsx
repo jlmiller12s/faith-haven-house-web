@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const BRAND = {
   background: "#173247",
@@ -30,7 +30,7 @@ function ResetPasswordForm() {
   useEffect(() => {
     // Supabase handles the token via the URL hash (#access_token=...)
     // The browser client automatically picks this up on mount.
-    const supabase = createRapSupabaseBrowser();
+    const supabase = createSupabaseBrowserClient();
     supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
         setSessionReady(true);
@@ -53,7 +53,7 @@ function ResetPasswordForm() {
 
     setSubmitting(true);
     try {
-      const supabase = createRapSupabaseBrowser();
+      const supabase = createSupabaseBrowserClient();
       const { error: updateError } = await supabase.auth.updateUser({ password });
 
       if (updateError) {

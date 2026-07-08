@@ -1,4 +1,5 @@
-import { createRapSupabaseAdmin, createRapSupabaseServer } from "@/lib/supabase-server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getCurrentStaffUser, isSuperAdmin } from "@/lib/rapAuth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -33,7 +34,7 @@ const InviteSchema = z.object({
 export async function POST(request) {
   try {
     // 1. Verify caller is authenticated and is super_admin (server-side)
-    const supabaseServer = await createRapSupabaseServer();
+    const supabaseServer = await createSupabaseServerClient();
     const staffUser = await getCurrentStaffUser(supabaseServer);
 
     if (!staffUser) {
@@ -68,7 +69,7 @@ export async function POST(request) {
       "https://faith-haven-house-web.vercel.app";
 
     // 3. Invite via Supabase Admin API (service role — server only)
-    const admin = createRapSupabaseAdmin();
+    const admin = createSupabaseAdminClient();
     const { data: inviteData, error: inviteError } =
       await admin.auth.admin.inviteUserByEmail(email, {
         redirectTo: `${siteUrl}/auth/callback`,

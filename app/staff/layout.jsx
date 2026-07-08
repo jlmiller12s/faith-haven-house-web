@@ -4,7 +4,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
-import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 // -------------------------------------------------------
 // Staff Session Context
@@ -36,26 +36,51 @@ export default function StaffLayout({ children }) {
   useEffect(() => {
     async function initSession() {
       try {
-        const supabase = createRapSupabaseBrowser();
+        const supabase = createSupabaseBrowserClient();
         const { data: { user } } = await supabase.auth.getUser();
+
+        const isBare = BARE_PATHS.some((p) => pathname === p || pathname.startsWith(p));
 
         if (!user) {
           setActiveStaff(null);
           setLoading(false);
+          if (!isBare) {
+            router.push("/staff/login");
+          }
           return;
         }
 
         // Fetch staff profile from DB — role always comes from server
         const { data: profile } = await supabase
           .from("staff_profiles")
-          .select("id, first_name, last_name, email, role, is_active")
+          .select("id, first_name, last_name, email, role, is_active, mfa_required")
           .eq("auth_user_id", user.id)
           .single();
 
         if (profile && profile.is_active) {
           setActiveStaff(profile);
+
+          if (!isBare) {
+            // Check MFA requirements
+            if (profile.mfa_required) {
+              const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+              if (aalData?.currentLevel !== "aal2") {
+                const { data: factorData } = await supabase.auth.mfa.listFactors();
+                const hasVerified = factorData?.totp?.some((f) => f.status === "verified");
+                if (hasVerified) {
+                  router.push("/staff/mfa/verify");
+                } else {
+                  router.push("/staff/mfa/setup");
+                }
+                return;
+              }
+            }
+          }
         } else {
           setActiveStaff(null);
+          if (!isBare) {
+            router.push("/staff/unauthorized");
+          }
         }
       } catch {
         setActiveStaff(null);
@@ -66,7 +91,7 @@ export default function StaffLayout({ children }) {
     initSession();
 
     // Listen for auth state changes (sign-out, token refresh)
-    const supabase = createRapSupabaseBrowser();
+    const supabase = createSupabaseBrowserClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event) => {
         if (event === "SIGNED_OUT") {
@@ -76,7 +101,7 @@ export default function StaffLayout({ children }) {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [pathname, router]);
 
   const handleLogout = () => {
     // Route to server-side logout (clears session server-side)
