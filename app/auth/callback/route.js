@@ -15,6 +15,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const type = searchParams.get("type");
   const next = searchParams.get("next") ?? "/staff/login";
 
   if (code) {
@@ -42,7 +43,13 @@ export async function GET(request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Email confirmed — redirect to login with confirmation message
+      // Password recovery flow — redirect to the reset-password page.
+      // The session cookie is now set, so updateUser() will work there.
+      if (type === "recovery") {
+        return NextResponse.redirect(new URL("/staff/reset-password", origin));
+      }
+
+      // Email confirmed or invite accepted — redirect to login
       const redirectUrl = new URL("/staff/login", origin);
       redirectUrl.searchParams.set("confirmed", "1");
       return NextResponse.redirect(redirectUrl);

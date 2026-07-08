@@ -26,15 +26,18 @@ function ResetPasswordForm() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Supabase handles the token via the URL hash (#access_token=...)
-    // The browser client automatically picks this up on mount.
+    // After /auth/callback exchanges the PKCE code, a session cookie is set.
+    // We just need to verify the session exists — no need to wait for an event.
     const supabase = createSupabaseBrowserClient();
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data?.session) {
         setSessionReady(true);
       }
+      setChecking(false);
     });
   }, []);
 
@@ -57,7 +60,7 @@ function ResetPasswordForm() {
       const { error: updateError } = await supabase.auth.updateUser({ password });
 
       if (updateError) {
-        setError("We could not update your password. Please request a new reset link.");
+        setError(updateError.message || "We could not update your password. Please request a new reset link.");
         setSubmitting(false);
         return;
       }
@@ -118,31 +121,35 @@ function ResetPasswordForm() {
           </p>
         </div>
 
-        {!sessionReady ? (
+        {checking ? (
+          <div style={{ textAlign: "center", padding: "2rem 0", color: BRAND.steel, fontSize: "0.9rem" }}>
+            Verifying your reset session…
+          </div>
+        ) : !sessionReady ? (
           <div
             style={{
-              backgroundColor: "#EAF4FB",
-              border: "1px solid #294C60",
+              backgroundColor: "#FFF1F0",
+              border: "1px solid #C0392B",
               borderRadius: "8px",
               padding: "1.25rem",
               fontSize: "0.9rem",
-              color: BRAND.navy,
+              color: "#7B2D00",
               textAlign: "center",
               lineHeight: "1.6",
             }}
           >
             <p style={{ margin: "0 0 1rem" }}>
-              Waiting for your reset session to initialize…
+              Your reset link has expired or is invalid.
             </p>
-            <p style={{ margin: 0, fontSize: "0.82rem", color: BRAND.steel }}>
-              If this page does not load, please request a new reset link.
+            <p style={{ margin: 0, fontSize: "0.82rem" }}>
+              Password reset links are single-use and expire after 1 hour.
             </p>
             <div style={{ marginTop: "1rem" }}>
               <Link
                 href="/staff/forgot-password"
-                style={{ color: BRAND.navy, fontWeight: "600", textDecoration: "none" }}
+                style={{ color: "#7B2D00", fontWeight: "600", textDecoration: "none" }}
               >
-                Request New Link
+                Request a New Reset Link →
               </Link>
             </div>
           </div>
