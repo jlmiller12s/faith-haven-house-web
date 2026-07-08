@@ -1,8 +1,7 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useStaffSession } from "../StaffClientProvider";
-import { getAdmissionsQueue } from "@/lib/crmService";
+import { getAdmissionsQueue, deleteCases } from "@/lib/crmService";
 import Link from "next/link";
 
 export default function AdmissionsQueuePage() {
@@ -12,6 +11,9 @@ export default function AdmissionsQueuePage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [assignedFilter, setAssignedFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [selectedCaseIds, setSelectedCaseIds] = useState([]);
+
+  const canDelete = ["super_admin", "executive_director", "admissions_coordinator"].includes(activeStaff?.role);
 
   useEffect(() => {
     async function load() {
@@ -21,6 +23,41 @@ export default function AdmissionsQueuePage() {
     }
     load();
   }, []);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedCaseIds(filteredQueue.map(item => item.id));
+    } else {
+      setSelectedCaseIds([]);
+    }
+  };
+
+  const handleSelectRow = (caseId) => {
+    setSelectedCaseIds(prev => 
+      prev.includes(caseId) 
+        ? prev.filter(id => id !== caseId) 
+        : [...prev, caseId]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedCaseIds.length === 0) return;
+    if (!window.confirm(`Are you sure you want to permanently delete the ${selectedCaseIds.length} selected pre-screen submissions/cases? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await deleteCases(selectedCaseIds, activeStaff.id);
+      setSelectedCaseIds([]);
+      const list = await getAdmissionsQueue();
+      setQueue(list);
+    } catch (err) {
+      alert(`Error deleting cases: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -58,11 +95,33 @@ export default function AdmissionsQueuePage() {
     <main className="crm-container">
       
       {/* Title */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <h1 className="crm-title">Admissions Queue</h1>
           <p className="crm-subtitle">Manage prospective resident cases and admissions progress stages.</p>
         </div>
+        {selectedCaseIds.length > 0 && canDelete && (
+          <button 
+            onClick={handleDeleteSelected}
+            className="btn" 
+            style={{ 
+              backgroundColor: "var(--color-terracotta)", 
+              color: "#FFFFFF", 
+              padding: "0.6rem 1.2rem", 
+              fontSize: "0.9rem",
+              borderRadius: "6px",
+              border: "none",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              transition: "opacity 0.2s"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.opacity = "0.9"}
+            onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
+          >
+            🗑️ Delete Selected ({selectedCaseIds.length})
+          </button>
+        )}
       </div>
 
       {/* Search & Filters Panel */}
@@ -123,6 +182,16 @@ export default function AdmissionsQueuePage() {
         <table className="crm-table">
           <thead>
             <tr>
+              {canDelete && (
+                <th style={{ width: "40px", paddingLeft: "1.5rem" }}>
+                  <input 
+                    type="checkbox" 
+                    onChange={handleSelectAll} 
+                    checked={filteredQueue.length > 0 && selectedCaseIds.length === filteredQueue.length}
+                    style={{ cursor: "pointer", width: "1.1rem", height: "1.1rem" }}
+                  />
+                </th>
+              )}
               <th>Case Number</th>
               <th>Applicant</th>
               <th>Status Stage</th>
@@ -135,13 +204,23 @@ export default function AdmissionsQueuePage() {
           <tbody>
             {filteredQueue.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ padding: "3rem", textAlign: "center", color: "var(--color-steel)" }}>
+                <td colSpan={canDelete ? 8 : 7} style={{ padding: "3rem", textAlign: "center", color: "var(--color-steel)" }}>
                   No admissions cases match the filter settings.
                 </td>
               </tr>
             ) : (
               filteredQueue.map(item => (
                 <tr key={item.id}>
+                  {canDelete && (
+                    <td style={{ paddingLeft: "1.5rem" }}>
+                      <input 
+                        type="checkbox" 
+                        onChange={() => handleSelectRow(item.id)} 
+                        checked={selectedCaseIds.includes(item.id)}
+                        style={{ cursor: "pointer", width: "1.1rem", height: "1.1rem" }}
+                      />
+                    </td>
+                  )}
                   <td style={{ fontWeight: "600", color: "var(--color-slate)", fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>
                     {item.caseNumber}
                   </td>
