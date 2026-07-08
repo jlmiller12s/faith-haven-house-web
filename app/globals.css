@@ -5471,6 +5471,8 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 2.25rem;
+  position: relative;
+  z-index: 2;
 }
 
 .timeline-node-card {
