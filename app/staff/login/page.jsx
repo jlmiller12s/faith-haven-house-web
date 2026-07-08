@@ -1,203 +1,458 @@
 "use client";
 
-import { useState } from "react";
-import { useStaffSession } from "../layout";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import CrmIcon from "@/lib/crmIcons";
+import Image from "next/image";
+import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
 
-import { isMockMode, supabase } from "@/lib/supabase";
+const BRAND = {
+  background: "#173247",
+  card: "#FAF8EF",
+  cardBorder: "#5E7890",
+  navy: "#294C60",
+  cream: "#EDE8D0",
+  charcoal: "#222222",
+  steel: "#5E7890",
+  ivory: "#FAF8EF",
+  errorBg: "#FFF1F0",
+  errorBorder: "#C0392B",
+  infoBg: "#EAF4FB",
+  infoBorder: "#294C60",
+  successBg: "#F0FFF4",
+  successBorder: "#27AE60",
+};
 
-export default function StaffLoginPage() {
+function LoginForm() {
   const router = useRouter();
-  const { profiles, setActiveStaff } = useStaffSession();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLoginSubmit = async (e) => {
+  useEffect(() => {
+    const confirmed = searchParams.get("confirmed");
+    const signedout = searchParams.get("signedout");
+    const errParam = searchParams.get("error");
+    const infoParam = searchParams.get("info");
+
+    if (confirmed === "1") {
+      setInfo("Your email has been confirmed. Please sign in to continue.");
+    } else if (signedout === "1") {
+      setInfo("You have been signed out.");
+    } else if (errParam === "confirmation_failed") {
+      setError(
+        "We could not confirm that email link. Please request a new one or contact an administrator."
+      );
+    } else if (infoParam === "invite_only") {
+      setInfo(
+        "Staff access is by invitation only. Please contact your RAP Portal administrator."
+      );
+    }
+  }, [searchParams]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setInfo("");
+    setSubmitting(true);
 
-    if (isMockMode) {
-      // Simulate login via profiles list matching email
-      const match = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-      if (match) {
-        setActiveStaff(match);
-        localStorage.setItem("fhh_crm_active_staff_id", match.id);
-        router.push("/staff");
-      } else {
-        setError("Invalid email address or unauthorized staff account. User enumeration checks are active.");
+    try {
+      const supabase = createRapSupabaseBrowser();
+
+      // 1. Sign in
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+
+      if (authError) {
+        // Generic error — do not reveal whether email exists
+        setError(
+          "We could not sign you in with those credentials. Please check your email and password."
+        );
+        setSubmitting(false);
+        return;
       }
-    } else {
-      // Real Supabase Auth Login Flow
-      try {
-        const { data, error: authError } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-        
-        if (authError) {
-          setError(authError.message);
+
+      const user = data?.user;
+      if (!user) {
+        setError("Sign in failed. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Check email confirmation
+      if (!user.email_confirmed_at) {
+        await supabase.auth.signOut();
+        setError(
+          "Please confirm your email before accessing the RAP Portal. Check your inbox for a confirmation link."
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      // 3. Check active staff profile
+      const { data: profile, error: profileError } = await supabase
+        .from("staff_profiles")
+        .select("id, is_active, mfa_required, role")
+        .eq("auth_user_id", user.id)
+        .single();
+
+      if (profileError || !profile) {
+        await supabase.auth.signOut();
+        setError(
+          "Your account is not authorized for RAP Portal access. Please contact an administrator."
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      if (!profile.is_active) {
+        await supabase.auth.signOut();
+        setError(
+          "Your account is not authorized for RAP Portal access. Please contact an administrator."
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      // 4. MFA check — middleware will also enforce, but pre-check here for UX
+      if (profile.mfa_required) {
+        const { data: aalData } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+        if (aalData?.currentLevel !== "aal2") {
+          const { data: factorData } = await supabase.auth.mfa.listFactors();
+          const hasVerified = factorData?.totp?.some(
+            (f) => f.status === "verified"
+          );
+          router.push(hasVerified ? "/staff/mfa/verify" : "/staff/mfa/setup");
           return;
         }
-
-        if (data?.user) {
-          // Fetch linked public.staff_profiles
-          const { data: profile, error: dbError } = await supabase
-            .from("staff_profiles")
-            .select("*")
-            .eq("auth_user_id", data.user.id)
-            .single();
-
-          if (dbError || !profile) {
-            setError("Authentication successful, but no matching profile exists in staff_profiles. Please contact the administrator.");
-            return;
-          }
-
-          if (!profile.is_active) {
-            setError("This staff profile is currently marked inactive. Access suspended.");
-            return;
-          }
-
-          setActiveStaff(profile);
-          localStorage.setItem("fhh_crm_active_staff_id", profile.id);
-          router.push("/staff");
-        }
-      } catch (err) {
-        setError("Network or database connection error: " + err.message);
       }
+
+      // 5. All clear — go to dashboard
+      router.push("/staff");
+      router.refresh();
+    } catch {
+      setError("A connection error occurred. Please try again.");
+      setSubmitting(false);
     }
   };
 
-  const handleQuickLogin = (profile) => {
-    setActiveStaff(profile);
-    localStorage.setItem("fhh_crm_active_staff_id", profile.id);
-    router.push("/staff");
-  };
-
   return (
-    <div style={{
-      minHeight: "100vh",
-      backgroundColor: "var(--color-slate)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "2rem"
-    }}>
-      <div className="crm-card" style={{ maxWidth: "440px", width: "100%", padding: "3rem" }}>
-        
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: BRAND.background,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "2rem",
+        fontFamily: "Inter, system-ui, sans-serif",
+      }}
+    >
+      {/* Card */}
+      <div
+        style={{
+          backgroundColor: BRAND.card,
+          border: `1px solid ${BRAND.cardBorder}`,
+          borderRadius: "12px",
+          padding: "3rem 2.5rem",
+          maxWidth: "440px",
+          width: "100%",
+          boxShadow: "0 8px 32px rgba(23,50,71,0.18)",
+        }}
+      >
+        {/* Logo + Brand */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div style={{ marginBottom: "1rem" }}>
-            <CrmIcon name="monogram" style={{ width: "4rem", height: "4rem" }} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <Image
+              src="/assets/fhh-logo-standalone-icon.png"
+              alt="Faith Haven House"
+              width={64}
+              height={64}
+              style={{ objectFit: "contain" }}
+              priority
+            />
           </div>
-          <h1 style={{ fontSize: "1.75rem", color: "var(--color-slate-dark)", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
+          <h1
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "700",
+              color: BRAND.navy,
+              margin: "0 0 0.25rem",
+              fontFamily: "Lora, Georgia, serif",
+              letterSpacing: "-0.01em",
+            }}
+          >
             Faith Haven House
           </h1>
-          <p style={{ fontSize: "0.9rem", color: "var(--color-steel)" }}>Internal CRM Portal - Staff Access Only</p>
+          <div
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: "700",
+              color: BRAND.navy,
+              margin: "0 0 0.15rem",
+              letterSpacing: "0.01em",
+            }}
+          >
+            RAP Portal
+          </div>
+          <div
+            style={{
+              fontSize: "0.82rem",
+              color: BRAND.steel,
+              fontWeight: "500",
+            }}
+          >
+            Resident Admissions Portal
+          </div>
+          <div
+            style={{
+              fontSize: "0.78rem",
+              color: BRAND.steel,
+              marginTop: "0.15rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              fontWeight: "600",
+            }}
+          >
+            Staff Access Only
+          </div>
         </div>
 
+        {/* Status messages */}
         {error && (
-          <div className="crm-alert-banner warning" style={{ marginBottom: "1.5rem" }}>
+          <div
+            role="alert"
+            style={{
+              backgroundColor: BRAND.errorBg,
+              border: `1px solid ${BRAND.errorBorder}`,
+              borderRadius: "6px",
+              padding: "0.85rem 1rem",
+              fontSize: "0.875rem",
+              color: "#7B2D00",
+              marginBottom: "1.5rem",
+              lineHeight: "1.5",
+            }}
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLoginSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <div className="crm-form-group">
-            <label className="crm-label">Email Address</label>
-            <input 
-              type="email" 
+        {info && (
+          <div
+            role="status"
+            style={{
+              backgroundColor: BRAND.infoBg,
+              border: `1px solid ${BRAND.infoBorder}`,
+              borderRadius: "6px",
+              padding: "0.85rem 1rem",
+              fontSize: "0.875rem",
+              color: BRAND.navy,
+              marginBottom: "1.5rem",
+              lineHeight: "1.5",
+            }}
+          >
+            {info}
+          </div>
+        )}
+
+        {/* Login form */}
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}
+        >
+          <div>
+            <label
+              htmlFor="rap-email"
+              style={{
+                display: "block",
+                fontSize: "0.85rem",
+                fontWeight: "600",
+                color: BRAND.navy,
+                marginBottom: "0.4rem",
+              }}
+            >
+              Email Address
+            </label>
+            <input
+              id="rap-email"
+              type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@faithhavenhouse.org"
-              className="crm-input"
+              style={{
+                width: "100%",
+                padding: "0.75rem 1rem",
+                fontSize: "0.95rem",
+                border: `1px solid ${BRAND.cardBorder}`,
+                borderRadius: "6px",
+                backgroundColor: "#FFFFFF",
+                color: BRAND.charcoal,
+                outline: "none",
+                boxSizing: "border-box",
+                fontFamily: "inherit",
+              }}
+              onFocus={(e) =>
+                (e.target.style.borderColor = BRAND.navy)
+              }
+              onBlur={(e) =>
+                (e.target.style.borderColor = BRAND.cardBorder)
+              }
             />
           </div>
 
-          <div className="crm-form-group">
-            <label className="crm-label">Password</label>
-            <input 
-              type="password" 
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.4rem",
+              }}
+            >
+              <label
+                htmlFor="rap-password"
+                style={{
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  color: BRAND.navy,
+                }}
+              >
+                Password
+              </label>
+              <Link
+                href="/staff/forgot-password"
+                style={{
+                  fontSize: "0.8rem",
+                  color: BRAND.steel,
+                  textDecoration: "none",
+                  fontWeight: "500",
+                }}
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <input
+              id="rap-password"
+              type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="crm-input"
+              style={{
+                width: "100%",
+                padding: "0.75rem 1rem",
+                fontSize: "0.95rem",
+                border: `1px solid ${BRAND.cardBorder}`,
+                borderRadius: "6px",
+                backgroundColor: "#FFFFFF",
+                color: BRAND.charcoal,
+                outline: "none",
+                boxSizing: "border-box",
+                fontFamily: "inherit",
+              }}
+              onFocus={(e) =>
+                (e.target.style.borderColor = BRAND.navy)
+              }
+              onBlur={(e) =>
+                (e.target.style.borderColor = BRAND.cardBorder)
+              }
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary"
-            style={{ width: "100%", padding: "0.85rem", marginTop: "0.5rem" }}
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              width: "100%",
+              padding: "0.9rem",
+              backgroundColor: submitting ? BRAND.steel : BRAND.navy,
+              color: BRAND.ivory,
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "0.95rem",
+              fontWeight: "700",
+              cursor: submitting ? "not-allowed" : "pointer",
+              fontFamily: "inherit",
+              letterSpacing: "0.02em",
+              transition: "background-color 0.2s",
+              marginTop: "0.25rem",
+            }}
           >
-            Sign In Securely
+            {submitting ? "Signing in…" : "Sign In Securely"}
           </button>
         </form>
 
-        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-          <span style={{ fontSize: "0.85rem", color: "var(--color-steel)" }}>
-            Need an account?{" "}
-            <Link href="/staff/signup" style={{ color: "var(--color-teal)", fontWeight: "600", textDecoration: "none" }}>
-              Register Here
-            </Link>
-          </span>
+        {/* Access request */}
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "1.75rem",
+            paddingTop: "1.25rem",
+            borderTop: `1px solid ${BRAND.cream}`,
+          }}
+        >
+          <p
+            style={{
+              fontSize: "0.82rem",
+              color: BRAND.steel,
+              margin: "0 0 0.35rem",
+            }}
+          >
+            Need access? Contact your RAP Portal administrator.
+          </p>
+          <Link
+            href="/contact"
+            style={{
+              fontSize: "0.82rem",
+              color: BRAND.navy,
+              fontWeight: "600",
+              textDecoration: "none",
+            }}
+          >
+            Request Access →
+          </Link>
         </div>
 
-        {isMockMode && (
-          <div style={{
-            marginTop: "2.5rem",
-            paddingTop: "1.5rem",
-            borderTop: "1px dashed var(--color-border)"
-          }}>
-            <h3 style={{ fontSize: "0.82rem", fontWeight: "700", textTransform: "uppercase", color: "var(--color-slate-dark)", marginBottom: "0.75rem", letterSpacing: "0.02em", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-              <CrmIcon name="flask" style={{ width: "1rem", height: "1rem", color: "var(--color-slate)" }} />
-              Sandbox Quick Logins
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              {profiles.slice(0, 5).map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handleQuickLogin(p)}
-                  style={{
-                    textAlign: "left",
-                    padding: "0.6rem 0.9rem",
-                    backgroundColor: "var(--color-ivory)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "6px",
-                    fontSize: "0.82rem",
-                    cursor: "pointer",
-                    transition: "var(--transition)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    fontFamily: "var(--font-sans)",
-                    color: "var(--color-charcoal)"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-teal)";
-                    e.currentTarget.style.backgroundColor = "#FFFFFF";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-border)";
-                    e.currentTarget.style.backgroundColor = "var(--color-ivory)";
-                  }}
-                >
-                  <div>
-                    <strong>{p.first_name} {p.last_name}</strong>
-                    <span style={{ display: "block", fontSize: "0.72rem", color: "var(--color-steel)" }}>{p.email}</span>
-                  </div>
-                  <span className="crm-badge slate">
-                    {p.role.split("_")[0]}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Security notice */}
+        <p
+          style={{
+            textAlign: "center",
+            fontSize: "0.72rem",
+            color: BRAND.steel,
+            marginTop: "1.5rem",
+            lineHeight: "1.5",
+            opacity: 0.8,
+          }}
+        >
+          Authorized staff access only. Activity may be logged to protect
+          resident and admissions information.
+        </p>
       </div>
     </div>
+  );
+}
+
+export default function StaffLoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

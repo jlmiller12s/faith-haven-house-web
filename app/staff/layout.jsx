@@ -1,233 +1,330 @@
 "use client";
 
 import { useState, useEffect, createContext, useContext } from "react";
-import { isMockMode, supabase } from "@/lib/supabase";
-import { getStaffProfiles } from "@/lib/crmService";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import CrmIcon from "@/lib/crmIcons";
+import Image from "next/image";
+import { createRapSupabaseBrowser } from "@/lib/supabase-browser";
 
-// Context for Staff Session
+// -------------------------------------------------------
+// Staff Session Context
+// -------------------------------------------------------
 const StaffSessionContext = createContext(null);
 
 export function useStaffSession() {
   return useContext(StaffSessionContext);
 }
 
+// Routes that render without the staff header / nav
+const BARE_PATHS = [
+  "/staff/login",
+  "/staff/forgot-password",
+  "/staff/reset-password",
+  "/staff/mfa/setup",
+  "/staff/mfa/verify",
+  "/staff/signup",
+  "/staff/unauthorized",
+  "/staff/auth/callback",
+];
+
 export default function StaffLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [profiles, setProfiles] = useState([]);
   const [activeStaff, setActiveStaff] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load profiles and active staff profile
   useEffect(() => {
-    async function init() {
-      if (isMockMode) {
-        const staffList = await getStaffProfiles();
-        setProfiles(staffList);
+    async function initSession() {
+      try {
+        const supabase = createRapSupabaseBrowser();
+        const { data: { user } } = await supabase.auth.getUser();
 
-        // Default active profile: super_admin or coordinator for easy initial review
-        const savedStaffId = localStorage.getItem("fhh_crm_active_staff_id");
-        const defaultStaff = staffList.find(s => s.id === savedStaffId) || staffList.find(s => s.role === "super_admin");
-        
-        setActiveStaff(defaultStaff || null);
-        setLoading(false);
-      } else {
-        // Real Supabase Auth user check
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            // Fetch profile linked to authenticated user
-            const { data: profile } = await supabase
-              .from("staff_profiles")
-              .select("*")
-              .eq("auth_user_id", user.id)
-              .single();
+        if (!user) {
+          setActiveStaff(null);
+          setLoading(false);
+          return;
+        }
 
-            if (profile && profile.is_active) {
-              setActiveStaff(profile);
-            } else {
-              setActiveStaff(null);
-            }
-          } else {
-            setActiveStaff(null);
-          }
-        } catch (e) {
-          console.error("Auth init failed:", e);
+        // Fetch staff profile from DB — role always comes from server
+        const { data: profile } = await supabase
+          .from("staff_profiles")
+          .select("id, first_name, last_name, email, role, is_active")
+          .eq("auth_user_id", user.id)
+          .single();
+
+        if (profile && profile.is_active) {
+          setActiveStaff(profile);
+        } else {
           setActiveStaff(null);
         }
-        setLoading(false);
+      } catch {
+        setActiveStaff(null);
       }
+      setLoading(false);
     }
-    init();
+
+    initSession();
+
+    // Listen for auth state changes (sign-out, token refresh)
+    const supabase = createRapSupabaseBrowser();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event) => {
+        if (event === "SIGNED_OUT") {
+          setActiveStaff(null);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // Handle mock profile switching
-  const handleSwitchProfile = (staffId) => {
-    const nextStaff = profiles.find(s => s.id === staffId);
-    if (nextStaff) {
-      setActiveStaff(nextStaff);
-      localStorage.setItem("fhh_crm_active_staff_id", staffId);
-      // Force reload or redirect to staff home to refresh components
-      window.location.reload();
-    }
+  const handleLogout = () => {
+    // Route to server-side logout (clears session server-side)
+    router.push("/staff/logout");
   };
 
-  // Log out staff
-  const handleLogout = async () => {
-    localStorage.removeItem("fhh_crm_active_staff_id");
-    setActiveStaff(null);
-    if (!isMockMode) {
-      await supabase.auth.signOut();
-    }
-    router.push("/staff/login");
-  };
-
-  // Route protection gate
-  useEffect(() => {
-    if (!loading && !activeStaff && pathname !== "/staff/login") {
-      router.push("/staff/login");
-    }
-  }, [activeStaff, loading, pathname, router]);
-
+  // Loading spinner
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "var(--color-ivory)" }}>
-        <div className="spinner" style={{ border: "4px solid rgba(0,0,0,0.1)", width: "36px", height: "36px", borderRadius: "50%", borderLeftColor: "var(--color-teal)", animation: "spin 1s linear infinite" }}></div>
-        <style jsx>{`
-          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        `}</style>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          backgroundColor: "#FAF8EF",
+        }}
+      >
+        <div
+          style={{
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+            border: "4px solid rgba(0,0,0,0.1)",
+            borderLeftColor: "#294C60",
+            animation: "spin 1s linear infinite",
+          }}
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  // Render Login page without header wraps
-  if (pathname === "/staff/login") {
+  // Bare layout for auth/utility pages
+  const isBare = BARE_PATHS.some((p) => pathname === p || pathname.startsWith(p));
+  if (isBare) {
     return (
-      <StaffSessionContext.Provider value={{ activeStaff, profiles, setActiveStaff, isMockMode, handleLogout }}>
+      <StaffSessionContext.Provider value={{ activeStaff, setActiveStaff, handleLogout }}>
         {children}
       </StaffSessionContext.Provider>
     );
   }
 
   return (
-    <StaffSessionContext.Provider value={{ activeStaff, profiles, setActiveStaff, isMockMode, handleLogout }}>
-      <div style={{ minHeight: "100vh", backgroundColor: "var(--color-ivory)", display: "flex", flexDirection: "column" }}>
-        
-        {/* DEVELOPER DIAGNOSTIC TOOLBAR */}
-        {isMockMode && (
-          <div className="crm-dev-toolbar">
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <CrmIcon name="flask" style={{ width: "1.15rem", height: "1.15rem", color: "var(--color-slate-dark)" }} />
-              <strong style={{ color: "var(--color-slate-dark)" }}>Developer CRM Sandbox Preview</strong>
-              <span style={{ color: "var(--color-steel)", opacity: 0.5 }}>|</span>
-              <span style={{ color: "var(--color-slate-dark)" }}>Current Active User:</span>
-              <select 
-                value={activeStaff?.id || ""} 
-                onChange={(e) => handleSwitchProfile(e.target.value)}
-                className="crm-dev-select"
-              >
-                {profiles.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.first_name} {p.last_name} ({p.role.replace(/_/g, " ")})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div style={{ fontSize: "0.78rem", color: "var(--color-slate-dark)", fontWeight: "600", opacity: 0.8 }}>
-              Toggle role dropdown to test tab permissions & field redactions instantly
-            </div>
-          </div>
-        )}
-
-        {/* STAFF CRM HEADER */}
-        <header style={{
-          backgroundColor: "var(--color-slate)",
-          color: "var(--color-ivory)",
-          padding: "1rem 2rem",
+    <StaffSessionContext.Provider value={{ activeStaff, setActiveStaff, handleLogout }}>
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "#FAF8EF",
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: "var(--shadow-sm)"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
-            <Link 
-              href="/staff" 
+          flexDirection: "column",
+        }}
+      >
+        {/* RAP PORTAL HEADER */}
+        <header
+          style={{
+            backgroundColor: "#294C60",
+            color: "#FAF8EF",
+            padding: "0.9rem 2rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            boxShadow: "0 2px 8px rgba(23,50,71,0.15)",
+            position: "sticky",
+            top: 0,
+            zIndex: 100,
+          }}
+        >
+          {/* Left: Brand + Nav */}
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}
+          >
+            <Link
+              href="/staff"
               style={{ textDecoration: "none" }}
               aria-label="RAP Portal dashboard"
             >
-              <div className="portal-brand">
-                <img
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+              >
+                <Image
                   src="/assets/fhh-logo-standalone-icon.png"
                   alt=""
                   aria-hidden="true"
-                  className="portal-brand__icon"
+                  width={36}
+                  height={36}
+                  style={{ objectFit: "contain" }}
                 />
-                <div className="portal-brand__text">
-                  <div className="portal-brand__title">RAP Portal</div>
-                  <div className="portal-brand__subtitle">
+                <div>
+                  <div
+                    style={{
+                      fontSize: "1.05rem",
+                      fontWeight: "800",
+                      color: "#FAF8EF",
+                      lineHeight: "1.1",
+                      letterSpacing: "0.01em",
+                      fontFamily: "Inter, system-ui, sans-serif",
+                    }}
+                  >
+                    RAP Portal
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.65rem",
+                      color: "rgba(250,248,239,0.65)",
+                      fontWeight: "500",
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                    }}
+                  >
                     Resident Admissions Portal
                   </div>
                 </div>
               </div>
             </Link>
-            <nav style={{ display: "flex", gap: "1.5rem" }}>
-              <Link href="/staff" style={{ color: pathname === "/staff" ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
-                Dashboard
-              </Link>
-              <Link href="/staff/admissions" style={{ color: pathname.startsWith("/staff/admissions") ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
-                Admissions Queue
-              </Link>
-              {activeStaff?.role !== "read_only_auditor" && (
-                <Link href="/staff/residents" style={{ color: pathname === "/staff/residents" ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
-                  Active Residents
+
+            {/* Navigation */}
+            <nav
+              style={{
+                display: "flex",
+                gap: "1.25rem",
+                alignItems: "center",
+              }}
+            >
+              {[
+                { href: "/staff", label: "Dashboard", match: pathname === "/staff" },
+                {
+                  href: "/staff/admissions",
+                  label: "Admissions",
+                  match: pathname.startsWith("/staff/admissions"),
+                },
+                ...(activeStaff?.role !== "read_only_auditor"
+                  ? [
+                      {
+                        href: "/staff/residents",
+                        label: "Residents",
+                        match: pathname === "/staff/residents",
+                      },
+                    ]
+                  : []),
+                ...(activeStaff?.role === "super_admin"
+                  ? [
+                      {
+                        href: "/staff/team",
+                        label: "Team",
+                        match: pathname === "/staff/team",
+                      },
+                      {
+                        href: "/staff/invite",
+                        label: "Invite Staff",
+                        match: pathname === "/staff/invite",
+                      },
+                    ]
+                  : []),
+                ...(["super_admin", "read_only_auditor"].includes(
+                  activeStaff?.role
+                )
+                  ? [
+                      {
+                        href: "/staff/audit",
+                        label: "Audit Trail",
+                        match: pathname === "/staff/audit",
+                      },
+                    ]
+                  : []),
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    color: item.match
+                      ? "#FFFFFF"
+                      : "rgba(250,248,239,0.72)",
+                    fontWeight: item.match ? "700" : "500",
+                    fontSize: "0.875rem",
+                    textDecoration: "none",
+                    letterSpacing: "0.01em",
+                    borderBottom: item.match
+                      ? "2px solid rgba(250,248,239,0.5)"
+                      : "2px solid transparent",
+                    paddingBottom: "2px",
+                    transition: "color 0.15s",
+                  }}
+                >
+                  {item.label}
                 </Link>
-              )}
-              {activeStaff?.role === "super_admin" && (
-                <Link href="/staff/team" style={{ color: pathname === "/staff/team" ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
-                  Team
-                </Link>
-              )}
-              {["super_admin", "read_only_auditor"].includes(activeStaff?.role) && (
-                <Link href="/staff/audit" style={{ color: pathname === "/staff/audit" ? "#FFFFFF" : "rgba(255,255,255,0.7)", fontWeight: "600", fontSize: "0.9rem", textDecoration: "none" }}>
-                  Audit Trail
-                </Link>
-              )}
+              ))}
             </nav>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: "0.85rem", fontWeight: "700" }}>{activeStaff?.first_name} {activeStaff?.last_name}</div>
-              <div style={{ fontSize: "0.72rem", color: "var(--color-powder-blue)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.03em" }}>
-                {activeStaff?.role.replace(/_/g, " ")}
+          {/* Right: Staff name + Sign Out */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "1.25rem",
+            }}
+          >
+            {activeStaff && (
+              <div style={{ textAlign: "right" }}>
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: "700",
+                    color: "#FAF8EF",
+                  }}
+                >
+                  {activeStaff.first_name} {activeStaff.last_name}
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.68rem",
+                    color: "rgba(250,248,239,0.6)",
+                    textTransform: "uppercase",
+                    fontWeight: "600",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  {activeStaff.role?.replace(/_/g, " ")}
+                </div>
               </div>
-            </div>
-            <button 
-              onClick={handleLogout}
+            )}
+            <a
+              href="/staff/logout"
               style={{
                 background: "transparent",
-                border: "1px solid rgba(255,255,255,0.2)",
-                color: "var(--color-ivory)",
-                borderRadius: "4px",
-                padding: "0.35rem 0.75rem",
+                border: "1px solid rgba(250,248,239,0.25)",
+                color: "#FAF8EF",
+                borderRadius: "5px",
+                padding: "0.35rem 0.85rem",
                 fontSize: "0.8rem",
                 cursor: "pointer",
-                fontWeight: "600"
+                fontWeight: "600",
+                textDecoration: "none",
+                fontFamily: "inherit",
+                letterSpacing: "0.02em",
+                transition: "border-color 0.15s",
               }}
             >
               Sign Out
-            </button>
+            </a>
           </div>
         </header>
 
-        {/* PAGE CONTENT CONTAINER */}
+        {/* PAGE CONTENT */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           {children}
         </div>
-
       </div>
     </StaffSessionContext.Provider>
   );
