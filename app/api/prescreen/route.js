@@ -45,10 +45,15 @@ export async function POST(request) {
         duplicateFlag = true;
       }
     } else {
-      const { data: matches } = await adminClient
+      const { data: matches, error: matchError } = await adminClient
         .from("applicants")
         .select("id")
         .or(`email.eq.${data.email},phone.eq.${data.phone}`);
+      
+      if (matchError) {
+        throw new Error(`Duplicate check query failed: ${matchError.message}`);
+      }
+
       if (matches && matches.length > 0) {
         matchedApplicantId = matches[0].id;
         duplicateFlag = true;
@@ -79,7 +84,10 @@ export async function POST(request) {
       if (isMockMode) {
         getMockDb().applicants.push(newApplicant);
       } else {
-        await adminClient.from("applicants").insert(newApplicant);
+        const { error: applicantError } = await adminClient.from("applicants").insert(newApplicant);
+        if (applicantError) {
+          throw new Error(`Failed to insert applicant: ${applicantError.message}`);
+        }
       }
     }
 
@@ -105,13 +113,16 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().cases.push(newCase);
     } else {
-      await adminClient.from("admissions_cases").insert({
+      const { error: caseError } = await adminClient.from("admissions_cases").insert({
         id: caseId,
         case_number: caseNumber,
         status: "pre_screen_received",
         applicant_id: applicantId,
         assigned_coordinator_id: "staff-3"
       });
+      if (caseError) {
+        throw new Error(`Failed to insert admissions case: ${caseError.message}`);
+      }
     }
 
     // 4. Save pre-screen submissions answers
@@ -145,7 +156,10 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().prescreens.push(newPrescreen);
     } else {
-      await adminClient.from("prescreen_submissions").insert(newPrescreen);
+      const { error: prescreenError } = await adminClient.from("prescreen_submissions").insert(newPrescreen);
+      if (prescreenError) {
+        throw new Error(`Failed to insert prescreen submission: ${prescreenError.message}`);
+      }
     }
 
     // 5. Create timeline activity event
@@ -179,7 +193,10 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().tasks.push(newTask);
     } else {
-      await adminClient.from("tasks").insert(newTask);
+      const { error: taskError } = await adminClient.from("tasks").insert(newTask);
+      if (taskError) {
+        throw new Error(`Failed to insert coordinator follow-up task: ${taskError.message}`);
+      }
     }
 
     // 7. Audit Logging (Secure, generic details)
@@ -271,7 +288,7 @@ export async function POST(request) {
       {
         success: false,
         status: "temporary_error",
-        error: "Internal server error processing pre-screening submission.",
+        error: error?.message || "Internal server error processing pre-screening submission.",
       },
       { status: 500 }
     );
