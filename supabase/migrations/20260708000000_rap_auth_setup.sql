@@ -78,13 +78,7 @@ CREATE POLICY "staff_profiles_authenticated_list"
   ON public.staff_profiles
   FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.staff_profiles sp
-      WHERE sp.auth_user_id = auth.uid()
-        AND sp.is_active = true
-    )
-  );
+  USING (public.get_auth_role() IS NOT NULL);
 
 -- Only super_admin can insert/update/delete staff profiles
 DROP POLICY IF EXISTS "staff_profiles_admin_write" ON public.staff_profiles;
@@ -92,22 +86,8 @@ CREATE POLICY "staff_profiles_admin_write"
   ON public.staff_profiles
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.staff_profiles sp
-      WHERE sp.auth_user_id = auth.uid()
-        AND sp.role = 'super_admin'
-        AND sp.is_active = true
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.staff_profiles sp
-      WHERE sp.auth_user_id = auth.uid()
-        AND sp.role = 'super_admin'
-        AND sp.is_active = true
-    )
-  );
+  USING (public.get_auth_role() = 'super_admin')
+  WITH CHECK (public.get_auth_role() = 'super_admin');
 
 -- -------------------------------------------------------
 -- 6. RLS Policies: audit_logs
