@@ -11,7 +11,8 @@ import {
   updateDocumentStatus, 
   saveCommitteeDecision, 
   saveWelcomeDay,
-  updateAssignments
+  updateAssignments,
+  getStaffProfiles
 } from "@/lib/crmService";
 import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
@@ -19,8 +20,9 @@ import CrmIcon from "@/lib/crmIcons";
 export default function CaseDetailsPage({ params }) {
   const resolvedParams = use(params);
   const { caseId } = resolvedParams;
-  const { activeStaff, profiles } = useStaffSession();
+  const { activeStaff } = useStaffSession();
   const [data, setData] = useState(null);
+  const [profiles, setProfiles] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
 
@@ -61,6 +63,8 @@ export default function CaseDetailsPage({ params }) {
 
   const loadDetails = async () => {
     const details = await getCaseDetails(caseId);
+    const staffList = await getStaffProfiles();
+    setProfiles(staffList || []);
     if (details) {
       setData(details);
       // Initialize Welcome day form states from db
