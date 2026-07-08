@@ -3,5 +3,6 @@ node_modules/
 out/
 .env*.local
 .vercel
+.worktrees/
 npm-debug.log*
 public/assets/hero-video.mp4
