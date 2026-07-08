@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isMockMode, getMockDb, supabase } from "@/lib/supabase";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { logAuditEvent, logActivityEvent } from "@/lib/crmService";
 
 /**
@@ -27,6 +28,8 @@ export async function POST(request) {
     const firstName = nameParts[0] || "Unknown";
     const lastName = nameParts.slice(1).join(" ") || "Applicant";
 
+    const adminClient = isMockMode ? null : createSupabaseAdminClient();
+
     // 1. Duplicate detection
     let matchedApplicantId = null;
     let duplicateFlag = false;
@@ -42,7 +45,7 @@ export async function POST(request) {
         duplicateFlag = true;
       }
     } else {
-      const { data: matches } = await supabase
+      const { data: matches } = await adminClient
         .from("applicants")
         .select("id")
         .or(`email.eq.${data.email},phone.eq.${data.phone}`);
@@ -76,7 +79,7 @@ export async function POST(request) {
       if (isMockMode) {
         getMockDb().applicants.push(newApplicant);
       } else {
-        await supabase.from("applicants").insert(newApplicant);
+        await adminClient.from("applicants").insert(newApplicant);
       }
     }
 
@@ -102,7 +105,7 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().cases.push(newCase);
     } else {
-      await supabase.from("admissions_cases").insert({
+      await adminClient.from("admissions_cases").insert({
         id: caseId,
         case_number: caseNumber,
         status: "pre_screen_received",
@@ -142,7 +145,7 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().prescreens.push(newPrescreen);
     } else {
-      await supabase.from("prescreen_submissions").insert(newPrescreen);
+      await adminClient.from("prescreen_submissions").insert(newPrescreen);
     }
 
     // 5. Create timeline activity event
@@ -154,7 +157,7 @@ export async function POST(request) {
         ? "Initial pre-screen interest form received. System flagged possible duplicate applicant file for coordinator review."
         : "Initial pre-screen interest form received via public website portal.",
       actorId: null
-    });
+    }, adminClient);
 
     // 6. Create default coordinator follow-up task
     const taskId = `t-${Math.random().toString(36).substr(2, 9)}`;
@@ -176,7 +179,7 @@ export async function POST(request) {
     if (isMockMode) {
       getMockDb().tasks.push(newTask);
     } else {
-      await supabase.from("tasks").insert(newTask);
+      await adminClient.from("tasks").insert(newTask);
     }
 
     // 7. Audit Logging (Secure, generic details)
@@ -187,10 +190,74 @@ export async function POST(request) {
       entityId: caseId,
       caseId,
       metadata: { source: "web_portal", isDuplicateMatch: duplicateFlag }
-    });
+    }, adminClient);
 
     // 8. Safe notification log alert (no PII leaked)
     console.log("[CRM_NOTIFICATION_ALERT] A new pre-screen submission is ready for coordinator review.");
+
+    // 9. Send confirmation email to potential occupant via Resend if email is provided and Resend API Key is set
+    if (data.email && process.env.RESEND_API_KEY) {
+      try {
+        const sender = process.env.RESEND_SENDER_EMAIL || "onboarding@resend.dev";
+        const emailResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: `Faith Haven House <${sender}>`,
+            to: data.email.trim(),
+            subject: "We Received Your Pre-Screening Information - Faith Haven House",
+            html: `
+              <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #222222; background-color: #FAF8EF; border: 1px solid #EDE8D0; border-radius: 8px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                  <h2 style="color: #173247; font-family: Georgia, serif; margin-bottom: 5px;">Faith Haven House</h2>
+                  <p style="font-size: 0.85rem; color: #5E7890; margin-top: 0; letter-spacing: 0.05em; text-transform: uppercase;">Resident Admissions Portal</p>
+                </div>
+                
+                <p>Dear ${firstName},</p>
+                
+                <p>Thank you for submitting your initial interest and housing pre-screening form to Faith Haven House. We have successfully received your information and created a secure admissions folder for you.</p>
+                
+                <div style="background-color: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #EDE8D0; margin: 20px 0;">
+                  <p style="margin: 0 0 8px; font-size: 0.9rem; color: #5E7890; text-transform: uppercase; font-weight: bold; letter-spacing: 0.03em;">Your Reference ID</p>
+                  <p style="margin: 0; font-size: 1.2rem; color: #173247; font-weight: bold; font-family: monospace;">${caseNumber}</p>
+                </div>
+                
+                <h3 style="color: #173247; font-family: Georgia, serif; border-bottom: 1px solid #EDE8D0; padding-bottom: 5px;">What Happens Next?</h3>
+                <ol style="padding-left: 20px; line-height: 1.6;">
+                  <li style="margin-bottom: 10px;"><strong>Application Review:</strong> Our admissions team will review your pre-screening details to determine if our structured, faith-centered transitional living program is a good fit for your support goals.</li>
+                  <li style="margin-bottom: 10px;"><strong>Staff Outreach:</strong> If your initial profile is a potential fit, a coordinator will reach out to you using your preferred contact method (<strong>${data.contactMethod || "phone"}</strong>) to walk you through the secure admissions documents.</li>
+                </ol>
+                
+                <div style="background-color: #FFF9E6; border-left: 4px solid #F39C12; padding: 12px; font-size: 0.9rem; margin: 20px 0; color: #7F8C8D;">
+                  <strong>Note:</strong> Completing this form does not guarantee placement. All admissions are subject to space availability and committee review.
+                </div>
+                
+                <p style="margin-top: 30px;">If you have any questions or need to update your contact information, please call us directly at <strong>636-577-5876</strong>.</p>
+                
+                <hr style="border: 0; border-top: 1px solid #EDE8D0; margin: 30px 0;" />
+                
+                <p style="font-size: 0.8rem; color: #7F8C8D; text-align: center; margin: 0;">
+                  Faith Haven House · Admissions Office<br />
+                  St. Charles County, Missouri · 636-577-5876
+                </p>
+              </div>
+            `,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          const errText = await emailResponse.text();
+          console.error("[PRESCREEN_EMAIL_ERROR]", errText);
+        } else {
+          console.log("[PRESCREEN_EMAIL_SUCCESS] Confirmation email sent to", data.email);
+        }
+      } catch (err) {
+        console.error("[PRESCREEN_EMAIL_SEND_EXCEPTION]", err);
+      }
+    }
 
     return NextResponse.json({
       success: true,
