@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const adminClient = createSupabaseAdminClient();
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    // Fetch all staff profiles
-    const { data: profiles, error: profilesError } = await adminClient
-      .from("staff_profiles")
-      .select("*");
-      
-    if (profilesError) {
-      return NextResponse.json({ error: profilesError.message }, { status: 500 });
+    if (!user) {
+      return NextResponse.json({ loggedIn: false });
     }
 
-    // Fetch auth users
-    const { data: authUsers } = await adminClient.auth.admin.listUsers();
+    const { data: profile } = await supabase
+      .from("staff_profiles")
+      .select("*")
+      .eq("auth_user_id", user.id)
+      .single();
 
     return NextResponse.json({
-      profiles,
-      authUsers: authUsers?.users || null
+      loggedIn: true,
+      user,
+      profile
     });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
