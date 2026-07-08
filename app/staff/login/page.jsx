@@ -104,7 +104,9 @@ function LoginForm() {
       if (profileError || !profile) {
         await supabase.auth.signOut();
         setError(
-          "Your account is not authorized for RAP Portal access. Please contact an administrator."
+          profileError
+            ? `Profile verification error: ${profileError.message} (Code: ${profileError.code})`
+            : "Your account is not authorized for RAP Portal access. Please contact an administrator."
         );
         setSubmitting(false);
         return;
@@ -113,7 +115,7 @@ function LoginForm() {
       if (!profile.is_active) {
         await supabase.auth.signOut();
         setError(
-          "Your account is not authorized for RAP Portal access. Please contact an administrator."
+          "Your account is deactivated. Please contact an administrator."
         );
         setSubmitting(false);
         return;
