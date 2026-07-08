@@ -1,79 +1,57 @@
 import { NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
 
-/**
- * RAP Portal — Next.js Middleware
- *
- * Protects all /staff/* routes with server-side session validation.
- * Refreshes Supabase session tokens on every request to prevent expiry.
- *
- * Public staff routes (no session required):
- *   /staff/login
- *   /staff/forgot-password
- *   /staff/reset-password
- *   /staff/auth/callback
- *   /staff/unauthorized
- *   /staff/signup (redirects to login)
- *
- * Auth callback routes:
- *   /auth/callback
- *   /staff/auth/callback
- */
-
-const PUBLIC_STAFF_PATHS = [
+const PUBLIC_STAFF_ROUTES = [
   "/staff/login",
   "/staff/forgot-password",
   "/staff/reset-password",
-  "/staff/unauthorized",
   "/staff/auth/callback",
+  "/auth/callback",
+  "/staff/unauthorized",
 ];
 
-export async function middleware(request) {
+function isPublicStaffRoute(pathname) {
+  return PUBLIC_STAFF_ROUTES.some((route) => pathname.startsWith(route));
+}
+
+export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Allow public auth callback routes
   if (
-    pathname === "/auth/callback" ||
-    pathname === "/staff/auth/callback"
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/assets") ||
+    pathname.includes(".")
   ) {
     return NextResponse.next();
   }
 
-  // Redirect /staff/signup to login (invite-only info message)
-  if (pathname === "/staff/signup") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/staff/login";
-    url.searchParams.set("info", "invite_only");
-    return NextResponse.redirect(url);
+  // Set request header to pass the pathname to server layout/components
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
+  if (isPublicStaffRoute(pathname)) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  // Allow public staff paths without session checks, just refresh session cookies
-  if (PUBLIC_STAFF_PATHS.includes(pathname)) {
-    const { response } = await updateSession(request);
-    return response;
+  // Allow staff route rendering to pass through middleware.
+  // Real auth verification must happen in the Node.js/server layout or server pages,
+  // not inside Edge middleware, to prevent Edge runtime crashes.
+  if (pathname.startsWith("/staff")) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  // Only protect /staff/* paths
-  if (!pathname.startsWith("/staff")) {
-    return NextResponse.next();
-  }
-
-  // Run updateSession helper to refresh cookie and resolve session user
-  const { user, response } = await updateSession(request);
-
-  // If no authenticated user, redirect to /staff/login
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/staff/login";
-    return NextResponse.redirect(url);
-  }
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/staff/:path*",
-    "/auth/callback",
-  ],
+  matcher: ["/staff/:path*"],
 };

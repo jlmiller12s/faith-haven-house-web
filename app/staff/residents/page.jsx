@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getAdmissionsQueue } from "@/lib/crmService";
-import { useStaffSession } from "../layout";
+import { useStaffSession } from "../StaffClientProvider";
 import CrmIcon from "@/lib/crmIcons";
 
 export default function ActiveResidentsPage() {

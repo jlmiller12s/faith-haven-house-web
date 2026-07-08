@@ -1,6 +1,6 @@
 "use client";
 
-import { useStaffSession } from "../layout";
+import { useStaffSession } from "../StaffClientProvider";
 
 export default function SettingsPlaceholderPage() {
   const { activeStaff } = useStaffSession();

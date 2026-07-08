@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useStaffSession } from "../layout";
+import { useStaffSession } from "../StaffClientProvider";
 import { getAdmissionsQueue } from "@/lib/crmService";
 import Link from "next/link";
 

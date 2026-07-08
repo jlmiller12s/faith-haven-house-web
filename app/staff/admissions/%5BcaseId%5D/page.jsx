@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState, useEffect } from "react";
-import { useStaffSession } from "../../layout";
+import { useStaffSession } from "../../StaffClientProvider";
 import { 
   getCaseDetails, 
   updateCaseStatus, 
