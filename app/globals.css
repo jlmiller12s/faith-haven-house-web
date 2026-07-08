@@ -5457,7 +5457,8 @@ footer {
 
 .timeline-connecting-line {
   position: absolute;
-  left: 1.75rem;
+  left: 1.5rem;
+  transform: translateX(-50%);
   top: 0.5rem;
   bottom: 0.5rem;
   width: 3px;
@@ -6031,7 +6032,7 @@ footer {
   }
 
   .timeline-icon-box {
-    left: -3.25rem;
+    left: -3rem;
     width: 2.5rem;
     height: 2.5rem;
     padding: 0.5rem;
