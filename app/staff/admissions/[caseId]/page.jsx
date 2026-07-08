@@ -263,12 +263,6 @@ export default function CaseDetailsPage({ params }) {
         <Link href="/staff/admissions" style={{ textDecoration: "none", color: "var(--color-teal)", fontWeight: "600", fontSize: "0.9rem" }}>
           &larr; Back to Admissions Queue
         </Link>
-        <div style={{ backgroundColor: "#FFE5E5", padding: "1rem", borderRadius: "6px", margin: "1.5rem 0", border: "1px solid #FFAAAA" }}>
-          <p style={{ margin: 0, fontWeight: "bold", color: "#880000" }}>Debug Session info:</p>
-          <pre style={{ margin: "0.5rem 0 0 0", fontSize: "0.75rem", color: "#550000" }}>
-            {JSON.stringify({ activeStaff }, null, 2)}
-          </pre>
-        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem", flexWrap: "wrap", gap: "1.5rem" }}>
           <div>
             <span style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)", color: "var(--color-steel)", display: "block" }}>
