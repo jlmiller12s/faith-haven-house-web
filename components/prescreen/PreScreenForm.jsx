@@ -4,6 +4,7 @@ import { useState } from "react";
 import FormProgress from "./FormProgress";
 import ReviewSubmission from "./ReviewSubmission";
 import SubmissionSuccess from "./SubmissionSuccess";
+import { parseSubmissionResponse } from "@/lib/prescreen/clientResponse.mjs";
 
 const INITIAL_FORM_DATA = {
   // Step 1
@@ -60,7 +61,7 @@ export default function PreScreenForm() {
   const [errors, setErrors] = useState({});
   const [ackError, setAckError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState(null);
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -175,12 +176,17 @@ export default function PreScreenForm() {
         body: JSON.stringify({ ...formData, acknowledgements: acks }),
       });
 
-      if (res.ok) {
-        setIsSubmitted(true);
+      const body = await res.json().catch(() => ({}));
+      const result = parseSubmissionResponse(res.ok, body);
+
+      if (result.ok) {
+        setSubmissionResult({
+          ...result,
+          emailProvided: Boolean(formData.email.trim()),
+        });
         window.scrollTo({ top: 200, behavior: "smooth" });
       } else {
-        const errData = await res.json().catch(() => ({}));
-        alert(errData.error || "There was an issue submitting your form. Please try again or call us directly at 636-577-5876.");
+        alert(`${result.error} Please call 636-577-5876 if the problem continues.`);
       }
     } catch (err) {
       console.error(err);
@@ -190,8 +196,8 @@ export default function PreScreenForm() {
     }
   };
 
-  if (isSubmitted) {
-    return <SubmissionSuccess />;
+  if (submissionResult) {
+    return <SubmissionSuccess {...submissionResult} />;
   }
 
   return (
