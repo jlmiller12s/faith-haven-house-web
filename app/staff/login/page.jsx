@@ -137,8 +137,8 @@ function LoginForm() {
       // 5. All clear — go to dashboard
       router.push("/staff");
       router.refresh();
-    } catch {
-      setError("A connection error occurred. Please try again.");
+    } catch (err) {
+      setError(err?.message || "A connection error occurred. Please try again.");
       setSubmitting(false);
     }
   };

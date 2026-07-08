@@ -20,9 +20,11 @@ function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setSubmitting(true);
 
     try {
@@ -32,15 +34,20 @@ function ForgotPasswordForm() {
         "https://faith-haven-house-web.vercel.app";
 
       // Fire and forget — do NOT reveal whether the email exists
-      await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
         redirectTo: `${siteUrl}/staff/reset-password`,
       });
-    } catch {
-      // Silently ignore — same UX whether success or failure
-    }
 
-    // Always show the same success message regardless of outcome
-    setSubmitted(true);
+      if (resetError) {
+        setError(resetError.message);
+        setSubmitting(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(err?.message || "An error occurred. Please try again.");
+    }
     setSubmitting(false);
   };
 
@@ -123,6 +130,24 @@ function ForgotPasswordForm() {
           </div>
         ) : (
           <>
+            {error && (
+              <div
+                role="alert"
+                style={{
+                  backgroundColor: "#FFF1F0",
+                  border: "1px solid #C0392B",
+                  borderRadius: "6px",
+                  padding: "0.85rem 1rem",
+                  fontSize: "0.875rem",
+                  color: "#7B2D00",
+                  marginBottom: "1.5rem",
+                  lineHeight: "1.5",
+                }}
+              >
+                {error}
+              </div>
+            )}
+
             <p
               style={{
                 fontSize: "0.875rem",
