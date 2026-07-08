@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useStaffSession } from "../StaffClientProvider";
-import { getStaffProfiles, updateStaffRole } from "@/lib/crmService";
+import { getStaffProfiles, updateStaffRole, deleteStaff } from "@/lib/crmService";
 import CrmIcon from "@/lib/crmIcons";
 
 export default function TeamManagementPage() {
@@ -10,6 +10,7 @@ export default function TeamManagementPage() {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [selectedStaffIds, setSelectedStaffIds] = useState([]);
 
   const loadProfiles = async () => {
     const list = await getStaffProfiles();
@@ -27,6 +28,43 @@ export default function TeamManagementPage() {
     if (res.success) {
       setMessage("✓ Role updated successfully. Audit trail updated.");
       loadProfiles();
+    }
+  };
+
+  const otherStaff = profiles.filter(p => p.id !== activeStaff.id);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedStaffIds(otherStaff.map(p => p.id));
+    } else {
+      setSelectedStaffIds([]);
+    }
+  };
+
+  const handleSelectRow = (staffId) => {
+    setSelectedStaffIds(prev => 
+      prev.includes(staffId) 
+        ? prev.filter(id => id !== staffId) 
+        : [...prev, staffId]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedStaffIds.length === 0) return;
+    if (!window.confirm(`Are you sure you want to permanently remove the ${selectedStaffIds.length} selected team members? They will be deleted from the database and won't be able to sign in.`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await deleteStaff(selectedStaffIds, activeStaff.id);
+      setSelectedStaffIds([]);
+      setMessage("✓ Selected team members deleted successfully.");
+      await loadProfiles();
+    } catch (err) {
+      alert(`Error deleting team members: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,11 +92,35 @@ export default function TeamManagementPage() {
 
   return (
     <main className="crm-container">
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 className="crm-title">Team & Role Management</h1>
-        <p className="crm-subtitle">
-          Manage access controls and roles for admissions staff profiles.
-        </p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
+        <div>
+          <h1 className="crm-title">Team & Role Management</h1>
+          <p className="crm-subtitle">
+            Manage access controls and roles for admissions staff profiles.
+          </p>
+        </div>
+        {selectedStaffIds.length > 0 && (
+          <button 
+            onClick={handleDeleteSelected}
+            className="btn" 
+            style={{ 
+              backgroundColor: "var(--color-terracotta)", 
+              color: "#FFFFFF", 
+              padding: "0.6rem 1.2rem", 
+              fontSize: "0.9rem",
+              borderRadius: "6px",
+              border: "none",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              transition: "opacity 0.2s"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.opacity = "0.9"}
+            onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
+          >
+            🗑️ Remove Selected ({selectedStaffIds.length})
+          </button>
+        )}
       </div>
 
       {message && (
@@ -71,6 +133,14 @@ export default function TeamManagementPage() {
         <table className="crm-table">
           <thead>
             <tr>
+              <th style={{ width: "40px", paddingLeft: "1.5rem" }}>
+                <input 
+                  type="checkbox" 
+                  onChange={handleSelectAll} 
+                  checked={otherStaff.length > 0 && selectedStaffIds.length === otherStaff.length}
+                  style={{ cursor: "pointer", width: "1.1rem", height: "1.1rem" }}
+                />
+              </th>
               <th>Staff Member</th>
               <th>Email Address</th>
               <th>Assigned Role</th>
@@ -81,6 +151,16 @@ export default function TeamManagementPage() {
           <tbody>
             {profiles.map(p => (
               <tr key={p.id}>
+                <td style={{ paddingLeft: "1.5rem" }}>
+                  {p.id !== activeStaff.id ? (
+                    <input 
+                      type="checkbox" 
+                      onChange={() => handleSelectRow(p.id)} 
+                      checked={selectedStaffIds.includes(p.id)}
+                      style={{ cursor: "pointer", width: "1.1rem", height: "1.1rem" }}
+                    />
+                  ) : null}
+                </td>
                 <td style={{ fontWeight: "600" }}>{p.first_name} {p.last_name}</td>
                 <td style={{ color: "var(--color-steel)" }}>{p.email}</td>
                 <td style={{ fontWeight: "600", color: "var(--color-teal)" }}>
