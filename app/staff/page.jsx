@@ -10,22 +10,47 @@ export default function StaffDashboard() {
   const { activeStaff } = useStaffSession();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      const list = await getAdmissionsQueue();
-      // Fetch full details dynamically to simulate count logic
-      const fullDetails = await Promise.all(list.map(c => getCaseDetails(c.id)));
-      setCases(fullDetails.filter(Boolean));
-      setLoading(false);
+      try {
+        const list = await getAdmissionsQueue();
+        // Fetch full details dynamically to simulate count logic
+        const fullDetails = await Promise.all(list.map(c => getCaseDetails(c.id)));
+        if (!cancelled) setCases(fullDetails.filter(Boolean));
+      } catch (err) {
+        if (!cancelled) setLoadError(err?.message || "Unable to load dashboard metrics.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
     load();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {
     return (
       <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-steel)" }}>
         Loading dashboard metrics...
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-steel)" }}>
+        <p style={{ fontWeight: 600, color: "var(--color-charcoal)", marginBottom: "0.5rem" }}>
+          Could not load the dashboard.
+        </p>
+        <p style={{ fontSize: "0.9rem", marginBottom: "1.5rem" }}>{loadError}</p>
+        <button className="btn btn-outline" onClick={() => window.location.reload()}>
+          Retry
+        </button>
+        <p style={{ fontSize: "0.8rem", marginTop: "1rem" }}>
+          If this keeps happening, sign out and back in — your session may have expired.
+        </p>
       </div>
     );
   }
