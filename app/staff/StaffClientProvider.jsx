@@ -122,6 +122,11 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                   label: "Admissions",
                   match: pathname.startsWith("/staff/admissions"),
                 },
+                {
+                  href: "/staff/intake-documents",
+                  label: "Intake Documents",
+                  match: pathname.startsWith("/staff/intake-documents"),
+                },
                 ...(activeStaff?.role !== "read_only_auditor"
                   ? [
                       {
