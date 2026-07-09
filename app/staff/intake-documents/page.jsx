@@ -76,6 +76,16 @@ const INTAKE_DOCUMENTS = [
     description: "Documents applicant consent for drug and alcohol testing requirements.",
     filename: "FHH_8.4_Drug_and_Alcohol_Testing_Consent_v1.1.docx",
   },
+  {
+    id: "FHH-PPTX",
+    title: "Faith Haven House PowerPoint Template",
+    number: "FHH Template",
+    version: "v1.0",
+    category: "Presentation Templates",
+    description: "A branded presentation template for Faith Haven House board updates, donor presentations, community meetings, and internal reports.",
+    filename: "Faith-Haven-House-Presentation-Template.pptx",
+    customPath: "/Faith-Haven-House-Presentation-Template.pptx"
+  }
 ];
 
 export default function IntakeDocumentsPage() {
@@ -101,7 +111,7 @@ export default function IntakeDocumentsPage() {
       <div style={{ marginBottom: "2rem" }}>
         <h1 className="crm-title">Intake & Admissions Documents</h1>
         <p className="crm-subtitle">
-          Use this document repository to download the current Faith Haven House admissions and resident intake forms. These documents support applicant screening, admissions review, onboarding, consent, and welcome-day preparation.
+          Use this document repository to download the current Faith Haven House admissions forms, resident intake forms, and presentation templates. These documents support applicant screening, admissions review, onboarding, consent, and branded reporting.
         </p>
       </div>
 
@@ -148,9 +158,10 @@ export default function IntakeDocumentsPage() {
           </label>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             {[
-              { id: "all", label: "All Forms" },
+              { id: "all", label: "All Resources" },
               { id: "Admissions Documents", label: "Admissions" },
               { id: "Resident Intake Documents", label: "Resident Intake" },
+              { id: "Presentation Templates", label: "Presentation Templates" },
             ].map((cat) => (
               <button
                 key={cat.id}
@@ -196,7 +207,9 @@ export default function IntakeDocumentsPage() {
                 position: "relative",
                 borderLeft: doc.category === "Admissions Documents" 
                   ? "4px solid var(--color-teal)" 
-                  : "4px solid var(--color-terracotta)",
+                  : doc.category === "Resident Intake Documents"
+                  ? "4px solid var(--color-terracotta)"
+                  : "4px solid var(--color-slate-dark)",
               }}
             >
               <div>
@@ -240,15 +253,23 @@ export default function IntakeDocumentsPage() {
                         borderRadius: "20px",
                         backgroundColor: doc.category === "Admissions Documents" 
                           ? "rgba(92, 158, 173, 0.12)" 
-                          : "rgba(200, 107, 74, 0.12)",
+                          : doc.category === "Resident Intake Documents"
+                          ? "rgba(200, 107, 74, 0.12)"
+                          : "rgba(41, 76, 96, 0.12)",
                         color: doc.category === "Admissions Documents" 
                           ? "var(--color-teal)" 
-                          : "var(--color-terracotta-dark)",
+                          : doc.category === "Resident Intake Documents"
+                          ? "var(--color-terracotta-dark)"
+                          : "var(--color-slate-dark)",
                         textTransform: "uppercase",
                         letterSpacing: "0.02em",
                       }}
                     >
-                      {doc.category === "Admissions Documents" ? "Admissions" : "Intake"}
+                      {doc.category === "Admissions Documents" 
+                        ? "Admissions" 
+                        : doc.category === "Resident Intake Documents"
+                        ? "Intake"
+                        : "Template"}
                     </span>
                   </div>
                 </div>
@@ -282,7 +303,7 @@ export default function IntakeDocumentsPage() {
 
               {/* Action row: Download button */}
               <a
-                href={`/intake-documents/${doc.filename}`}
+                href={doc.customPath || `/intake-documents/${doc.filename}`}
                 download={doc.filename}
                 className="btn"
                 style={{
@@ -305,7 +326,7 @@ export default function IntakeDocumentsPage() {
                 onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
                 onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
               >
-                📥 Download Form
+                {doc.category === "Presentation Templates" ? "📥 Download PowerPoint Template" : "📥 Download Form"}
               </a>
             </div>
           ))}
