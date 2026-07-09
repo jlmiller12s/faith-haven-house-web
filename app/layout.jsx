@@ -3,6 +3,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata = {
+  metadataBase: new URL("https://www.faithhavenhouse.org"),
   title: "Faith Haven House | Transitional Living Facility for Homeless Men",
   description:
     "Faith Haven House is a transitional living facility for homeless men in St. Charles County, helping residents start the rebuilding process and transition to stable environments.",
@@ -11,6 +12,31 @@ export const metadata = {
     shortcut: "/assets/fhh-favicon.png",
     apple: "/assets/fhh-favicon.png",
   },
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.faithhavenhouse.org",
+    siteName: "Faith Haven House",
+    title: "Faith Haven House | Transitional Living Facility for Homeless Men",
+    description: "Faith Haven House is a transitional living facility for homeless men in St. Charles County, helping residents start the rebuilding process and transition to stable environments.",
+    images: [
+      {
+        url: "/assets/brand_values_bar.png",
+        width: 1200,
+        height: 630,
+        alt: "Faith Haven House Transitional Living"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Faith Haven House | Transitional Living Facility for Homeless Men",
+    description: "Faith Haven House is a transitional living facility for homeless men in St. Charles County, helping residents start the rebuilding process.",
+    images: ["/assets/brand_values_bar.png"]
+  }
 };
 
 export default function RootLayout({ children }) {

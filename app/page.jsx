@@ -15,6 +15,14 @@ import Values from "@/components/Values";
 import DonateBanner from "@/components/DonateBanner";
 import Footer from "@/components/Footer";
 
+export const metadata = {
+  title: "Faith Haven House | Transitional Shelter for Homeless Men in St. Charles County",
+  description: "Faith Haven House provides a safe, transitional living facility and supportive services for homeless men in St. Charles County, helping them transition to permanent housing and self-sufficiency.",
+  alternates: {
+    canonical: "https://www.faithhavenhouse.org",
+  },
+};
+
 const MISSION_TEXT =
   "Faith Haven House will be a place where residents start the re-building process. We work with homeless men, providing a stable living environment. Throughout transition, they receive a network of support with available resources to meet their physical and spiritual needs.";
 

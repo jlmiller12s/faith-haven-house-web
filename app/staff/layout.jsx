@@ -3,6 +3,13 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { StaffClientProvider } from "./StaffClientProvider";
 
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 // Routes that do not require layout-level authentication gates
 const PUBLIC_STAFF_ROUTES = [
   "/staff/login",
