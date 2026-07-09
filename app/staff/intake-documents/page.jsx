@@ -346,7 +346,7 @@ export default function IntakeDocumentsPage() {
                 onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
                 onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
               >
-                {doc.category === "Presentation Templates" ? "📥 Download PowerPoint Template" : "📥 Download Form"}
+                {doc.category === "Presentation Templates" ? "Download PowerPoint Template" : "Download Form"}
               </a>
             </div>
           ))}
