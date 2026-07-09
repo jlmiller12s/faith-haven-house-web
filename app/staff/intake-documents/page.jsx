@@ -85,6 +85,26 @@ const INTAKE_DOCUMENTS = [
     description: "A branded presentation template for Faith Haven House board updates, donor presentations, community meetings, and internal reports.",
     filename: "Faith-Haven-House-Presentation-Template.pptx",
     customPath: "/Faith-Haven-House-Presentation-Template.pptx"
+  },
+  {
+    id: "FHH-PPTX-SANCTUARY",
+    title: "FHH Board Presentation — Sanctuary Template",
+    number: "FHH Board-1",
+    version: "v1.0",
+    category: "Presentation Templates",
+    description: "Sanctuary design template optimized for Faith Haven House board reviews, strategic updates, and annual evaluations.",
+    filename: "FHH-Board-Template-1-Sanctuary.pptx",
+    customPath: "/FHH-Board-Template-1-Sanctuary.pptx"
+  },
+  {
+    id: "FHH-PPTX-CORNERSTONE",
+    title: "FHH Board Presentation — Cornerstone Template",
+    number: "FHH Board-2",
+    version: "v1.0",
+    category: "Presentation Templates",
+    description: "Cornerstone design template optimized for donor presentations, community outreach, and external capital campaign reports.",
+    filename: "FHH-Board-Template-2-Cornerstone.pptx",
+    customPath: "/FHH-Board-Template-2-Cornerstone.pptx"
   }
 ];
 
