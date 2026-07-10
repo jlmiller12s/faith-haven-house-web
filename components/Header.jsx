@@ -41,7 +41,6 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const timeoutRef = useRef(null);
   const pathname = usePathname();
-
   const handleMouseEnter = (label) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setOpenDropdown(label);
@@ -50,9 +49,8 @@ export default function Header() {
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setOpenDropdown(null);
-    }, 220); // 220ms grace period so mouse movement down never closes dropdown
+    }, 450); // 450ms grace period so mouse movement down never closes dropdown
   };
-
   const handleLinkClick = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setOpenDropdown(null);
