@@ -517,7 +517,7 @@ export default function AdmissionsPage() {
               <Link href="/get-help" className="btn btn-primary">
                 Start Your Next Step
               </Link>
-              <Link href="/contact" className="btn btn-outline">
+              <Link href="/contact" className="btn btn-outline-light">
                 Contact Faith Haven House
               </Link>
             </div>
