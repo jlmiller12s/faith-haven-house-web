@@ -16,6 +16,7 @@ import {
 } from "@/lib/crmService";
 import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
+import { ADMISSIONS_DOCUMENT_TYPES } from "@/lib/documentStatus.mjs";
 
 export default function CaseDetailsPage({ params }) {
   const resolvedParams = use(params);
@@ -38,6 +39,8 @@ export default function CaseDetailsPage({ params }) {
   const [newTaskDueDate, setNewTaskDueDate] = useState("");
 
   const [statusUpdateNote, setStatusUpdateNote] = useState("");
+  const [documentActionKey, setDocumentActionKey] = useState("");
+  const [documentStatusMessage, setDocumentStatusMessage] = useState(null);
 
   // Committee decision states
   const [commDecision, setCommDecision] = useState("admit");
@@ -186,13 +189,39 @@ export default function CaseDetailsPage({ params }) {
 
   // Handle document status modification
   const handleDocStatusUpdate = async (docTypeId, nextStatus) => {
-    await updateDocumentStatus({
-      caseId,
-      documentTypeId: docTypeId,
-      status: nextStatus,
-      reviewedBy: activeStaff.id
-    }, activeStaff.id);
-    loadDetails();
+    const actionKey = `${docTypeId}:${nextStatus}`;
+    setDocumentActionKey(actionKey);
+    setDocumentStatusMessage(null);
+
+    try {
+      const result = await updateDocumentStatus({
+        caseId,
+        documentTypeId: docTypeId,
+        status: nextStatus,
+        reviewedBy: activeStaff.id
+      }, activeStaff.id);
+
+      if (!result.success) {
+        setDocumentStatusMessage({
+          type: "error",
+          text: typeof result.error === "string" ? result.error : "The document status could not be updated."
+        });
+        return;
+      }
+
+      setDocumentStatusMessage({
+        type: "success",
+        text: nextStatus === "requested" ? "Document request recorded." : "Document marked complete."
+      });
+      await loadDetails();
+    } catch (error) {
+      setDocumentStatusMessage({
+        type: "error",
+        text: error?.message || "The document status could not be updated."
+      });
+    } finally {
+      setDocumentActionKey("");
+    }
   };
 
   // Handle Committee decision submit
@@ -527,16 +556,17 @@ export default function CaseDetailsPage({ params }) {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                {[
-                  { id: "doc-1", number: "FHH-INT-001", title: "Resident Intake Application", comp: "Applicant", sens: "high" },
-                  { id: "doc-2", number: "FHH-INT-002", title: "Background Check Acknowledgment", comp: "Applicant", sens: "high" },
-                  { id: "doc-3", number: "FHH-INT-003", title: "Authorization for Release of Information", comp: "Applicant", sens: "high" },
-                  { id: "doc-4", number: "FHH-INT-004", title: "Drug & Alcohol Testing Consent", comp: "Applicant", sens: "high" },
-                  { id: "doc-5", number: "FHH-ADM-001", title: "Admissions Interview Evaluation", comp: "Staff", sens: "restricted" },
-                  { id: "doc-6", number: "FHH-ADM-002", title: "Behavioral Health Admission Readiness Assessment", comp: "Licensed Professional", sens: "clinical" },
-                  { id: "doc-7", number: "FHH-ADM-003", title: "Admissions Committee Decision Form", comp: "Committee", sens: "restricted" },
-                  { id: "doc-8", number: "FHH-ADM-004", title: "Welcome Day Checklist", comp: "Staff", sens: "restricted" }
-                ].map(dt => {
+                {documentStatusMessage && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className={`crm-alert-banner ${documentStatusMessage.type === "error" ? "error" : "success"}`}
+                  >
+                    {documentStatusMessage.text}
+                  </div>
+                )}
+
+                {ADMISSIONS_DOCUMENT_TYPES.map(dt => {
                   const dbDoc = documents.find(d => d.document_type_id === dt.id || d.document_type_id === dt.number);
                   const status = dbDoc ? dbDoc.status : "not_requested";
 
@@ -577,8 +607,24 @@ export default function CaseDetailsPage({ params }) {
                         
                         {canModifyCase && (
                           <div style={{ display: "flex", gap: "0.35rem" }}>
-                            <button onClick={() => handleDocStatusUpdate(dt.id, "requested")} className="btn btn-outline" style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}>Request</button>
-                            <button onClick={() => handleDocStatusUpdate(dt.id, "complete")} className="btn btn-primary" style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}>Complete</button>
+                            <button
+                              type="button"
+                              onClick={() => handleDocStatusUpdate(dt.id, "requested")}
+                              disabled={documentActionKey !== "" || status !== "not_requested"}
+                              className="btn btn-outline"
+                              style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}
+                            >
+                              {documentActionKey === `${dt.id}:requested` ? "Requesting…" : "Request"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDocStatusUpdate(dt.id, "complete")}
+                              disabled={documentActionKey !== "" || status === "complete"}
+                              className="btn btn-primary"
+                              style={{ padding: "0.25rem 0.5rem", fontSize: "0.72rem" }}
+                            >
+                              {documentActionKey === `${dt.id}:complete` ? "Saving…" : "Complete"}
+                            </button>
                           </div>
                         )}
                       </div>

@@ -6156,6 +6156,25 @@ footer {
   color: var(--color-slate-dark);
 }
 
+.crm-alert-banner.success {
+  background-color: rgba(92, 158, 173, 0.12);
+  border: 1px solid var(--color-teal);
+  color: var(--color-slate-dark);
+}
+
+.crm-alert-banner.error {
+  background-color: rgba(200, 107, 74, 0.08);
+  border: 1px solid var(--color-terracotta);
+  color: var(--color-terracotta-dark);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Cards (Styled to match the About Us Story Card look) */
 .crm-card {
   background-color: #FAF8EF; /* Matches warm Ivory White from About section */
