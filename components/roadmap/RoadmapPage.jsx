@@ -32,6 +32,23 @@ function ChevronRight({ className }) {
   );
 }
 
+function CheckIcon({ className }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 /* ─── 1. Hero ────────────────────────────────────────── */
 function RoadmapHero() {
   const ref = useRef(null);
@@ -137,7 +154,11 @@ function RoadmapTimeline() {
 
         <nav className="rm-timeline" aria-label="Roadmap stages overview">
           {ROADMAP_STAGES.map((stage, i) => (
-            <div key={stage.number} className="rm-timeline-step">
+            <a
+              key={stage.number}
+              href={`#stage-${stage.number}`}
+              className="rm-timeline-step"
+            >
               <div className="rm-timeline-node">
                 <span className="rm-timeline-node-num">{stage.number}</span>
               </div>
@@ -147,7 +168,7 @@ function RoadmapTimeline() {
               {i < ROADMAP_STAGES.length - 1 && (
                 <div className="rm-timeline-connector" aria-hidden="true" />
               )}
-            </div>
+            </a>
           ))}
         </nav>
       </div>
@@ -237,8 +258,8 @@ function RoadmapStage({ stage, index }) {
           <ul className="rm-focus-list">
             {stage.focusAreas.map((area) => (
               <li key={area} className="rm-focus-item">
-                <span className="rm-focus-dot" aria-hidden="true" />
-                {area}
+                <CheckIcon className="rm-focus-icon" />
+                <span>{area}</span>
               </li>
             ))}
           </ul>
@@ -432,7 +453,9 @@ function RoadmapCta() {
       <div className="container rm-cta-grid">
         {/* Left CTA */}
         <div className="rm-cta-panel rm-cta-panel--resident">
-          <img src="/assets/icon_hope.png" alt="" aria-hidden="true" className="rm-cta-icon" />
+          <div className="rm-cta-icon-wrap">
+            <img src="/assets/icon_hope.png" alt="" aria-hidden="true" className="rm-cta-icon" />
+          </div>
           <h2 className="rm-cta-heading">Looking for a Next Step?</h2>
           <p className="rm-cta-body">
             Start with a confidential initial interest form. A Faith Haven House team member can
@@ -445,13 +468,15 @@ function RoadmapCta() {
 
         {/* Right CTA */}
         <div className="rm-cta-panel rm-cta-panel--donor">
-          <img src="/assets/icon_restoration.png" alt="" aria-hidden="true" className="rm-cta-icon" />
+          <div className="rm-cta-icon-wrap">
+            <img src="/assets/icon_restoration.png" alt="" aria-hidden="true" className="rm-cta-icon" />
+          </div>
           <h2 className="rm-cta-heading">Help Fund the Roadmap</h2>
           <p className="rm-cta-body">
             Donations, volunteers, churches, and community partners help make this pathway
             possible for men working toward stability and independence.
           </p>
-          <Link href="/donate" className="btn btn-outline rm-cta-btn">
+          <Link href="/donate" className="btn btn-outline-light rm-cta-btn">
             Support Faith Haven House
           </Link>
         </div>
