@@ -21,6 +21,8 @@ export default function SmoothScroll() {
       infinite: false,
     });
 
+    window.lenis = lenis;
+
     // Feed Lenis scroll position into ScrollTrigger every frame
     lenis.on("scroll", ScrollTrigger.update);
 

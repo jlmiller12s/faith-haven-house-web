@@ -11,6 +11,7 @@ const NAV_ITEMS = [
     href: "/about",
     submenu: [
       { label: "About Us", href: "/about" },
+      { label: "Meet the Team", href: "/team" },
       { label: "In Loving Memory of Dareth Jeffers", href: "/about/dareth-jeffers" },
       { label: "FAQ", href: "/about/faq" },
     ],
