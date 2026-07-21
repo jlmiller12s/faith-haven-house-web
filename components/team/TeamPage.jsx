@@ -28,14 +28,10 @@ const TEAM_MEMBERS = [
     role: "Community Operations & Leadership",
     badge: "Leadership Team",
     image: "/assets/marshall-robinson.JPG",
-    quote: "DISCOVER where God is working • DISCERN how best to serve • DEVOTE myself to God’s people and purposes.",
+    quote: "DISCOVER where God is working, DISCERN how best to serve, and DEVOTE myself to God’s people and purposes.",
     bio: [
       "Marshall “Book” Robinson, Jr. was born and raised in the City of St. Louis and several of its inner-ring suburbs. He and Tanisha, his wife of 24 years, have welcomed 18 children into their family through adoption and foster care.",
-      "Book is pursuing a Master of Divinity at Covenant Theological Seminary while preparing for future doctoral studies. He also preaches and teaches across the nation and treasures time spent with his family.",
-      "His ministry philosophy is simple:",
-      "• DISCOVER where God is working",
-      "• DISCERN how best to serve",
-      "• DEVOTE myself to God’s people and purposes"
+      "Book is pursuing a Master of Divinity at Covenant Theological Seminary while preparing for future doctoral studies. He also preaches and teaches across the nation and treasures time spent with his family. His ministry philosophy is simple: DISCOVER where God is working, DISCERN how best to serve, and DEVOTE myself to God’s people and purposes."
     ]
   }
 ];
