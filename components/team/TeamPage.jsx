@@ -24,15 +24,14 @@ const TEAM_MEMBERS = [
   },
   {
     id: "marshall-robinson",
-    name: "Marshall Robinson",
+    name: "Marshall “Book” Robinson, Jr.",
     role: "Community Operations & Leadership",
     badge: "Leadership Team",
     image: "/assets/marshall-robinson.JPG",
-    quote: "Every individual deserves a sanctuary of dignity, mentorship, and a clear pathway forward.",
+    quote: "Discover where God is working, Discern how best to serve, and Devote himself to God’s people and purposes.",
     bio: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel hendrerit libero. Proin magna justo, auctor in ligula at, imperdiet tristique libero. Nullam convallis tellus at nunc auctor, sed pretium eros vehicula. Vivamus in lorem at diam viverra sodales. Suspendisse potenti. Integer finibus vulputate sapien, in ultrices velit imperdiet eget.",
-      "Ut convallis, sem sit amet interdum consectetuer, odio augue aliquam leo, nec dapibus tortor nibh sed augue. Integer eu magna sit amet metus fermentum posuere. Morbi sit amet nulla. Sed id ligula quis est convallis tempor. Curabitur aliquet quam id dui. Cras dapibus. Vivamus elementum semper nisi.",
-      "Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metust varius laoreet. Quisque rutrum. Aenean imperdiet."
+      "Marshall “Book” Robinson, Jr. was born and raised in the City of St. Louis and several of its inner-ring suburbs. He and Tanisha, his wife of 24 years, have welcomed 18 children into their family through adoption and foster care.",
+      "Book is pursuing a Master of Divinity at Covenant Theological Seminary while preparing for future doctoral studies. He also preaches and teaches across the nation and treasures time spent with his family. His ministry philosophy is simple: Discover where God is working, Discern how best to serve, and Devote himself to God’s people and purposes."
     ]
   }
 ];
