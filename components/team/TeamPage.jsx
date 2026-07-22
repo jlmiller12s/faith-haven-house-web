@@ -33,6 +33,44 @@ const TEAM_MEMBERS = [
       "Marshall “Book” Robinson, Jr. was born and raised in the City of St. Louis and several of its inner-ring suburbs. He and Tanisha, his wife of 24 years, have welcomed 18 children into their family through adoption and foster care.",
       "Book is pursuing a Master of Divinity at Covenant Theological Seminary while preparing for future doctoral studies. He also preaches and teaches across the nation and treasures time spent with his family. His ministry philosophy is simple: DISCOVER where God is working, DISCERN how best to serve, and DEVOTE myself to God’s people and purposes."
     ]
+  },
+  {
+    id: "tammy-conderman",
+    name: "Tammy Conderman",
+    role: "Secretary, Board of Directors",
+    badge: "Board of Directors",
+    image: "/assets/tammy-conderman.jpg",
+    quote: "A life rooted in family, service, and meaningful, Christ-centered work.",
+    bio: [
+      "Tammy Conderman serves as Secretary of the Faith Haven House Board of Directors. A St. Charles native, Tammy Conderman brings a deep commitment to the local community and a passion for assisting those seeking to build better lives for themselves.",
+      "Tammy Conderman has served with the Veterans United Foundation and Chesterfield Community Church and has participated in several local community-support programs. Tammy Conderman brings more than 30 years of experience in operations, project management, and leadership. Tammy Conderman and her family are longtime supporters of local organizations and value a life rooted in family, service, and meaningful, Christ-centered work."
+    ]
+  },
+  {
+    id: "mike-keller",
+    name: "Mike Keller",
+    role: "Treasurer, Board of Directors",
+    badge: "Board of Directors",
+    image: "/assets/fhh_community_1.avif",
+    quote: "Serving others with a heart for community, stewardship, and mission.",
+    bio: [
+      "Mike Keller serves as Treasurer of the Faith Haven House Board of Directors. After retiring, Mike Keller and his wife, Susan, moved to Missouri four years ago to be closer to their three children, who live in St. Charles County and Chicago.",
+      "Mike Keller earned a degree in business administration from the University of Nebraska at Kearney. His professional experience includes public accounting, banking, manufacturing accounting, and project management.",
+      "God also called Mike Keller to serve others through summer mission work. Although the work was often physically demanding, Mike Keller had the opportunity to serve nonprofit organizations in eight states and three Central American countries through construction projects and evangelism. In addition, Mike Keller spent 20 years serving with UrbanPromise, a nonprofit organization in Wilmington, Delaware.",
+      "Mike Keller attends Element Church in Wentzville, where he serves as a small-group leader, facilities volunteer, and community-service volunteer."
+    ]
+  },
+  {
+    id: "toni-lynch",
+    name: "Toni Lynch",
+    role: "Member, Board of Directors",
+    badge: "Board of Directors",
+    image: "/assets/toni-lynch.jpg",
+    quote: "Dedicated to serving our community and supporting Faith Haven House’s mission.",
+    bio: [
+      "Toni Lynch serves as a member of the Faith Haven House Board of Directors. Dedicated to community advocacy, stewardship, and compassionate care, Toni works alongside our leadership team to support men on their path to housing stability.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    ]
   }
 ];
 
