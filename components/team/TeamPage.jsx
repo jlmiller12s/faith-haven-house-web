@@ -7,22 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const TEAM_MEMBERS = [
   {
-    id: "dareth-jeffers",
-    name: "Dareth Renee Jeffers",
-    role: "Founder & Visionary Leader",
-    badge: "In Loving Memory",
-    image: "/assets/dareth.jpg",
-    quote: "Rebuilding lives, restoring hope, and walking beside men on their journey to stability.",
-    bio: [
-      "Dareth founded Faith Haven House from a deep desire to uplift men experiencing housing instability and to help create a clearer path toward stability, responsibility, and long-term independence.",
-      "She understood that transformation often begins with a safe place, practical support, meaningful accountability, and someone willing to believe that a difficult season does not have to define a person’s future."
-    ],
-    highlightLink: {
-      text: "Read Dareth's Full Memorial Legacy →",
-      href: "/about/dareth-jeffers"
-    }
-  },
-  {
     id: "marshall-robinson",
     name: "Marshall “Book” Robinson, Jr.",
     role: "Community Operations & Leadership",
@@ -45,6 +29,22 @@ const TEAM_MEMBERS = [
       "Tammy Conderman serves as Secretary of the Faith Haven House Board of Directors. A St. Charles native, Tammy Conderman brings a deep commitment to the local community and a passion for assisting those seeking to build better lives for themselves.",
       "Tammy Conderman has served with the Veterans United Foundation and Chesterfield Community Church and has participated in several local community-support programs. Tammy Conderman brings more than 30 years of experience in operations, project management, and leadership. Tammy Conderman and her family are longtime supporters of local organizations and value a life rooted in family, service, and meaningful, Christ-centered work."
     ]
+  },
+  {
+    id: "dareth-jeffers",
+    name: "Dareth Renee Jeffers",
+    role: "Founder & Visionary Leader",
+    badge: "In Loving Memory",
+    image: "/assets/dareth.jpg",
+    quote: "Rebuilding lives, restoring hope, and walking beside men on their journey to stability.",
+    bio: [
+      "Dareth founded Faith Haven House from a deep desire to uplift men experiencing housing instability and to help create a clearer path toward stability, responsibility, and long-term independence.",
+      "She understood that transformation often begins with a safe place, practical support, meaningful accountability, and someone willing to believe that a difficult season does not have to define a person’s future."
+    ],
+    highlightLink: {
+      text: "Read Dareth's Full Memorial Legacy →",
+      href: "/about/dareth-jeffers"
+    }
   },
   {
     id: "mike-keller",

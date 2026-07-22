@@ -7043,20 +7043,18 @@ footer {
 
 .cf_card {
   position: absolute;
+  left: 50%;
+  top: 50%;
   width: 360px;
   height: 510px;
-  top: 42%;
-  left: 50%;
   transform: translate(-50%, -50%);
   transform-origin: 50% 90%;
   cursor: pointer;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, filter 0.35s ease;
+  transition: filter 0.45s ease;
 }
 
 .cf_card.is-hovered {
-  transform: translate(-50%, -52%) scale(1.06) !important;
   z-index: 600 !important;
-  box-shadow: 0 28px 60px rgba(41, 76, 96, 0.32);
 }
 
 .cf_card_inner {
@@ -7069,10 +7067,13 @@ footer {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: border-color 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease, border-color 0.4s ease;
 }
 
-.cf_card:hover .cf_card_inner {
+.cf_card:hover .cf_card_inner,
+.cf_card.is-hovered .cf_card_inner {
+  transform: translateY(-16px) scale(1.04);
+  box-shadow: 0 28px 60px rgba(41, 76, 96, 0.32);
   border-color: var(--color-powder-blue);
 }
 
