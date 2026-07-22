@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useStaffSession } from "@/app/staff/StaffClientProvider";
 import {
   getAllBlogPosts,
@@ -8,6 +8,13 @@ import {
   updateBlogPost,
   deleteBlogPost
 } from "@/lib/blogService";
+
+const QUICK_AVATAR_PRESETS = [
+  { name: "Dareth Jeffers", image: "/assets/dareth.jpg" },
+  { name: "Marshall Robinson", image: "/assets/marshall-robinson-enhanced.png" },
+  { name: "Tammy Conderman", image: "/assets/tammy-conderman.jpg" },
+  { name: "FHH Logo Mark", image: "/assets/fhh-favicon.png" }
+];
 
 export default function StaffBlogManager() {
   const { activeStaff } = useStaffSession();
@@ -25,10 +32,15 @@ export default function StaffBlogManager() {
     excerpt: "",
     content: "",
     author_name: "Dareth Jeffers, Founder & Executive Director",
-    author_image: "/assets/lg.jpg",
+    author_image: "/assets/dareth.jpg",
     status: "published"
   });
   const [saving, setSaving] = useState(false);
+
+  // Drag & Drop State
+  const [isDragging, setIsDragging] = useState(false);
+  const [showAdvancedUrl, setShowAdvancedUrl] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Preview Post Modal
   const [previewPost, setPreviewPost] = useState(null);
@@ -59,9 +71,10 @@ export default function StaffBlogManager() {
       excerpt: "",
       content: "",
       author_name: `${activeStaff?.first_name || "Dareth"} ${activeStaff?.last_name || "Jeffers"}, Executive Director`,
-      author_image: "/assets/lg.jpg",
+      author_image: "/assets/dareth.jpg",
       status: "published"
     });
+    setShowAdvancedUrl(false);
     setIsModalOpen(true);
   };
 
@@ -73,10 +86,44 @@ export default function StaffBlogManager() {
       excerpt: post.excerpt || "",
       content: post.content || "",
       author_name: post.author_name || "",
-      author_image: post.author_image || "/assets/lg.jpg",
+      author_image: post.author_image || "/assets/dareth.jpg",
       status: post.status || "published"
     });
+    setShowAdvancedUrl(false);
     setIsModalOpen(true);
+  };
+
+  // Image Upload File Processing (Drag & Drop or File Select)
+  const processImageFile = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("Please upload a valid image file (PNG, JPG, WEBP, AVIF).");
+      return;
+    }
+    setErrorMsg(null);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFormData((prev) => ({
+        ...prev,
+        author_image: e.target.result
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processImageFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      processImageFile(e.target.files[0]);
+    }
   };
 
   const handleSavePost = async (e) => {
@@ -305,9 +352,9 @@ export default function StaffBlogManager() {
                       <td style={{ padding: "1rem", fontSize: "0.9rem", color: "var(--color-charcoal)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                           <img
-                            src={post.author_image || "/assets/lg.jpg"}
+                            src={post.author_image || "/assets/dareth.jpg"}
                             alt=""
-                            style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }}
+                            style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }}
                           />
                           <span>{post.author_name}</span>
                         </div>
@@ -383,8 +430,8 @@ export default function StaffBlogManager() {
               backgroundColor: "#FFFFFF",
               borderRadius: "16px",
               width: "100%",
-              maxWidth: "720px",
-              maxHeight: "90vh",
+              maxWidth: "760px",
+              maxHeight: "92vh",
               overflowY: "auto",
               boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
               padding: "2rem"
@@ -442,30 +489,164 @@ export default function StaffBlogManager() {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", color: "var(--color-charcoal)", marginBottom: "0.35rem" }}>
-                    Author Name &amp; Title
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.author_name}
-                    onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
-                    placeholder="e.g. Dareth Jeffers, Founder & Executive Director"
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "6px",
-                      border: "1px solid var(--color-border)",
-                      fontSize: "0.95rem"
-                    }}
-                  />
+              <div>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", color: "var(--color-charcoal)", marginBottom: "0.35rem" }}>
+                  Author Name &amp; Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.author_name}
+                  onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
+                  placeholder="e.g. Dareth Jeffers, Founder & Executive Director"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 1rem",
+                    borderRadius: "6px",
+                    border: "1px solid var(--color-border)",
+                    fontSize: "0.95rem"
+                  }}
+                />
+              </div>
+
+              {/* EASY DRAG AND DROP IMAGE UPLOADER SECTION */}
+              <div
+                style={{
+                  backgroundColor: "var(--color-powder-blue-pale)",
+                  borderRadius: "12px",
+                  padding: "1.25rem",
+                  border: "1px solid rgba(92, 158, 173, 0.3)"
+                }}
+              >
+                <label style={{ display: "block", fontSize: "0.88rem", fontWeight: "700", color: "var(--color-slate-dark)", marginBottom: "0.5rem" }}>
+                  Author Headshot / Photo *
+                </label>
+
+                {/* Quick Presets Row */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <span style={{ fontSize: "0.75rem", fontWeight: "600", color: "var(--color-steel)", display: "block", marginBottom: "0.4rem" }}>
+                    Quick Select Leadership Photo:
+                  </span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                    {QUICK_AVATAR_PRESETS.map((preset) => (
+                      <button
+                        key={preset.name}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, author_image: preset.image })}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.4rem",
+                          padding: "0.35rem 0.65rem",
+                          borderRadius: "20px",
+                          border: formData.author_image === preset.image ? "2px solid var(--color-teal)" : "1px solid var(--color-border)",
+                          backgroundColor: formData.author_image === preset.image ? "#FFFFFF" : "rgba(255,255,255,0.7)",
+                          cursor: "pointer",
+                          fontSize: "0.78rem",
+                          fontWeight: "600",
+                          color: "var(--color-charcoal)"
+                        }}
+                      >
+                        <img
+                          src={preset.image}
+                          alt=""
+                          style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover" }}
+                        />
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", color: "var(--color-charcoal)", marginBottom: "0.35rem" }}>
-                    Author Image Asset URL
-                  </label>
+                {/* Drag and Drop Zone */}
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleFileDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{
+                    border: isDragging ? "2px dashed var(--color-teal)" : "2px dashed var(--color-steel)",
+                    backgroundColor: isDragging ? "rgba(92, 158, 173, 0.15)" : "#FFFFFF",
+                    borderRadius: "10px",
+                    padding: "1.5rem",
+                    textAlign: "center",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    style={{ display: "none" }}
+                  />
+
+                  {formData.author_image ? (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.25rem" }}>
+                      <img
+                        src={formData.author_image}
+                        alt="Author Preview"
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                          border: "2px solid var(--color-teal)"
+                        }}
+                      />
+                      <div style={{ textAlign: "left" }}>
+                        <div style={{ fontWeight: "700", color: "var(--color-slate-dark)", fontSize: "0.95rem" }}>
+                          Selected Photo Preview
+                        </div>
+                        <div style={{ fontSize: "0.78rem", color: "var(--color-steel)", margin: "0.2rem 0" }}>
+                          Drag &amp; drop another image here or click to replace
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          style={{ padding: "0.25rem 0.65rem", fontSize: "0.75rem", marginTop: "0.2rem" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            fileInputRef.current?.click();
+                          }}
+                        >
+                          📷 Change / Upload New Photo
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" strokeWidth="1.8" style={{ marginBottom: "0.5rem" }}>
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                      </svg>
+                      <div style={{ fontWeight: "700", color: "var(--color-slate-dark)", fontSize: "0.95rem" }}>
+                        Drag &amp; Drop Image Here
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "var(--color-steel)", marginTop: "0.2rem" }}>
+                        or click to select photo from your computer
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Advanced URL Toggle */}
+                <div style={{ marginTop: "0.6rem", textAlign: "right" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdvancedUrl(!showAdvancedUrl)}
+                    style={{ background: "none", border: "none", fontSize: "0.75rem", color: "var(--color-steel)", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    {showAdvancedUrl ? "Hide custom URL input" : "Advanced: Enter custom image URL"}
+                  </button>
+                </div>
+
+                {showAdvancedUrl && (
                   <input
                     type="text"
                     value={formData.author_image}
@@ -473,13 +654,14 @@ export default function StaffBlogManager() {
                     placeholder="/assets/lg.jpg"
                     style={{
                       width: "100%",
-                      padding: "0.75rem 1rem",
+                      padding: "0.6rem 0.85rem",
                       borderRadius: "6px",
                       border: "1px solid var(--color-border)",
-                      fontSize: "0.95rem"
+                      fontSize: "0.85rem",
+                      marginTop: "0.4rem"
                     }}
                   />
-                </div>
+                )}
               </div>
 
               <div>
@@ -605,7 +787,7 @@ export default function StaffBlogManager() {
             <div className="blog-layout" style={{ margin: 0 }}>
               <div className="blog-img-wrap">
                 <img
-                  src={previewPost.author_image || "/assets/lg.jpg"}
+                  src={previewPost.author_image || "/assets/dareth.jpg"}
                   alt={previewPost.author_name}
                   className="blog-img"
                 />
