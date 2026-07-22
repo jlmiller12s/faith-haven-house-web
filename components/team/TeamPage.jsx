@@ -51,7 +51,7 @@ const TEAM_MEMBERS = [
     name: "Mike Keller",
     role: "Treasurer, Board of Directors",
     badge: "Board of Directors",
-    image: "/assets/fhh_community_1.avif",
+    image: "/assets/fhh-favicon.png",
     quote: "Serving others with a heart for community, stewardship, and mission.",
     bio: [
       "Mike Keller serves as Treasurer of the Faith Haven House Board of Directors. After retiring, Mike Keller and his wife, Susan, moved to Missouri four years ago to be closer to their three children, who live in St. Charles County and Chicago.",
