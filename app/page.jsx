@@ -1,13 +1,56 @@
 import Countdown from "./Countdown";
 import styles from "./coming-soon.module.css";
+import SmoothScroll from "@/components/SmoothScroll";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import Narrative from "@/components/Narrative";
+import ProcessTimeline from "@/components/ProcessTimeline";
+import Stats from "@/components/Stats";
+import Pyramid from "@/components/Pyramid";
+import Volunteer from "@/components/Volunteer";
+import Stories from "@/components/Stories";
+import OneAway from "@/components/OneAway";
+import Resources from "@/components/Resources";
+import Partners from "@/components/Partners";
+import Blog from "@/components/Blog";
+import Values from "@/components/Values";
+import DonateBanner from "@/components/DonateBanner";
+import Footer from "@/components/Footer";
 
-export const metadata = {
-  title: "New Website Coming Soon | Faith Haven House",
-  description:
-    "Faith Haven House is preparing a new website, launching August 3, 2026.",
-};
+const LAUNCH_TIME = new Date("2026-08-03T05:01:00.000Z").getTime();
 
-export default function Home() {
+// This page must evaluate the launch time on every request. Static rendering
+// would otherwise freeze whichever state existed when Vercel built the site.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export function generateMetadata() {
+  if (Date.now() < LAUNCH_TIME) {
+    return {
+      title: "New Website Coming Soon | Faith Haven House",
+      description:
+        "Faith Haven House is preparing a new website, launching August 3, 2026.",
+    };
+  }
+
+  return {
+    title:
+      "Faith Haven House | Transitional Shelter for Homeless Men in St. Charles County",
+    description:
+      "Faith Haven House provides a safe, transitional living facility and supportive services for homeless men in St. Charles County, helping them transition to permanent housing and self-sufficiency.",
+    alternates: {
+      canonical: "https://www.faithhavenhouse.org",
+    },
+  };
+}
+
+const MISSION_TEXT =
+  "Faith Haven House will be a place where residents start the re-building process. We work with homeless men, providing a stable living environment. Throughout transition, they receive a network of support with available resources to meet their physical and spiritual needs.";
+
+const FOUNDER_TEXT =
+  "Between 2013 and 2015, Dareth Jeffers served meals to unhoused men and women. The standard answer to shelter requests was no. Dareth prayed, found servant-hearted partners, designed a logo, and made a plan. Faith Haven House became that YES. Today, men have a place to stay and a chance to rebuild.";
+
+function ComingSoon() {
   return (
     <main className={styles.page}>
       <video
@@ -36,15 +79,11 @@ export default function Home() {
       </header>
 
       <section className={styles.hero}>
-        <h1>
-          New website coming soon.
-        </h1>
-
+        <h1>New website coming soon.</h1>
         <p className={styles.intro}>
           We’re building a renewed online home to help more men in St. Charles
           County find shelter, support, and a path forward.
         </p>
-
         <Countdown />
       </section>
 
@@ -54,4 +93,32 @@ export default function Home() {
       </footer>
     </main>
   );
+}
+
+function LaunchedWebsite() {
+  return (
+    <>
+      <SmoothScroll />
+      <Header />
+      <Hero />
+      <Narrative id="about" text={MISSION_TEXT} />
+      <Pyramid />
+      <ProcessTimeline />
+      <OneAway />
+      <Narrative text={FOUNDER_TEXT} cardBg />
+      <Stats />
+      <Volunteer />
+      <Stories />
+      <Resources />
+      <Partners />
+      <Blog />
+      <Values />
+      <DonateBanner />
+      <Footer />
+    </>
+  );
+}
+
+export default function Home() {
+  return Date.now() >= LAUNCH_TIME ? <LaunchedWebsite /> : <ComingSoon />;
 }

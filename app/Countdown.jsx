@@ -21,7 +21,15 @@ export default function Countdown() {
   const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
-    const update = () => setTimeLeft(getTimeLeft());
+    let launchReloaded = false;
+    const update = () => {
+      const next = getTimeLeft();
+      setTimeLeft(next);
+      if (next.complete && !launchReloaded) {
+        launchReloaded = true;
+        window.location.reload();
+      }
+    };
     update();
     const timer = window.setInterval(update, 1000);
     return () => window.clearInterval(timer);
