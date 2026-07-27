@@ -1909,6 +1909,214 @@ footer {
   .container { padding: 0 1rem; }
 }
 
+/* RAP Portal guided onboarding */
+.rap-demo-banner {
+  background: #f1c96b;
+  color: #173247;
+  padding: 0.42rem 1rem;
+  text-align: center;
+  font: 750 0.74rem/1.25 Inter, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.rap-tour-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(250, 248, 239, 0.3);
+  border-radius: 999px;
+  padding: 0.34rem 0.72rem 0.34rem 0.42rem;
+  background: rgba(250, 248, 239, 0.08);
+  color: #faf8ef;
+  font: 700 0.76rem/1 Inter, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.rap-tour-replay span {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #faf8ef;
+  color: #294c60;
+}
+
+.rap-tour-replay:hover,
+.rap-tour-replay:focus-visible {
+  background: rgba(250, 248, 239, 0.17);
+  outline: 2px solid #faf8ef;
+  outline-offset: 2px;
+}
+
+.rap-tour-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.rap-tour-scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: rgba(16, 34, 45, 0.72);
+  backdrop-filter: blur(2px);
+  pointer-events: auto;
+  cursor: default;
+}
+
+.rap-tour-spotlight {
+  position: fixed;
+  z-index: 1;
+  border: 2px solid #8fc6bd;
+  border-radius: 11px;
+  box-shadow:
+    0 0 0 5px rgba(143, 198, 189, 0.18),
+    0 0 32px rgba(143, 198, 189, 0.55);
+  pointer-events: none;
+  animation: rap-tour-lantern 1.8s ease-in-out infinite;
+}
+
+.rap-tour-card {
+  position: fixed;
+  z-index: 2;
+  width: min(380px, calc(100vw - 36px));
+  padding: 1.35rem;
+  border: 1px solid rgba(41, 76, 96, 0.17);
+  border-radius: 14px;
+  background: #fffef9;
+  color: #294c60;
+  box-shadow: 0 24px 64px rgba(9, 28, 39, 0.34);
+  pointer-events: auto;
+}
+
+.rap-tour-card.is-welcome {
+  top: 50%;
+  left: 50%;
+  width: min(460px, calc(100vw - 36px));
+  transform: translate(-50%, -50%);
+}
+
+.rap-tour-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.15rem;
+}
+
+.rap-tour-progress span {
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: #d8e1e3;
+}
+
+.rap-tour-progress span.is-active {
+  background: #3e7c78;
+}
+
+.rap-tour-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.45rem;
+  color: #3e7c78;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.rap-tour-eyebrow span {
+  color: #6c7d86;
+}
+
+.rap-tour-card h2 {
+  margin: 0 0 0.55rem;
+  color: #294c60;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.55rem;
+  line-height: 1.15;
+}
+
+.rap-tour-body {
+  margin: 0;
+  color: #536672;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.rap-tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.35rem;
+}
+
+.rap-tour-actions > div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.rap-tour-actions button {
+  border-radius: 7px;
+  padding: 0.62rem 0.92rem;
+  font: 750 0.82rem/1 Inter, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.rap-tour-skip,
+.rap-tour-back {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #536672;
+}
+
+.rap-tour-back {
+  border-color: #cbd6d9;
+}
+
+.rap-tour-next {
+  border: 1px solid #294c60;
+  background: #294c60;
+  color: #fffef9;
+}
+
+.rap-tour-actions button:hover,
+.rap-tour-actions button:focus-visible {
+  outline: 2px solid #3e7c78;
+  outline-offset: 2px;
+}
+
+@keyframes rap-tour-lantern {
+  50% {
+    box-shadow:
+      0 0 0 7px rgba(143, 198, 189, 0.12),
+      0 0 42px rgba(143, 198, 189, 0.72);
+  }
+}
+
+@media (max-width: 640px) {
+  .rap-tour-card.is-anchored {
+    right: 18px !important;
+    bottom: 18px !important;
+    left: 18px !important;
+    top: auto !important;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rap-tour-spotlight {
+    animation: none;
+  }
+}
+
 @media (max-width: 480px) {
   .values-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
   .value-card { padding: 1.25rem 0.5rem; }
@@ -7175,5 +7383,3 @@ footer {
     height: 250px;
   }
 }
-
-

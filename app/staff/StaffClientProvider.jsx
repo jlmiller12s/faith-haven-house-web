@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import RapPortalTour from "@/components/staff/RapPortalTour";
 
 // Context for Staff Session
 export const StaffSessionContext = createContext(null);
@@ -28,6 +29,23 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
   const router = useRouter();
   const pathname = usePathname();
   const [activeStaff, setActiveStaff] = useState(initialActiveStaff);
+  const [tourOpen, setTourOpen] = useState(false);
+
+  useEffect(() => {
+    if (!activeStaff) return;
+    const storageKey = `rap-portal-tour-complete:${activeStaff.id}`;
+    if (window.localStorage.getItem(storageKey) !== "1") {
+      const timer = window.setTimeout(() => setTourOpen(true), 450);
+      return () => window.clearTimeout(timer);
+    }
+  }, [activeStaff]);
+
+  const closeTour = useCallback(async () => {
+    setTourOpen(false);
+    if (activeStaff?.id) {
+      window.localStorage.setItem(`rap-portal-tour-complete:${activeStaff.id}`, "1");
+    }
+  }, [activeStaff]);
 
   const handleLogout = () => {
     // Route to server-side logout (clears session server-side)
@@ -54,6 +72,11 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
           flexDirection: "column",
         }}
       >
+        {activeStaff?.is_demo_mode && (
+          <div className="rap-demo-banner" role="status">
+            Local preview mode — no applicant data or production accounts are connected.
+          </div>
+        )}
         {/* RAP PORTAL HEADER */}
         <header
           style={{
@@ -167,6 +190,16 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
               ].map((item) => (
                 <Link
                   key={item.href}
+                  data-tour={
+                    item.href === "/staff" ? "dashboard" :
+                    item.href === "/staff/admissions" ? "admissions" :
+                    item.href === "/staff/intake-documents" ? "intake-documents" :
+                    item.href === "/staff/blog" ? "blog" :
+                    item.href === "/staff/residents" ? "residents" :
+                    item.href === "/staff/team" ? "team" :
+                    item.href === "/staff/invite" ? "team" :
+                    item.href === "/staff/audit" ? "audit" : undefined
+                  }
                   href={item.href}
                   style={{
                     color: item.match ? "#FFFFFF" : "rgba(250,248,239,0.72)",
@@ -189,6 +222,15 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
 
           {/* Right: Staff name + Sign Out */}
           <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+            <button
+              type="button"
+              className="rap-tour-replay"
+              onClick={() => setTourOpen(true)}
+              aria-label="Replay the RAP Portal tour"
+            >
+              <span aria-hidden="true">?</span>
+              Tour
+            </button>
             {activeStaff && (
               <div style={{ textAlign: "right" }}>
                 <div
@@ -215,6 +257,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
             )}
             <a
               href="/staff/logout"
+              data-tour="sign-out"
               style={{
                 background: "transparent",
                 border: "1px solid rgba(250,248,239,0.25)",
@@ -239,6 +282,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           {children}
         </div>
+        <RapPortalTour open={tourOpen} onClose={closeTour} />
       </div>
     </StaffSessionContext.Provider>
   );

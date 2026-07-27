@@ -26,6 +26,29 @@ const PUBLIC_STAFF_ROUTES = [
 export default async function StaffLayout({ children }) {
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
+  const demoMode = process.env.RAP_PORTAL_DEMO_MODE === "1";
+
+  // Explicit, opt-in local preview. This never activates unless the server is
+  // started with RAP_PORTAL_DEMO_MODE=1 and does not depend on Supabase.
+  if (demoMode && !pathname.startsWith("/staff/login")) {
+    return (
+      <StaffClientProvider
+        initialActiveStaff={{
+          id: "local-demo-admin",
+          first_name: "Portal",
+          last_name: "Preview",
+          email: "preview@faithhavenhouse.local",
+          role: "super_admin",
+          is_active: true,
+          mfa_required: false,
+          rap_tour_completed_at: null,
+          is_demo_mode: true,
+        }}
+      >
+        {children}
+      </StaffClientProvider>
+    );
+  }
 
   // Check if path is allowed publicly
   const isPublicPath = PUBLIC_STAFF_ROUTES.some(
