@@ -1970,12 +1970,18 @@ footer {
   cursor: default;
 }
 
+.rap-tour-scrim.has-spotlight {
+  background: transparent;
+  backdrop-filter: none;
+}
+
 .rap-tour-spotlight {
   position: fixed;
   z-index: 1;
   border: 2px solid #8fc6bd;
   border-radius: 11px;
   box-shadow:
+    0 0 0 9999px rgba(16, 34, 45, 0.72),
     0 0 0 5px rgba(143, 198, 189, 0.18),
     0 0 32px rgba(143, 198, 189, 0.55);
   pointer-events: none;
@@ -2096,6 +2102,7 @@ footer {
 @keyframes rap-tour-lantern {
   50% {
     box-shadow:
+      0 0 0 9999px rgba(16, 34, 45, 0.72),
       0 0 0 7px rgba(143, 198, 189, 0.12),
       0 0 42px rgba(143, 198, 189, 0.72);
   }

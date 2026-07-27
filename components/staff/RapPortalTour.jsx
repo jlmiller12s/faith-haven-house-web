@@ -137,7 +137,7 @@ export default function RapPortalTour({ open, onClose }) {
     <div className="rap-tour-layer" aria-live="polite">
       <button
         type="button"
-        className="rap-tour-scrim"
+        className={`rap-tour-scrim${hasTarget ? " has-spotlight" : ""}`}
         aria-label="Skip portal tour"
         onClick={() => onClose("skipped")}
       />
