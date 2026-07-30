@@ -2526,6 +2526,28 @@ footer {
   transform: translateY(-1px);
 }
 
+.btn-submit-form:disabled {
+  background-color: #9B8B84;
+  color: #FFFFFF;
+  cursor: wait;
+  opacity: 1;
+  transform: none;
+  box-shadow: none;
+}
+
+.submission-error {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 2rem;
+  padding: 1rem 1.15rem;
+  color: #7D2E1A;
+  background-color: #FFF2ED;
+  border: 2px solid #C86B4A;
+  border-radius: 0.75rem;
+  line-height: 1.45;
+}
+
 /* Step 7 Review Summary */
 .review-summary-box {
   background-color: #FFFFFF;

@@ -62,6 +62,7 @@ export default function PreScreenForm() {
   const [ackError, setAckError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState(null);
+  const [submissionError, setSubmissionError] = useState("");
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -157,12 +158,19 @@ export default function PreScreenForm() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
+    setSubmissionError("");
 
     // Verify all acknowledgements checked
     const allChecked = Object.values(acks).every(Boolean);
     if (!allChecked) {
       setAckError("Please review and check all acknowledgement boxes before submitting.");
+      requestAnimationFrame(() => {
+        document.querySelector(".acknowledgements-box")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      });
       return;
     }
 
@@ -186,11 +194,15 @@ export default function PreScreenForm() {
         });
         window.scrollTo({ top: 200, behavior: "smooth" });
       } else {
-        alert(`${result.error} Please call 636-577-5876 if the problem continues.`);
+        setSubmissionError(
+          `${result.error} Please try again or call 636-577-5876 if the problem continues.`
+        );
       }
     } catch (err) {
       console.error(err);
-      alert(err?.message || "Submission error. Please check your network or call 636-577-5876.");
+      setSubmissionError(
+        "We could not submit the form. Please check your connection and try again, or call 636-577-5876."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -204,7 +216,7 @@ export default function PreScreenForm() {
     <div className="prescreen-card">
       <FormProgress currentStep={step} setStep={setStep} />
 
-      <form onSubmit={step === 7 ? handleSubmit : (e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()}>
         {/* STEP 1: Contact Information */}
         {step === 1 && (
           <div>
@@ -819,12 +831,22 @@ export default function PreScreenForm() {
             formData={formData}
             setStep={setStep}
             acks={acks}
-            setAcks={setAcks}
+            setAcks={(updater) => {
+              setAcks(updater);
+              setAckError("");
+            }}
             ackErrors={ackError}
           />
         )}
 
         {/* Bottom Navigation Actions */}
+        {step === 7 && submissionError && (
+          <div className="submission-error" role="alert">
+            <strong>We could not complete your submission.</strong>
+            <span>{submissionError}</span>
+          </div>
+        )}
+
         <div className="step-actions">
           {step > 1 ? (
             <button type="button" className="btn-back" onClick={handlePrev}>
@@ -837,7 +859,13 @@ export default function PreScreenForm() {
               Continue →
             </button>
           ) : (
-            <button type="submit" className="btn-submit-form" disabled={isSubmitting}>
+            <button
+              type="button"
+              className="btn-submit-form"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+            >
               {isSubmitting ? "Submitting..." : "Submit Initial Interest Form"}
             </button>
           )}
