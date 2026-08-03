@@ -11,12 +11,27 @@ export const MEMORIAL_DATA = {
     imageAlt: "Dareth Renee Jeffers, Founder of Faith Haven House"
   },
   legacy: {
-    heading: "A Legacy of Compassion and Action",
+    heading: "Our Story: Called Out Upon the Waters",
     paragraphs: [
-      "Dareth founded Faith Haven House from a deep desire to uplift men experiencing housing instability and to help create a clearer path toward stability, responsibility, and long-term independence.",
-      "She understood that transformation often begins with a safe place, practical support, meaningful accountability, and someone willing to believe that a difficult season does not have to define a person’s future."
+      "More than a decade ago, our founder, Darreth Jeffers, recognized a need that many people in St. Charles County didn't realize existed—men experiencing homelessness with nowhere to turn. Having once experienced homelessness herself, Darreth understood the fear and uncertainty of not having a place to call home. Her own journey gave her a deep compassion for others facing the same struggle.",
+      "While many services exist for women, children, and families, single men are often among the most underserved in the homeless services system. At the time, there was no transitional home in St. Charles County or St. Louis or that matter, dedicated to helping men rebuild their lives.",
+      "Each week, Darreth and her Life Group served meals at the Salvation Army in St. Charles. As she built relationships with the same men week after week, God began stirring something in her heart. Through prayer, His calling became clear: Open a transitional home for men. He even gave her the name—Faith Haven House."
     ],
-    quote: "Faith Haven House exists because Dareth believed people deserve more than a place to stay. They deserve a pathway forward."
+    confirmationHeading: "A Calling Confirmed",
+    confirmationParagraphs: [
+      "In September 2016, while visiting Israel, God confirmed that calling in unforgettable ways. As her church group boarded a boat on the Sea of Galilee, she looked up and saw its name: Faith Haven. Moments later, the captain shared the worship song \"Oceans,\" whose lyrics had been encouraging her throughout this journey.",
+      "Sitting there on the water, surrounded by worship, Darreth knew with absolute certainty: God was calling her to open Faith Haven House.",
+      "Today, Faith Haven House exists because one woman said \"yes\" to God's call. We are committed to providing men with hope, stability, and the opportunity to rebuild their lives with dignity, purpose, and faith."
+    ],
+    quote: "You call me out upon the waters... You've never failed, and You won't start now.",
+    quoteAttribution: "",
+    boldPhrases: [
+      "Open a transitional home for men.",
+      "Faith Haven House.",
+      "Faith Haven.",
+      "\"Oceans,\"",
+      "God was calling her to open Faith Haven House."
+    ]
   },
   lifeMilestones: [
     {
@@ -113,7 +128,7 @@ export const MEMORIAL_DATA = {
     ],
     primaryBtn: {
       text: "Make a Memorial Gift",
-      href: "https://www.zeffy.com/en-US/embed/donation-form/donate-to-make-a-difference-13369?modal=true"
+      href: "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969"
     },
     secondaryBtn: {
       text: "Learn About Faith Haven House",

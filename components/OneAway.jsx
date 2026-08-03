@@ -2,8 +2,10 @@
 
 import { useRef } from "react";
 import useScrollReveal from "@/hooks/useScrollReveal";
+import { useSiteContent } from "@/components/cms/SiteContentContext";
 
 export default function OneAway() {
+  const content = useSiteContent();
   const ref = useRef(null);
   useScrollReveal(ref, "[data-reveal]", { stagger: 0.12, y: 28 });
 
@@ -15,10 +17,8 @@ export default function OneAway() {
             <span className="section-eyebrow" style={{ color: "var(--color-terracotta)" }}>
               A Perspective on Homelessness
             </span>
-            <h2 className="oneaway-title">One Life Event Away</h2>
-            <p className="oneaway-desc">
-              In St. Charles County, homelessness among single men rarely happens overnight. Most residents at Faith Haven House are good, hardworking men who found themselves just <strong>one crisis away</strong> — one sudden illness, one job loss, one family tragedy, or one broken relationship away from losing their shelter.
-            </p>
+            <h2 className="oneaway-title">{content["home.perspective.title"]}</h2>
+            <p className="oneaway-desc">{content["home.perspective.text"]}</p>
 
             <div className="oneaway-highlights">
               <div className="oneaway-pill">

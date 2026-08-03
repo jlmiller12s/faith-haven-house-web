@@ -6,3 +6,5 @@ out/
 .worktrees/
 npm-debug.log*
 public/assets/hero-video.mp4
+
+.vercel

@@ -7,9 +7,9 @@ import useScrollReveal from "@/hooks/useScrollReveal";
 
 const STATS = [
   {
-    target: 36,
+    target: 122,
     suffix: "",
-    display: "36",
+    display: "122",
     label: "Days to Housing",
     desc: "The average time residents spend with us before securing employment and transitioning to permanent housing.",
   },

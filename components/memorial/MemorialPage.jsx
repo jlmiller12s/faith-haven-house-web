@@ -6,6 +6,21 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MEMORIAL_DATA } from "./memorialData";
 
+function renderEmphasis(text, boldPhrases) {
+  const escapedPhrases = [...boldPhrases]
+    .sort((a, b) => b.length - a.length)
+    .map((phrase) => phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const emphasisPattern = new RegExp(`(${escapedPhrases.join("|")})`, "g");
+
+  return text.split(emphasisPattern).map((part, index) =>
+    boldPhrases.includes(part) ? (
+      <strong key={`${part}-${index}`}>{part}</strong>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function MemorialPage() {
   const containerRef = useRef(null);
 
@@ -153,7 +168,15 @@ export default function MemorialPage() {
               <h2 className="memorial-section-title">{legacy.heading}</h2>
               <div className="legacy-paragraphs">
                 {legacy.paragraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
+                  <p key={i}>{renderEmphasis(p, legacy.boldPhrases)}</p>
+                ))}
+                <h3 className="legacy-confirmation-heading">
+                  {legacy.confirmationHeading}
+                </h3>
+                {legacy.confirmationParagraphs.map((p, i) => (
+                  <p key={`confirmation-${i}`}>
+                    {renderEmphasis(p, legacy.boldPhrases)}
+                  </p>
                 ))}
               </div>
             </div>
@@ -166,9 +189,11 @@ export default function MemorialPage() {
                   {legacy.quote}
                 </blockquote>
                 <div className="quote-divider" aria-hidden="true" />
-                <cite className="legacy-quote-author">
-                  Faith Haven House Dedication
-                </cite>
+                {legacy.quoteAttribution ? (
+                  <cite className="legacy-quote-author">
+                    {legacy.quoteAttribution}
+                  </cite>
+                ) : null}
               </div>
             </div>
           </div>

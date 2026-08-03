@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { useSiteContent } from "@/components/cms/SiteContentContext";
 
 const DONATE_URL =
-  "https://www.zeffy.com/en-US/embed/donation-form/donate-to-make-a-difference-13369?modal=true";
+  "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969";
 
 export default function Hero() {
+  const content = useSiteContent();
   const ref = useRef(null);
   const videoRef = useRef(null);
 
@@ -69,12 +71,12 @@ export default function Hero() {
       {/* Content Overlay */}
       <div className="hero-content-container">
         <h1 className="hero-title--light">
-          <span className="hero-title-line">Every call answered. Every bed filled.</span>
-          <span className="hero-title-line dimmed-light">A sanctuary to rebuild lives.</span>
+          <span className="hero-title-line">{content["home.hero.title"]}</span>
+          <span className="hero-title-line dimmed-light">{content["home.hero.subtitle"]}</span>
         </h1>
 
         <p className="hero-tagline hero-tagline--light">
-          Faith Haven House provides a supportive network, daily shelter, and life skills coaching to guide unhoused men from transition to independent homeownership.
+          {content["home.hero.tagline"]}
         </p>
 
         <div className="hero-actions">
@@ -96,7 +98,7 @@ export default function Hero() {
       <div className="hero-metrics-bar">
         <div className="hero-metric-item">
           <label>AVERAGE STAY TO HOUSING</label>
-          <div className="val">36 Days</div>
+          <div className="val">122 Days</div>
           <p>Transition to permanent residence</p>
         </div>
         <div className="hero-metric-item">

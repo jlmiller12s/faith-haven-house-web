@@ -69,13 +69,32 @@ const TEAM_MEMBERS = [
     quote: "Dedicated to serving our community and supporting Faith Haven House’s mission.",
     bio: [
       "Toni Lynch serves as a member of the Faith Haven House Board of Directors. Dedicated to community advocacy, stewardship, and compassionate care, Toni works alongside our leadership team to support men on their path to housing stability.",
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      "Bio forthcoming."
     ]
+  },
+  {
+    id: "hj-hohensee",
+    name: "HJ Hohensee",
+    role: "Member, Board of Directors",
+    badge: "Board of Directors",
+    image: "/assets/fhh-favicon.png",
+    imageAlt: "Photo forthcoming for HJ Hohensee",
+    quote: "",
+    bio: ["Bio and photo forthcoming."]
   }
 ];
 
+const TEAM_ORDER = [
+  "dareth-jeffers",
+  "marshall-robinson",
+  "tammy-conderman",
+  "mike-keller",
+  "toni-lynch",
+  "hj-hohensee",
+];
+
 export default function TeamPage() {
-  const [viewMode, setViewMode] = useState("fan"); // "fan" or "grid"
+  const [viewMode, setViewMode] = useState("grid");
   const [selectedMember, setSelectedMember] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
   const stageRef = useRef(null);
@@ -83,7 +102,10 @@ export default function TeamPage() {
   const modalContentRef = useRef(null);
 
   // Compute Fan Deck placement parameters
-  const total = TEAM_MEMBERS.length;
+  const orderedMembers = TEAM_ORDER.map((id) =>
+    TEAM_MEMBERS.find((member) => member.id === id)
+  ).filter(Boolean);
+  const total = orderedMembers.length;
   const midIndex = (total - 1) / 2;
 
   useEffect(() => {
@@ -271,7 +293,7 @@ export default function TeamPage() {
           <section className="team-fan-container" ref={stageRef}>
             <div className="cf_stage">
               <div className="cf_stack" data-ann-cf-stack="true">
-                {TEAM_MEMBERS.map((member, index) => {
+                {orderedMembers.map((member, index) => {
                   const factor = index - midIndex;
                   const isHovered = hoveredId === member.id;
                   const baseZ = Math.round(100 - Math.abs(factor) * 10);
@@ -302,7 +324,7 @@ export default function TeamPage() {
                         <div className="cf_card_media">
                           <img
                             src={member.image}
-                            alt={member.name}
+                            alt={member.imageAlt || member.name}
                             className="cf_card_img"
                             loading="lazy"
                           />
@@ -337,7 +359,7 @@ export default function TeamPage() {
         {viewMode === "grid" && (
           <section className="team-grid-section">
             <div className="team-grid">
-              {TEAM_MEMBERS.map((member) => (
+              {orderedMembers.map((member) => (
                 <div
                   key={member.id}
                   className="team-card"
@@ -355,7 +377,7 @@ export default function TeamPage() {
                   <div className="team-card-image-wrapper">
                     <img
                       src={member.image}
-                      alt={member.name}
+                      alt={member.imageAlt || member.name}
                       className="team-card-img"
                       loading="lazy"
                     />
@@ -376,6 +398,9 @@ export default function TeamPage() {
                     <span className="team-card-badge">{member.badge}</span>
                     <h3 className="team-card-name">{member.name}</h3>
                     <p className="team-card-role">{member.role}</p>
+                    <p className="team-card-bio-preview">
+                      {member.bio[0]}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -438,7 +463,7 @@ export default function TeamPage() {
                 <div className="team-modal-img-frame">
                   <img
                     src={selectedMember.image}
-                    alt={selectedMember.name}
+                    alt={selectedMember.imageAlt || selectedMember.name}
                     className="team-modal-img"
                   />
                   <div className="team-modal-img-caption">
@@ -448,7 +473,7 @@ export default function TeamPage() {
                 </div>
               </div>
 
-              {/* Right Column: Details & Lorem Ipsum Bio Placeholder */}
+              {/* Right Column: Details and biography */}
               <div className="team-modal-details-col">
                 <span className="team-modal-eyebrow">{selectedMember.badge}</span>
                 <h2 id="modal-member-name" className="team-modal-title">
@@ -463,7 +488,7 @@ export default function TeamPage() {
                   </blockquote>
                 )}
 
-                {/* Lorem Ipsum Bio Paragraphs */}
+                {/* Biography paragraphs */}
                 <div className="team-modal-bio">
                   <h4 className="bio-section-heading">Biography &amp; Overview</h4>
                   {selectedMember.bio.map((paragraph, idx) => (

@@ -2,11 +2,13 @@
 
 import { useRef } from "react";
 import useScrollReveal from "@/hooks/useScrollReveal";
+import { useSiteContent } from "@/components/cms/SiteContentContext";
 
 const DONATE_URL =
-  "https://www.zeffy.com/en-US/embed/donation-form/donate-to-make-a-difference-13369?modal=true";
+  "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969";
 
 export default function DonateBanner() {
+  const content = useSiteContent();
   const ref = useRef(null);
   useScrollReveal(ref, "[data-reveal]", { stagger: 0.12, y: 24, start: "top 88%" });
 
@@ -15,12 +17,8 @@ export default function DonateBanner() {
       <div className="container">
         <div className="donate-banner-content" data-reveal>
           <span className="section-eyebrow">Join the Mission</span>
-          <h2>With God, We Can Do More</h2>
-          <p>
-            Any donation is accepted with nothing but kindness at our facility. Your support goes
-            directly towards the empowerment, facilitation, and stable transition of every resident
-            during their stay.
-          </p>
+          <h2>{content["home.donate.title"]}</h2>
+          <p>{content["home.donate.text"]}</p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <a href={DONATE_URL} className="btn btn-primary" target="_blank" rel="noopener">
               Donate Today

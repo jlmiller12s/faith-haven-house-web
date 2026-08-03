@@ -6,6 +6,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FAQ_CATEGORIES, FAQ_ITEMS } from "./faqData";
 
+const DONATE_URL =
+  "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969";
+
 export default function FaqPage() {
   const [activeCategory, setActiveCategory] = useState("All Questions");
   const [openItems, setOpenItems] = useState({ "prog-1": true }); // First question open by default
@@ -72,10 +75,10 @@ export default function FaqPage() {
 
   // Group filtered items by category (preserving standard order)
   const categoryOrder = [
+    "About Faith Haven House",
     "Program & Residency",
     "Clothing & Supplies",
     "Support & Donations",
-    "About Faith Haven House",
     "General Questions",
   ];
 
@@ -121,9 +124,9 @@ export default function FaqPage() {
               <Link href="/get-help" className="btn btn-primary">
                 Get Help
               </Link>
-              <Link href="/donate" className="btn btn-outline">
+              <a href={DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
                 Support Faith Haven House
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -214,6 +217,14 @@ export default function FaqPage() {
                           >
                             <div className="faq-answer-inner">
                               <p>{item.answer}</p>
+                              {item.steps?.length > 0 && (
+                                <ol className="faq-answer-steps">
+                                  {item.steps.map((step) => (
+                                    <li key={step}>{step}</li>
+                                  ))}
+                                </ol>
+                              )}
+                              {item.note && <p className="faq-answer-note">{item.note}</p>}
                             </div>
                           </div>
                         </div>

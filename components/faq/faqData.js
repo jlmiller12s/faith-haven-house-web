@@ -1,9 +1,9 @@
 export const FAQ_CATEGORIES = [
   "All Questions",
+  "About Faith Haven House",
   "Program & Residency",
   "Support & Donations",
   "Clothing & Supplies",
-  "About Faith Haven House",
 ];
 
 export const FAQ_ITEMS = [
@@ -77,7 +77,14 @@ export const FAQ_ITEMS = [
     category: "Support & Donations",
     question: "How can I donate?",
     answer:
-      "There is a donate button on this website, faithhavenhouse.org. This is also where you would set up a monthly donation. You can donate via PayPal or Venmo directly, or you can mail a check to Faith Haven House directly (7338 Mexico Road, St. Peters, MO 63376), or you can bring it by the house and say hello.",
+      "You can make a secure one-time donation online or donate by check or in person.",
+    steps: [
+      "One-time online giving: select the Donate button, choose or enter the amount, and complete the secure Zeffy form.",
+      "By check: make the check payable to Faith Haven House and mail it to 7338 Mexico Road, St. Peters, MO 63376.",
+      "In person: bring your donation to Faith Haven House at 7338 Mexico Road, St. Peters, Missouri.",
+    ],
+    note:
+      "PayPal and Venmo account details are awaiting confirmation from Faith Haven House leadership and will be posted here once verified. Do not send funds to an unverified account.",
   },
 
   // About Faith Haven House
@@ -87,28 +94,5 @@ export const FAQ_ITEMS = [
     question: "What is Faith Haven House?",
     answer:
       "We are a transitional living program for homeless men. We meet the basic needs of housing, food, and hygiene while the men work to obtain a job and find permanent housing to regain their independence.",
-  },
-
-  // General Questions (Legacy entries)
-  {
-    id: "gen-1",
-    category: "General Questions",
-    question: "What is an FAQ section?",
-    answer:
-      'An FAQ section can be used to quickly answer common questions about your business like "Where do you ship to?", "What are your opening hours?", or "How can I book a service?".',
-  },
-  {
-    id: "gen-2",
-    category: "General Questions",
-    question: "Why do FAQs matter?",
-    answer:
-      "FAQs are a great way to help site visitors find quick answers to common questions about your business and create a better navigation experience.",
-  },
-  {
-    id: "gen-3",
-    category: "General Questions",
-    question: "Where can I add my FAQs?",
-    answer:
-      "FAQs can be added to any page on your site or to your Wix mobile app, giving access to members on the go.",
   },
 ];

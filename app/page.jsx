@@ -16,6 +16,8 @@ import Blog from "@/components/Blog";
 import Values from "@/components/Values";
 import DonateBanner from "@/components/DonateBanner";
 import Footer from "@/components/Footer";
+import { SiteContentProvider } from "@/components/cms/SiteContentContext";
+import { getPublishedSiteContent } from "@/lib/cms/contentService";
 
 const LAUNCH_TIME = new Date("2026-08-03T05:01:00.000Z").getTime();
 
@@ -95,17 +97,17 @@ function ComingSoon() {
   );
 }
 
-function LaunchedWebsite() {
+function LaunchedWebsite({ content }) {
   return (
-    <>
+    <SiteContentProvider content={content}>
       <SmoothScroll />
       <Header />
       <Hero />
-      <Narrative id="about" text={MISSION_TEXT} />
+      <Narrative id="about" text={content["home.mission.text"]} />
       <Pyramid />
       <ProcessTimeline />
       <OneAway />
-      <Narrative text={FOUNDER_TEXT} cardBg />
+      <Narrative text={content["home.founder.text"]} cardBg />
       <Stats />
       <Volunteer />
       <Stories />
@@ -115,10 +117,13 @@ function LaunchedWebsite() {
       <Values />
       <DonateBanner />
       <Footer />
-    </>
+    </SiteContentProvider>
   );
 }
 
-export default function Home() {
-  return Date.now() >= LAUNCH_TIME ? <LaunchedWebsite /> : <ComingSoon />;
+export default async function Home() {
+  const showFullHomepage = process.env.SHOW_FULL_HOMEPAGE === "1";
+
+  if (!showFullHomepage && Date.now() < LAUNCH_TIME) return <ComingSoon />;
+  return <LaunchedWebsite content={await getPublishedSiteContent()} />;
 }

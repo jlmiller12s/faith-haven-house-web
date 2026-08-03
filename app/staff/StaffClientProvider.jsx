@@ -155,6 +155,9 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                   label: "Blog Manager",
                   match: pathname.startsWith("/staff/blog"),
                 },
+                ...(["super_admin", "executive_director"].includes(activeStaff?.role)
+                  ? [{ href: "/staff/content", label: "Website Content", match: pathname.startsWith("/staff/content") }]
+                  : []),
                 ...(activeStaff?.role !== "read_only_auditor"
                   ? [
                       {
@@ -195,6 +198,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                     item.href === "/staff/admissions" ? "admissions" :
                     item.href === "/staff/intake-documents" ? "intake-documents" :
                     item.href === "/staff/blog" ? "blog" :
+                    item.href === "/staff/content" ? "content" :
                     item.href === "/staff/residents" ? "residents" :
                     item.href === "/staff/team" ? "team" :
                     item.href === "/staff/invite" ? "team" :

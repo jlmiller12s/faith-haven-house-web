@@ -6,6 +6,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { ROADMAP_STAGES, SUPPORT_ITEMS } from "./roadmapData";
 
+const DONATE_URL =
+  "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969";
+
 /* ─── Helper: SVG Icons ─────────────────────────────── */
 function PathIcon({ className }) {
   return (
@@ -97,9 +100,14 @@ function RoadmapHero() {
           <Link href="/get-help" className="btn btn-primary">
             Start Your Next Step
           </Link>
-          <Link href="/donate" className="btn btn-outline">
+          <a
+            href={DONATE_URL}
+            className="btn btn-outline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Support the Roadmap
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -476,9 +484,14 @@ function RoadmapCta() {
             Donations, volunteers, churches, and community partners help make this pathway
             possible for men working toward stability and independence.
           </p>
-          <Link href="/donate" className="btn btn-outline-light rm-cta-btn">
+          <a
+            href={DONATE_URL}
+            className="btn btn-outline-light rm-cta-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Support Faith Haven House
-          </Link>
+          </a>
         </div>
       </div>
     </section>

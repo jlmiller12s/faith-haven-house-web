@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 ];
 
 const DONATE_URL =
-  "https://www.zeffy.com/en-US/embed/donation-form/donate-to-make-a-difference-13369?modal=true";
+  "https://www.zeffy.com/en-US/donation-form/donate-to-make-a-difference-16969";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,7 +50,11 @@ export default function Header() {
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setOpenDropdown(null);
-    }, 450); // 450ms grace period so mouse movement down never closes dropdown
+    }, 900);
+  };
+  const toggleDropdown = (label) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpenDropdown((current) => (current === label ? null : label));
   };
   const handleLinkClick = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -82,20 +86,24 @@ export default function Header() {
                     onMouseEnter={() => handleMouseEnter(item.label)}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <Link
-                      href={item.href}
+                    <button
+                      type="button"
                       className={`nav-dropdown-trigger${
                         isSubActive ? " active" : ""
                       }`}
+                      onClick={() => toggleDropdown(item.label)}
+                      aria-expanded={openDropdown === item.label}
+                      aria-controls={`nav-submenu-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
                     >
                       {item.label}
                       <span className="dropdown-caret" aria-hidden="true">
                         ▾
                       </span>
-                    </Link>
+                    </button>
 
                     {openDropdown === item.label && (
                       <div
+                        id={`nav-submenu-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
                         className="nav-dropdown-menu"
                         onMouseEnter={() => handleMouseEnter(item.label)}
                         onMouseLeave={handleMouseLeave}

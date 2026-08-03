@@ -4,8 +4,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useSiteContent } from "@/components/cms/SiteContentContext";
 
 export default function AboutContent() {
+  const content = useSiteContent();
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -58,14 +60,8 @@ export default function AboutContent() {
         {/* HERO SECTION */}
         <section className="about-hero-section" data-float-up data-reveal>
           <span className="section-eyebrow">OUR STORY &amp; MISSION</span>
-          <h1 className="about-hero-title">Rebuilding Lives, Restoring Hope</h1>
-          <p className="about-hero-lead">
-            Faith Haven House will be a place where the residents can start the
-            re-building process. We will be working with homeless men with the
-            goal to help them transition to a stable living environment. Throughout
-            the transition, they will receive a network of support with available
-            resources.
-          </p>
+          <h1 className="about-hero-title">{content["about.hero.title"]}</h1>
+          <p className="about-hero-lead">{content["about.hero.text"]}</p>
         </section>
 
         {/* MEMORIAL CARD CALLOUT */}
@@ -93,13 +89,13 @@ export default function AboutContent() {
             <div className="story-founder-card" data-reveal>
               <div className="founder-image-wrapper">
                 <img
-                  src="/assets/dareth_founder_1.avif"
+                  src={content["about.founder.image"]}
                   alt="Dareth Jeffers, Founder and Executive Director"
                   className="founder-img"
                 />
               </div>
               <div className="founder-card-caption">
-                <h3>Dareth Jeffers</h3>
+                <h3>{content["about.founder.name"]}</h3>
                 <span className="founder-title">
                   Founder &amp; Executive Director
                 </span>
@@ -166,25 +162,25 @@ export default function AboutContent() {
               {[1, 2, 3].flatMap((setNum) => [
                 {
                   id: `img-1-${setNum}`,
-                  src: "/assets/dareth_founder_2.avif",
+                  src: content["about.gallery.1"],
                   alt: "Dareth Jeffers in the community",
                   caption: "Leadership & Vision",
                 },
                 {
                   id: `img-2-${setNum}`,
-                  src: "/assets/fhh_community_1.avif",
+                  src: content["about.gallery.2"],
                   alt: "Faith Haven House community gathering",
                   caption: "Community Support",
                 },
                 {
                   id: `img-3-${setNum}`,
-                  src: "/assets/fhh_community_2.avif",
+                  src: content["about.gallery.3"],
                   alt: "Volunteers serving together",
                   caption: "Servant Leadership",
                 },
                 {
                   id: `img-4-${setNum}`,
-                  src: "/assets/fhh_community_3.avif",
+                  src: content["about.gallery.4"],
                   alt: "Faith Haven House community event",
                   caption: "Building Relationships",
                 },
