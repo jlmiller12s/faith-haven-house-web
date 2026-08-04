@@ -4,12 +4,39 @@ import { useRef } from "react";
 import useScrollReveal from "@/hooks/useScrollReveal";
 import { useSiteContent } from "@/components/cms/SiteContentContext";
 
+const STORY_EMPHASIS = {
+  Eric: {
+    strong: ["36 days", "full‑time job", "permanent housing"],
+    em: ["First Step Back Home"],
+  },
+  Devon: {
+    strong: ["one month", "smiling", "laughing", "working in a field he enjoys", "living in a stable place"],
+    em: [],
+  },
+};
+
+function renderStoryText(text, name) {
+  const emphasis = STORY_EMPHASIS[name];
+  if (!emphasis) return text;
+  const phrases = [...emphasis.strong, ...emphasis.em];
+  const escaped = phrases.map((phrase) => phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pattern = new RegExp(`(${escaped.join("|")})`, "g");
+  const strong = new Set(emphasis.strong);
+  const italic = new Set(emphasis.em);
+
+  return text.split(pattern).map((part, index) => {
+    if (strong.has(part)) return <strong key={`${part}-${index}`}>{part}</strong>;
+    if (italic.has(part)) return <em key={`${part}-${index}`}>{part}</em>;
+    return part;
+  });
+}
+
 export default function Stories() {
   const content = useSiteContent();
   const ref = useRef(null);
   useScrollReveal(ref, "[data-reveal]", { stagger: 0.15, y: 32, start: "top 88%" });
 
-  const STORIES = Array.from({ length: 10 }, (_, index) => {
+  const STORIES = Array.from({ length: 12 }, (_, index) => {
     const slot = index + 1;
     const name = content[`stories.${slot}.name`];
     return {
@@ -46,11 +73,11 @@ export default function Stories() {
                 <div className="story-meta">
                   <div className="story-info">
                     <h4>{s.name}</h4>
-                    <span>{s.meta}</span>
+                    {s.meta && <span>{s.meta}</span>}
                   </div>
                 </div>
                 <span className="story-quote-mark" aria-hidden="true">&ldquo;</span>
-                <p className="story-body">{s.quote}</p>
+                <p className="story-body">{renderStoryText(s.quote, s.name)}</p>
               </div>
             </div>
           ))}

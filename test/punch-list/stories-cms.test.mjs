@@ -3,16 +3,16 @@ import assert from "node:assert/strict";
 import { CONTENT_FIELDS, validateContentValue } from "../../lib/cms/contentRegistry.mjs";
 import { readFile } from "node:fs/promises";
 
-test("CMS provides ten success-story slots with photo fields", () => {
+test("CMS provides twelve success-story slots with photo fields", () => {
   const storyNames = CONTENT_FIELDS.filter((field) => /^stories\.\d+\.name$/.test(field.key));
   const storyImages = CONTENT_FIELDS.filter((field) => /^stories\.\d+\.image$/.test(field.key));
-  assert.equal(storyNames.length, 10);
-  assert.equal(storyImages.length, 10);
+  assert.equal(storyNames.length, 12);
+  assert.equal(storyImages.length, 12);
 });
 
 test("unfilled optional story fields are valid and remain unpublished", () => {
-  assert.equal(validateContentValue("stories.10.name", "").valid, true);
-  assert.equal(validateContentValue("stories.10.image", "").valid, true);
+  assert.equal(validateContentValue("stories.12.name", "").valid, true);
+  assert.equal(validateContentValue("stories.12.image", "").valid, true);
 });
 
 test("stories component publishes only slots with a name and narrative", async () => {

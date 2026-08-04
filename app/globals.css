@@ -116,7 +116,7 @@ h1, h2, h3, h4, h5, h6 {
 /* =====================================================
    SECTION HEADER SYSTEM
    ===================================================== */
-.section-header { margin-bottom: 3.5rem; }
+.section-header { margin-bottom: 2.5rem; }
 .section-header--center { text-align: center; }
 
 .section-eyebrow {
@@ -744,7 +744,7 @@ header.floating-header {
    NARRATIVE SECTION
    ===================================================== */
 .narrative-container {
-  padding: 8rem 0;
+  padding: 4.5rem 0;
   border-top: 1px solid var(--color-border);
 }
 
@@ -777,7 +777,7 @@ header.floating-header {
    PROCESS TIMELINE
    ===================================================== */
 .process-section {
-  padding: 8rem 0;
+  padding: 4.5rem 0;
   background-color: var(--color-slate);
   border-top: 1px solid rgba(255,255,255,0.06);
 }
@@ -864,7 +864,7 @@ header.floating-header {
    STATS SECTION
    ===================================================== */
 .stats-section {
-  padding: 7rem 0;
+  padding: 4rem 0;
   background-color: var(--bg-section-blue);
   border-top: 1px solid var(--color-border);
 }
@@ -921,7 +921,7 @@ header.floating-header {
    REBUILDING ROADMAP (PYRAMID)
    ===================================================== */
 .pyramid-section {
-  padding: 8rem 0;
+  padding: 4.5rem 0;
   background-color: var(--bg-main);
   border-top: 1px solid var(--color-border);
 }
@@ -1039,7 +1039,7 @@ header.floating-header {
    VOLUNTEER SECTION
    ===================================================== */
 .volunteer-section {
-  padding: 8rem 0;
+  padding: 4.5rem 0;
   background-color: var(--bg-section-alt);
   border-top: 1px solid var(--color-border);
 }
@@ -1289,7 +1289,7 @@ header.floating-header {
    SUCCESS STORIES
    ===================================================== */
 .stories-section {
-  padding: 8rem 0;
+  padding: 4.5rem 0;
   background-color: var(--color-slate);
   border-top: 1px solid rgba(255,255,255,0.06);
 }
@@ -1375,6 +1375,7 @@ header.floating-header {
   color: rgba(248, 246, 241, 0.75);
   line-height: 1.7;
   margin-bottom: 0;
+  white-space: pre-line;
   font-style: italic;
 }
 
@@ -1406,7 +1407,7 @@ header.floating-header {
    BLOG SECTION
    ===================================================== */
 .blog-section {
-  padding: 7rem 0;
+  padding: 4.5rem 0;
   background-color: var(--bg-main);
   border-top: 1px solid var(--color-border);
 }
@@ -1521,7 +1522,7 @@ header.floating-header {
    ONE AWAY SECTION
    ===================================================== */
 .oneaway-section {
-  padding: 6rem 0;
+  padding: 4rem 0;
   background-color: var(--bg-card);
 }
 
@@ -1588,7 +1589,7 @@ header.floating-header {
    RESOURCES & PARTNERS SECTIONS
    ===================================================== */
 .resources-section, .partners-section {
-  padding: 7rem 0;
+  padding: 4.5rem 0;
   background-color: var(--bg-main);
 }
 
@@ -1730,7 +1731,7 @@ header.floating-header {
    DONATE BANNER
    ===================================================== */
 .donate-banner {
-  padding: 6rem 0;
+  padding: 4.5rem 0;
   background-color: var(--bg-main);
   border-top: 1px solid var(--color-border);
 }
@@ -3355,7 +3356,7 @@ footer {
 /* ── Hero ── */
 .rm-hero {
   position: relative;
-  padding: 8rem 0 4.5rem;
+  padding: 6.5rem 0 3.5rem;
   background: linear-gradient(160deg, var(--color-powder-blue-pale) 0%, var(--color-ivory) 55%, #FFFFFF 100%);
   overflow: hidden;
   border-bottom: 1px solid var(--color-border);
@@ -3600,7 +3601,7 @@ footer {
 
 .rm-stage {
   position: relative;
-  padding: 6rem 0;
+  padding: 4.5rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -3891,7 +3892,7 @@ footer {
 
 /* ── Support Grid ── */
 .rm-support-section {
-  padding: 6rem 0;
+  padding: 4.5rem 0;
   background: linear-gradient(160deg, var(--color-ivory) 0%, var(--color-powder-blue-pale) 100%);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
@@ -3939,7 +3940,7 @@ footer {
 
 /* ── Progress Personal ── */
 .rm-personal-section {
-  padding: 6rem 0;
+  padding: 4.5rem 0;
   background: var(--color-powder-blue-pale);
 }
 

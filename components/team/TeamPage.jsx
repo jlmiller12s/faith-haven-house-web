@@ -5,6 +5,17 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+function renderEmphasis(text, phrases = []) {
+  if (!phrases.length) return text;
+  const escaped = phrases.map((phrase) => phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pattern = new RegExp(`(${escaped.join("|")})`, "g");
+  const emphasized = new Set(phrases);
+
+  return text.split(pattern).map((part, index) =>
+    emphasized.has(part) ? <strong key={`${part}-${index}`}>{part}</strong> : part
+  );
+}
+
 const TEAM_MEMBERS = [
   {
     id: "marshall-robinson",
@@ -67,9 +78,16 @@ const TEAM_MEMBERS = [
     badge: "Board of Directors",
     image: "/assets/toni-lynch.jpg",
     quote: "Dedicated to serving our community and supporting Faith Haven House’s mission.",
+    emphasis: [
+      "executive administrative support",
+      "international adoption",
+      "Girl Scout and Boy Scout leader",
+      "Faith Haven House",
+    ],
     bio: [
-      "Toni Lynch serves as a member of the Faith Haven House Board of Directors. Dedicated to community advocacy, stewardship, and compassionate care, Toni works alongside our leadership team to support men on their path to housing stability.",
-      "Bio forthcoming."
+      "Toni grew up in St. Louis County, where her family regularly served at local food banks and supported unhoused neighbors — values she carried into adulthood. After living in several states, she returned to St. Charles County in 2004 and has remained an active part of the community.",
+      "With a background in executive administrative support and international adoption, Toni has always been drawn to work that supports people and families. As a Girl Scout and Boy Scout leader, she involved her children in serving at homeless shelters, continuing the legacy of compassion she learned as a child on a regular basis.",
+      "Toni has volunteered with her church’s food pantry and has been committed to Faith Haven House since its before the grand opening. She has a deep heart for the unhoused both locally and globally, guided by a belief shared by cofounder Dareth Jeffers: “With God we can do anything.”"
     ]
   },
   {
@@ -399,7 +417,7 @@ export default function TeamPage() {
                     <h3 className="team-card-name">{member.name}</h3>
                     <p className="team-card-role">{member.role}</p>
                     <p className="team-card-bio-preview">
-                      {member.bio[0]}
+                      {renderEmphasis(member.bio[0], member.emphasis)}
                     </p>
                   </div>
                 </div>
@@ -493,7 +511,7 @@ export default function TeamPage() {
                   <h4 className="bio-section-heading">Biography &amp; Overview</h4>
                   {selectedMember.bio.map((paragraph, idx) => (
                     <p key={idx} className="bio-paragraph">
-                      {paragraph}
+                      {renderEmphasis(paragraph, selectedMember.emphasis)}
                     </p>
                   ))}
                 </div>

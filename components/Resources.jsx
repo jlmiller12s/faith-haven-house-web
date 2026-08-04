@@ -7,7 +7,7 @@ const RESOURCES = [
   {
     icon: "/assets/icon_restoration.png",
     title: "Meal Train Support",
-    desc: "Community members supply nightly hot meals for Faith Haven House residents through our dedicated online Meal Train.",
+    desc: "The Meal Train is used when volunteers choose to provide a meal, but residents are not served a hot meal every night.",
     linkText: "Sign Up For Meal Train →",
     linkUrl: "https://www.mealtrain.com/trains/yq254l",
   },
@@ -16,12 +16,12 @@ const RESOURCES = [
     title: "Housing & Rebuilding Guidance",
     desc: "Information and referrals for emergency shelter pre-screening, transitional housing, and long-term lease programs.",
     linkText: "View Program Roadmap →",
-    linkUrl: "#roadmap",
+    linkUrl: "/roadmap",
   },
   {
     icon: "/assets/icon_empowerment.png",
     title: "Volunteer & Mentor SOP",
-    desc: "Detailed guidelines for Daytime House Monitors, life skills coaches, and men's mentorship programs.",
+    desc: "Detailed guidelines for Daytime House Monitors, resident mentors, and volunteer support.",
     linkText: "Explore Volunteer SOP →",
     linkUrl: "#volunteer",
   },
