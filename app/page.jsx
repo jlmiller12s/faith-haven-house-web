@@ -110,7 +110,7 @@ function LaunchedWebsite({ content }) {
       <Narrative text={content["home.founder.text"]} cardBg />
       <Stats />
       <Volunteer />
-      <Stories />
+      <Stories compact />
       <Resources />
       <Partners />
       <Blog />
