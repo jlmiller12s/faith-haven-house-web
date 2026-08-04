@@ -18,7 +18,7 @@ export default async function StoriesPage() {
     <SiteContentProvider content={content}>
       <main style={{ paddingTop: "5rem" }}>
         <Header />
-        <Stories />
+        <Stories standalone />
         <Footer />
       </main>
     </SiteContentProvider>
