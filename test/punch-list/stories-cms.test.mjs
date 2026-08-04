@@ -52,3 +52,23 @@ test("the homepage uses the approved compact success-story layout", async () => 
   assert.match(page, /<Stories compact \/>/);
   assert.match(source, /const useCompactLayout = standalone \|\| compact;/);
 });
+
+test("Devon's portrait keeps his face inside the story-card crop", async () => {
+  const source = await readFile(new URL("../../components/Stories.jsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /s\.name === "Devon" \? "story-media-img--devon"/);
+  assert.match(styles, /\.story-media img\.story-media-img--devon\s*\{[^}]*object-position:\s*50%\s+12%;/s);
+});
+
+test("brief graduate milestones form the final equal-height row", async () => {
+  const source = await readFile(new URL("../../components/Stories.jsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /\.\.\.STORIES\.filter\(\(story\) => story\.quote\.length > 280\)/);
+  assert.match(source, /\.\.\.STORIES\.filter\(\(story\) => story\.quote\.length <= 280\)/);
+  assert.match(source, /ORDERED_STORIES\.map/);
+  assert.match(styles, /\.stories-grid--compact\s*\{[^}]*align-items:\s*stretch;/s);
+  assert.match(styles, /\.story-card--compact \.story-content\s*\{[^}]*flex:\s*1;/s);
+  assert.match(styles, /\.story-toggle\s*\{[^}]*margin-top:\s*auto;/s);
+});

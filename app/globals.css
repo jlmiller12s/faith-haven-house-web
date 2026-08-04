@@ -1373,7 +1373,7 @@ header.floating-header {
 .stories-grid--compact {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .story-card {
@@ -1413,6 +1413,10 @@ header.floating-header {
   object-fit: cover;
   object-position: center;
   transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-media img.story-media-img--devon {
+  object-position: 50% 12%;
 }
 
 .story-card:hover .story-media img {
@@ -1466,6 +1470,9 @@ header.floating-header {
 .story-card--compact .story-content {
   position: relative;
   padding: 1.2rem 1.25rem 1.1rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .story-quote-mark {
@@ -1553,7 +1560,7 @@ header.floating-header {
 .story-toggle {
   width: 100%;
   min-height: 44px;
-  margin-top: 0.85rem;
+  margin-top: auto;
   padding-top: 0.7rem;
   border-top: 1px solid rgba(184, 216, 232, 0.15);
   display: flex;

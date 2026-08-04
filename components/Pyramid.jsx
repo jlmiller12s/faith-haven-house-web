@@ -14,10 +14,10 @@ const CARDS = [
     num: 3,
     subtitle: "Level 3: Foundation",
     title: "Access to Nutritious Meals",
-    body: "Every recovery journey requires a secure foundation. We do provide food for residents to prepare their own meals, and on occasion we may have a Meal Train, but we do not have someone delivering dinner every day. Residents also have a warm bed and a highly structured, drug-free shelter environment.",
+    body: "Every journey forward begins with safety, nourishment, and a place to rest. Residents have food available to prepare their own meals, with occasional shared meals offered through the kindness of Meal Train volunteers. While dinner is not delivered every day, each man has a warm bed and a welcoming, highly structured, drug-free place to rest, rebuild, and move forward.",
     features: [
-      { icon: "/assets/icon_restoration.png", alt: "Restoration Icon", text: "Nutritious Food Available" },
-      { icon: "/assets/icon_hope.png",        alt: "Hope Icon",        text: "Secure, Welcoming Sanctuary" },
+      { icon: "/assets/icon_restoration.png", alt: "Restoration Icon", text: "Food Available for Every Resident" },
+      { icon: "/assets/icon_hope.png",        alt: "Hope Icon",        text: "A Safe, Welcoming Place to Rest" },
     ],
   },
   {
@@ -54,7 +54,7 @@ export default function Pyramid() {
           <span className="section-eyebrow">Structured Transition</span>
           <h2 className="section-title">The Rebuilding Roadmap</h2>
           <p className="section-subtitle">
-            Three interconnected layers of care take each resident from emergency shelter to self-sufficient homeownership.
+            Three interconnected layers of care support each resident as he moves from emergency shelter toward long-term stability and greater independence.
           </p>
         </div>
 
