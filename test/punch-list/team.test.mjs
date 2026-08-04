@@ -20,10 +20,13 @@ test("team order begins with Dareth, then Book, and includes HJ Hohensee", async
   assert.ok(hj > book);
 });
 
-test("team page does not publish lorem ipsum as a biography", async () => {
+test("team page publishes HJ Hohensee's approved profile", async () => {
   const source = await readFile(new URL("../../components/team/TeamPage.jsx", import.meta.url), "utf8");
   assert.doesNotMatch(source, /Lorem ipsum/i);
-  assert.match(source, /Bio and photo forthcoming/);
+  assert.doesNotMatch(source, /Bio and photo forthcoming/);
+  assert.match(source, /Vice President, Board of Directors/);
+  assert.match(source, /\/assets\/hj-hohensee\.webp/);
+  assert.match(source, /experienced homelessness for nearly two years/);
 });
 
 test("team modal preserves the full portrait instead of cropping it", async () => {

@@ -93,12 +93,22 @@ const TEAM_MEMBERS = [
   {
     id: "hj-hohensee",
     name: "HJ Hohensee",
-    role: "Member, Board of Directors",
+    role: "Vice President, Board of Directors",
     badge: "Board of Directors",
-    image: "/assets/fhh-favicon.png",
-    imageAlt: "Photo forthcoming for HJ Hohensee",
-    quote: "",
-    bio: ["Bio and photo forthcoming."]
+    image: "/assets/hj-hohensee.webp",
+    imageAlt: "Portrait of HJ Hohensee",
+    quote: "Trust and faith in the Lord are the only way a man can truly change.",
+    emphasis: [
+      "Vice President",
+      "local entrepreneur",
+      "experienced homelessness for nearly two years",
+      "finding and following Jesus",
+    ],
+    bio: [
+      "Emmett Hohensee, who goes by HJ, has lived in St. Charles, Missouri, since 1999. He currently serves as Vice President of the Faith Haven House Board of Directors and has served on the board for nearly three years.",
+      "A local entrepreneur, HJ makes antennas for military, personal, and commercial use. Missions have been part of his life from an early age, and he sees Faith Haven House as a local continuation of the mission work he has long supported.",
+      "HJ brings a deeply personal perspective on homelessness: as a child, he and his family experienced homelessness for nearly two years. He believes trust and faith in the Lord are essential to lasting transformation, and he is proud to help Faith Haven House guide men toward finding and following Jesus."
+    ]
   }
 ];
 
