@@ -13,10 +13,10 @@ const CARDS = [
   {
     num: 3,
     subtitle: "Level 3: Foundation",
-    title: "Safety, Food & Shelter",
-    body: "Every recovery journey requires a secure foundation. We meet residents' immediate physical and spiritual needs by providing a warm bed, daily meal delivery via our partner networks, and a highly structured, drug-free shelter environment to ensure peace and restoration.",
+    title: "Access to Nutritious Meals",
+    body: "Every recovery journey requires a secure foundation. We do provide food for residents to prepare their own meals, and on occasion we may have a Meal Train, but we do not have someone delivering dinner every day. Residents also have a warm bed and a highly structured, drug-free shelter environment.",
     features: [
-      { icon: "/assets/icon_restoration.png", alt: "Restoration Icon", text: "Nutritious Daily Meal Train" },
+      { icon: "/assets/icon_restoration.png", alt: "Restoration Icon", text: "Nutritious Food Available" },
       { icon: "/assets/icon_hope.png",        alt: "Hope Icon",        text: "Secure, Welcoming Sanctuary" },
     ],
   },
@@ -24,10 +24,10 @@ const CARDS = [
     num: 2,
     subtitle: "Level 2: The Core Network",
     title: "A Network of Support",
-    body: "Residents do not walk the rebuilding path alone. We build a personalized web of care around each man — personal mentors, life skills coaching classes, and regular Daytime House Monitor presence to maintain order, listen, and offer spiritual encouragement.",
+    body: "Residents do not walk the rebuilding path alone. We build a personalized web of care around each man — personal mentors and regular Daytime House Monitor presence to maintain order, listen, and offer spiritual encouragement.",
     features: [
       { icon: "/assets/icon_faith.png",         alt: "Faith Icon",         text: "One-on-One Men's Mentorship" },
-      { icon: "/assets/icon_accountability.png", alt: "Accountability Icon", text: "Life Skills & Job Preparation" },
+      { icon: "/assets/icon_accountability.png", alt: "Accountability Icon", text: "Job Preparation & Accountability" },
     ],
   },
   {

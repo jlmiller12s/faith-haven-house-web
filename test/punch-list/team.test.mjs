@@ -23,7 +23,7 @@ test("team order begins with Dareth, then Book, and includes HJ Hohensee", async
 test("team page does not publish lorem ipsum as a biography", async () => {
   const source = await readFile(new URL("../../components/team/TeamPage.jsx", import.meta.url), "utf8");
   assert.doesNotMatch(source, /Lorem ipsum/i);
-  assert.match(source, /Bio forthcoming/);
+  assert.match(source, /Bio and photo forthcoming/);
 });
 
 test("team modal preserves the full portrait instead of cropping it", async () => {

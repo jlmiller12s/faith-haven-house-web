@@ -39,7 +39,7 @@ export default function OneAway() {
                 <span className="oneaway-num">03</span>
                 <div>
                   <h4>Individual Care</h4>
-                  <p>Every resident receives direct guidance, life skills coaching, and permanent housing placement.</p>
+                  <p>Every resident receives direct guidance, personal accountability, and support as he works toward stable housing.</p>
                 </div>
               </div>
             </div>

@@ -13,8 +13,8 @@ const STEPS = [
   },
   {
     num: "02",
-    title: "Safety, Warm Bed & Daily Meal Train",
-    desc: "Residents receive immediate relief from the elements with secure lodging, clean living spaces, and nightly hot meal delivery supplied by community volunteers.",
+    title: "Safety, Warm Bed & Nutritious Food Available",
+    desc: "Residents have food available to prepare their own meals, and occasionally we will have a Meal Train, but daily hot meal service is not part of our program.",
   },
   {
     num: "03",
@@ -23,13 +23,13 @@ const STEPS = [
   },
   {
     num: "04",
-    title: "Men's Mentorship & Life Skills Coaching",
-    desc: "Weekly one-on-one mentorship pairs residents with experienced guides to work through financial literacy, resume creation, and personal accountability.",
+    title: "Men's Mentorship & Personal Accountability",
+    desc: "Regular one-on-one mentorship gives residents experienced guidance, encouragement, and personal accountability as they work toward stability.",
   },
   {
     num: "05",
     title: "Transition to Permanent Independent Living",
-    desc: "Graduates lock in employment, secure long-term lease housing via program partnerships, and step into self-sufficient homeownership.",
+    desc: "Graduates lock in employment, secure long-term lease housing, and step into self-sufficient homeownership.",
   },
 ];
 
