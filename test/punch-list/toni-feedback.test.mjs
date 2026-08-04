@@ -49,7 +49,7 @@ test("all approved graduate narratives remain byte-for-byte unchanged", () => {
     "ff1d7da12cee47d63a8aaaf48774d03c47e0fad92c342869c7ecd93e35376320",
     "65a30c4b0746ef7d5387140b2a1137edb861a8aadd21fb0089fee960e2cacebc",
     "f9666938ba783353faf8afe6782bde22d00fd40a222e74f2b72abb6e5aab8553",
-    "c3f25928eff6f927162d8ed8e889ce39d04e1c8b2892f1bc39fbbdd66904884e",
+    "5b85bbb3e33dcc1ef4a4dff8193d3462e6922d54f94d9abdf9f92bcb6789f68d",
     "46e56bff0897f923331623e82dd851186b73d62e0ee56f3b72f574c3cdd6d1d6",
     "f9666938ba783353faf8afe6782bde22d00fd40a222e74f2b72abb6e5aab8553",
   ];
@@ -73,6 +73,27 @@ test("Eric and Devon use Toni's latest wording exactly", () => {
     content["stories.2.quote"],
     "Graduate alert!! our first graduate\n\nDevon’s story is such a clear picture of what can happen when someone is given stability, encouragement, and a safe place to breathe again.\n\nIn just one month, Devon made huge progress. He came to us after living in a tent for quite some time — carrying the weight, exhaustion, and isolation that come with long-term homelessness. But little by little, things began to shift.\n\nBy the time he graduated, he was smiling, laughing, working in a field he enjoys, and living in a stable place. That transformation is exactly why we do what we do.\n\nI truly believe the men who come to us often just need that extra little lift — and Devon is proof of what that lift can spark.\n\nWith God, we can do more — and Eric’s story is proof of that."
   );
+});
+
+test("Jerome's story omits the retired opening paragraph", () => {
+  const content = getContentDefaults();
+  const story = content["stories.10.quote"];
+
+  assert.match(story, /^Welcome home, Jerome!!/);
+  assert.doesNotMatch(story, /homecoming feels like one of those moments/);
+});
+
+test("older CMS rows cannot restore Jerome's retired opening paragraph", () => {
+  const content = mergeContentRows([
+    {
+      content_key: "stories.10.quote",
+      value: "erome’s homecoming feels like one of those moments where you can see someone stepping into the life they’ve been fighting for.",
+      updated_at: "2026-08-04T03:00:00.000Z",
+    },
+  ]);
+
+  assert.match(content["stories.10.quote"], /^Welcome home, Jerome!!/);
+  assert.doesNotMatch(content["stories.10.quote"], /homecoming feels like one of those moments/);
 });
 
 test("older CMS rows cannot replace Toni's newly approved story copy", () => {
