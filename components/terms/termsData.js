@@ -83,7 +83,7 @@ export const TERMS_DATA = {
       title: "Contact Information",
       content: [
         "If you have questions or concerns regarding these Terms and Conditions, please contact Faith Haven House:",
-        "Faith Haven House\n7338 Mexico Road\nSaint Peters, MO 63376\nPhone: 636-577-5876\nEmail: faith.haven.house@gmail.com",
+        "Faith Haven House\n7338 Mexico Road\nSaint Peters, MO 63376\nPhone: 636-697-3872\nEmail: faith.haven.house@gmail.com",
       ],
     },
   ],

@@ -13,7 +13,7 @@ export default function Footer() {
               guiding unhoused men to self-sufficiency and independent homeownership.
             </p>
             <div className="footer-contact-info">
-              <p><strong>Phone:</strong> 636-577-5876</p>
+              <p><strong>Phone:</strong> 636-697-3872</p>
               <p><strong>Email:</strong> faith.haven.house@gmail.com</p>
               <p><strong>Address:</strong> 7338 Mexico Road, Saint Peters, MO 63376</p>
             </div>

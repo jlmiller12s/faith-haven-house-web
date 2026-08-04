@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Contact & Support | Faith Haven House",
-  description: "Get in touch with Faith Haven House in Saint Peters, MO. Phone: 636-577-5876 | Email: faith.haven.house@gmail.com",
+  description: "Get in touch with Faith Haven House in Saint Peters, MO. Phone: 636-697-3872 | Email: faith.haven.house@gmail.com",
 };
 
 export default function ContactPage() {
@@ -24,7 +24,7 @@ export default function ContactPage() {
             <span className="partner-role">DIRECT PHONE</span>
             <h3>Call Us</h3>
             <p>Speak directly with our staff or house monitors.</p>
-            <a href="tel:6365775876" className="resource-link">636-577-5876 →</a>
+            <a href="tel:6366973872" className="resource-link">636-697-3872 →</a>
           </div>
 
           <div className="resource-card">
