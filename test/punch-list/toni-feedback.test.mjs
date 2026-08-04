@@ -106,10 +106,21 @@ test("program descriptions match Toni's corrections and the Roadmap link works",
   const combined = [pyramid, process, resources, oneAway, registry].join("\n");
 
   assert.match(pyramid, /Access to Nutritious Meals/);
-  assert.match(process, /Residents have food available to prepare their own meals, and occasionally we will have a Meal Train, but daily hot meal service is not part of our program\./);
-  assert.match(resources, /The Meal Train is used when volunteers choose to provide a meal, but residents are not served a hot meal every night\./);
+  assert.match(pyramid, /Every journey forward begins with safety, nourishment, and a place to rest\./);
+  assert.match(pyramid, /Food Available for Every Resident/);
+  assert.match(pyramid, /A Safe, Welcoming Place to Rest/);
+  assert.match(pyramid, /support each resident as he moves from emergency shelter toward long-term stability and greater independence/);
+  assert.match(process, /Meal Train volunteers occasionally add the gift of a shared meal\./);
+  assert.match(process, /While daily hot meal service is not part of our program/);
+  assert.match(process, /Support on the Path to Independent Living/);
+  assert.match(process, /We help graduates pursue stable employment, connect with long-term housing opportunities/);
+  assert.match(process, /including homeownership when possible/);
+  assert.match(process, /support toward independent living/);
+  assert.doesNotMatch(process, /Graduates lock in employment|secure long-term lease housing/);
+  assert.match(resources, /Meal Train gives caring volunteers an opportunity to bless our residents with an occasional shared meal\./);
+  assert.match(resources, /Share a Meal Through Meal Train/);
   assert.match(resources, /linkUrl: "\/roadmap"/);
-  assert.doesNotMatch(combined, /daily meal delivery|nightly hot meal delivery|nightly hot meals|life skills coaching classes|via program partnerships/i);
+  assert.doesNotMatch(combined, /daily meal delivery|nightly hot meal delivery|nightly hot meals|life skills coaching classes|via program partnerships|every resident progresses|take each resident from emergency shelter/i);
 });
 
 test("homepage story cards preserve paragraph breaks and hide empty date rows", async () => {

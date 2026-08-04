@@ -56,6 +56,10 @@ export default function Stories({ standalone = false, compact = false }) {
       quote: content[`stories.${slot}.quote`],
     };
   }).filter((story) => story.name && story.quote);
+  const ORDERED_STORIES = [
+    ...STORIES.filter((story) => story.quote.length > 280),
+    ...STORIES.filter((story) => story.quote.length <= 280),
+  ];
 
   const SectionHeading = standalone ? "h1" : "h2";
   const StoryHeading = standalone ? "h2" : "h3";
@@ -93,7 +97,7 @@ export default function Stories({ standalone = false, compact = false }) {
         </div>
 
         <div className={`stories-grid${useCompactLayout ? " stories-grid--compact" : ""}`}>
-          {STORIES.map((s, index) => {
+          {ORDERED_STORIES.map((s, index) => {
             const isExpanded = expandedStories.has(index);
             const isLongStory = s.quote.length > 280;
             const storyBodyId = `story-${index + 1}-body`;
@@ -110,6 +114,7 @@ export default function Stories({ standalone = false, compact = false }) {
                 <div className="story-media">
                   {s.image ? (
                     <img
+                      className={s.name === "Devon" ? "story-media-img--devon" : undefined}
                       src={s.image}
                       alt={`${s.name}, Faith Haven House graduate`}
                       loading={index < 3 ? "eager" : "lazy"}

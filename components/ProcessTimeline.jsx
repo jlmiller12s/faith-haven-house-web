@@ -13,8 +13,8 @@ const STEPS = [
   },
   {
     num: "02",
-    title: "Safety, Warm Bed & Nutritious Food Available",
-    desc: "Residents have food available to prepare their own meals, and occasionally we will have a Meal Train, but daily hot meal service is not part of our program.",
+    title: "A Safe Place, Warm Bed & Nutritious Food",
+    desc: "Residents have food available to prepare their own meals, and Meal Train volunteers occasionally add the gift of a shared meal. While daily hot meal service is not part of our program, every man has a warm bed and a safe, structured place to rest, rebuild, and move forward.",
   },
   {
     num: "03",
@@ -28,8 +28,8 @@ const STEPS = [
   },
   {
     num: "05",
-    title: "Transition to Permanent Independent Living",
-    desc: "Graduates lock in employment, secure long-term lease housing, and step into self-sufficient homeownership.",
+    title: "Support on the Path to Independent Living",
+    desc: "We help graduates pursue stable employment, connect with long-term housing opportunities, and take meaningful steps toward greater independence — including homeownership when possible.",
   },
 ];
 
@@ -74,8 +74,8 @@ export default function ProcessTimeline() {
                 The 5-Stage Rebuilding Process
               </h2>
               <p className="section-subtitle" style={{ color: "rgba(248,246,241,0.65)", maxWidth: "480px" }}>
-                From initial pre-screen intake to independent homeownership, every resident progresses
-                through a structured, transparent timeline of care.
+                From initial pre-screen intake through support toward independent living, residents follow
+                a structured, transparent timeline of care designed to help them move forward.
               </p>
             </div>
           </div>

@@ -7,8 +7,8 @@ const RESOURCES = [
   {
     icon: "/assets/icon_restoration.png",
     title: "Meal Train Support",
-    desc: "The Meal Train is used when volunteers choose to provide a meal, but residents are not served a hot meal every night.",
-    linkText: "Sign Up For Meal Train →",
+    desc: "Meal Train gives caring volunteers an opportunity to bless our residents with an occasional shared meal. While a hot meal is not delivered every night, residents always have food available to prepare for themselves.",
+    linkText: "Share a Meal Through Meal Train →",
     linkUrl: "https://www.mealtrain.com/trains/yq254l",
   },
   {
