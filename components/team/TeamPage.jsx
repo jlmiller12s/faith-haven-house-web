@@ -65,10 +65,9 @@ const TEAM_MEMBERS = [
     image: "/assets/fhh-favicon.png",
     quote: "Serving others with a heart for community, stewardship, and mission.",
     bio: [
-      "Mike Keller serves as Treasurer of the Faith Haven House Board of Directors. After retiring, Mike Keller and his wife, Susan, moved to Missouri four years ago to be closer to their three children, who live in St. Charles County and Chicago.",
-      "Mike Keller earned a degree in business administration from the University of Nebraska at Kearney. His professional experience includes public accounting, banking, manufacturing accounting, and project management.",
-      "God also called Mike Keller to serve others through summer mission work. Although the work was often physically demanding, Mike Keller had the opportunity to serve nonprofit organizations in eight states and three Central American countries through construction projects and evangelism. In addition, Mike Keller spent 20 years serving with UrbanPromise, a nonprofit organization in Wilmington, Delaware.",
-      "Mike Keller attends Element Church in Wentzville, where he serves as a small-group leader, facilities volunteer, and community-service volunteer."
+      "Mike Keller retired and moved to Missouri with his wife, Susan, in 2019 to be closer to their three children, who now live in St. Charles County and Chicago. He earned a degree in Business Administration from the University of Nebraska at Kearney and built a career spanning public accounting, banking, manufacturing accounting, and project management.",
+      "Alongside his professional work, God called Mike to a lifetime of service. Over many summers, he partnered with nonprofit ministries in eight states and three Central American countries, helping lead construction and evangelism projects. He also invested 20 years serving with UrbanPromise in Wilmington, Delaware, equipping and encouraging young people and their communities.",
+      "Mike is an active member of Element Church in Wentzville, where he serves as a small group leader, facilities volunteer, and community service volunteer. At Faith Haven House, he brings decades of financial expertise, practical leadership, and a servant’s heart to help advance the ministry’s mission."
     ]
   },
   {
