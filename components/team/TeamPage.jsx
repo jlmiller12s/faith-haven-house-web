@@ -96,7 +96,7 @@ const TEAM_MEMBERS = [
     badge: "Board of Directors",
     image: "/assets/hj-hohensee.webp",
     imageAlt: "Portrait of HJ Hohensee",
-    quote: "Trust and faith in the Lord are the only way a man can truly change.",
+    quote: "trust and faith in the lord, is the only way a man can truly change.",
     emphasis: [
       "Vice President",
       "local entrepreneur",
