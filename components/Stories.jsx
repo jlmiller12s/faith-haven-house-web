@@ -114,7 +114,12 @@ export default function Stories({ standalone = false, compact = false }) {
                 <div className="story-media">
                   {s.image ? (
                     <img
-                      className={s.name === "Devon" ? "story-media-img--devon" : undefined}
+                      className={
+                        s.name === "Devon" ? "story-media-img--devon"
+                          : s.name === "Chris" ? "story-media-img--chris"
+                            : s.name === "Eric Goddard" ? "story-media-img--eric-goddard"
+                              : undefined
+                      }
                       src={s.image}
                       alt={`${s.name}, Faith Haven House graduate`}
                       loading={index < 3 ? "eager" : "lazy"}
