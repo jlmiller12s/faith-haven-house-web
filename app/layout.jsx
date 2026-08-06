@@ -1,6 +1,7 @@
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import { Analytics } from "@vercel/analytics/react";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 
 export const metadata = {
   metadataBase: new URL("https://www.faithhavenhouse.org"),
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <OrganizationJsonLd />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

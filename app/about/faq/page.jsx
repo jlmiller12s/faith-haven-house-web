@@ -2,6 +2,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Header from "@/components/Header";
 import FaqPage from "@/components/faq/FaqPage";
 import Footer from "@/components/Footer";
+import { FaqJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
+import { FAQ_ITEMS } from "@/components/faq/faqData";
 
 export const metadata = {
   title: "Frequently Asked Questions | Faith Haven House",
@@ -12,6 +14,14 @@ export const metadata = {
 export default function FaqRoute() {
   return (
     <>
+      <FaqJsonLd items={FAQ_ITEMS} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "About", url: "/about" },
+          { name: "FAQ", url: "/about/faq" },
+        ]}
+      />
       <SmoothScroll />
       <Header />
       <FaqPage />

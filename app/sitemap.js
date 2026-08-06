@@ -12,6 +12,7 @@ export default function sitemap() {
     { url: "/blog", changeFrequency: "weekly", priority: 0.8 },
     { url: "/contact", changeFrequency: "monthly", priority: 0.8 },
     { url: "/one-away", changeFrequency: "monthly", priority: 0.8 },
+    { url: "/team", changeFrequency: "monthly", priority: 0.8 },
     { url: "/about/dareth-jeffers", changeFrequency: "monthly", priority: 0.7 },
     { url: "/about/faq", changeFrequency: "monthly", priority: 0.7 },
     { url: "/resources", changeFrequency: "monthly", priority: 0.7 },
