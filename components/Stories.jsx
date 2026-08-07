@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import useScrollReveal from "@/hooks/useScrollReveal";
 import { useSiteContent } from "@/components/cms/SiteContentContext";
+import { STORY_SLOT_COUNT } from "@/lib/cms/contentRegistry.mjs";
 
 const STORY_EMPHASIS = {
   Eric: {
@@ -45,17 +46,18 @@ export default function Stories({ standalone = false, compact = false }) {
   const useCompactLayout = standalone || compact;
   useScrollReveal(ref, "[data-reveal]", { stagger: 0.15, y: 32, start: "top 88%" });
 
-  const STORIES = Array.from({ length: 12 }, (_, index) => {
+  const STORIES = Array.from({ length: STORY_SLOT_COUNT }, (_, index) => {
     const slot = index + 1;
     const name = content[`stories.${slot}.name`];
     return {
+      slot,
       name,
       initial: name?.charAt(0) || "",
       meta: content[`stories.${slot}.date`],
       image: content[`stories.${slot}.image`],
       quote: content[`stories.${slot}.quote`],
     };
-  }).filter((story) => story.name && story.quote);
+  }).filter((story) => story.quote && (story.name || story.image));
   const ORDERED_STORIES = [
     ...STORIES.filter((story) => story.quote.length > 280),
     ...STORIES.filter((story) => story.quote.length <= 280),
@@ -108,32 +110,29 @@ export default function Stories({ standalone = false, compact = false }) {
             return (
               <article
                 className={`story-card${useCompactLayout ? " story-card--compact" : ""}${isExpanded ? " story-card--expanded" : ""}`}
-                key={`${s.name}-${index}`}
+                key={`story-${s.slot}`}
                 data-reveal
               >
                 <div className="story-media">
                   {s.image ? (
                     <img
-                      className={
-                        s.name === "Devon" ? "story-media-img--devon"
-                          : s.name === "Chris" ? "story-media-img--chris"
-                            : s.name === "Eric Goddard" ? "story-media-img--eric-goddard"
-                              : undefined
-                      }
+                      className={s.name === "Eric Goddard" ? "story-media-img--eric-goddard" : undefined}
                       src={s.image}
-                      alt={`${s.name}, Faith Haven House graduate`}
+                      alt={s.name ? `${s.name}, Faith Haven House graduate` : "A Faith Haven House graduate"}
                       loading={index < 3 ? "eager" : "lazy"}
                       decoding="async"
                     />
                   ) : (
-                    <span className="story-media-placeholder" aria-hidden="true">{s.initial}</span>
+                    <span className="story-media-placeholder" aria-hidden="true">{s.initial || "✦"}</span>
                   )}
                   {useCompactLayout && <span className="story-graduate-badge">Graduate</span>}
                 </div>
                 <div className="story-content">
                   <div className="story-meta">
                     <div className="story-info">
-                      <StoryHeading>{s.name}</StoryHeading>
+                      {/* The December 2023 graduate's name was never recorded, so his
+                          card runs without a heading. The "Graduate" badge labels it. */}
+                      {s.name && <StoryHeading>{s.name}</StoryHeading>}
                       {s.meta && <span>{s.meta}</span>}
                     </div>
                   </div>

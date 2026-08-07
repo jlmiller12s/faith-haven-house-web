@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { getContentDefaults, mergeContentRows } from "../../lib/cms/contentRegistry.mjs";
+import { getContentDefaults, mergeContentRows, STORY_SLOT_COUNT } from "../../lib/cms/contentRegistry.mjs";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -15,11 +15,13 @@ test("Toni Lynch's approved three-paragraph bio is published verbatim", async ()
   assert.doesNotMatch(team, /Bio forthcoming\./);
 });
 
-test("all twelve graduate records are present without publication dates", () => {
+test("every graduate record is present, in order, without publication dates", () => {
   const content = getContentDefaults();
-  const names = Array.from({ length: 12 }, (_, index) => content[`stories.${index + 1}.name`]);
-  const dates = Array.from({ length: 12 }, (_, index) => content[`stories.${index + 1}.date`]);
+  const names = Array.from({ length: STORY_SLOT_COUNT }, (_, index) => content[`stories.${index + 1}.name`]);
+  const dates = Array.from({ length: STORY_SLOT_COUNT }, (_, index) => content[`stories.${index + 1}.date`]);
 
+  // Slot order is client-approved and must not be rearranged. Slot 13 is the
+  // December 2023 graduate whose name was never recorded.
   assert.deepEqual(names, [
     "Eric",
     "Devon",
@@ -33,15 +35,16 @@ test("all twelve graduate records are present without publication dates", () => 
     "Jerome",
     "Eric Goddard",
     "Shane",
+    "",
   ]);
-  assert.deepEqual(dates, Array(12).fill(""));
+  assert.deepEqual(dates, Array(STORY_SLOT_COUNT).fill(""));
 });
 
 test("all approved graduate narratives remain byte-for-byte unchanged", () => {
   const content = getContentDefaults();
   const expectedHashes = [
-    "1db0a406e0f87f786ff2480d358ded0874fcf6dcf71558a0d6bbb680cb369bff",
-    "859d3e42c37670a7b359f18e9bc1c46f29f66d93bc02c60a88fdf91af7b7fe5d",
+    "9a0f986fa8008bcc2fec29c3122f282415d401c3f5dfd15131f5d70e2756cf7f",
+    "ea57d162915ab1685bfbd4d23c2b960f95dc97d00b3afe60f52b48973d46d82e",
     "219b2ea072efea368384c81cd64e5276a086926e317b0b9f75d737abeb076d5c",
     "18307b1fc1c81cd7a03181f3b6c19a8daebe50c7e92aa608540a440317bfde56",
     "1395286f3b544f5918d68f8537ef232c86d9691362b4f656ec5d75257af689d5",
@@ -52,8 +55,9 @@ test("all approved graduate narratives remain byte-for-byte unchanged", () => {
     "5b85bbb3e33dcc1ef4a4dff8193d3462e6922d54f94d9abdf9f92bcb6789f68d",
     "46e56bff0897f923331623e82dd851186b73d62e0ee56f3b72f574c3cdd6d1d6",
     "f9666938ba783353faf8afe6782bde22d00fd40a222e74f2b72abb6e5aab8553",
+    "d0b654ea16cc0ddfd8a0904e9a300c0fc62b1bf0beba9f885d4a970bbe5f3e09",
   ];
-  const actualHashes = Array.from({ length: 12 }, (_, index) =>
+  const actualHashes = Array.from({ length: STORY_SLOT_COUNT }, (_, index) =>
     createHash("sha256")
       .update(content[`stories.${index + 1}.quote`])
       .digest("hex")
@@ -67,11 +71,11 @@ test("Eric and Devon use Toni's latest wording exactly", () => {
 
   assert.equal(
     content["stories.1.quote"],
-    "In just 36 days, Eric completely turned his life around — a powerful reminder of what determination, partnership, and faith can accomplish.\n\nEric secured a full‑time job while continuing to drive for DoorDash to supplement his income. His hard work paid off, and he has now moved into permanent housing through the First Step Back Home program. We are incredibly grateful for this partnership and honored to walk alongside organizations that help our residents reclaim their independence."
+    "In just 36 days, Eric completely turned his life around — a powerful reminder of what determination, partnership, and faith can accomplish.\n\nEric secured a full‑time job while continuing to drive for DoorDash to supplement his income. His hard work paid off, and he has now moved into permanent housing through the First Step Back Home program. We are incredibly grateful for this partnership and honored to walk alongside organizations that help our residents reclaim their independence.\n\nWith God, we can do more!!"
   );
   assert.equal(
     content["stories.2.quote"],
-    "Graduate alert!! our first graduate\n\nDevon’s story is such a clear picture of what can happen when someone is given stability, encouragement, and a safe place to breathe again.\n\nIn just one month, Devon made huge progress. He came to us after living in a tent for quite some time — carrying the weight, exhaustion, and isolation that come with long-term homelessness. But little by little, things began to shift.\n\nBy the time he graduated, he was smiling, laughing, working in a field he enjoys, and living in a stable place. That transformation is exactly why we do what we do.\n\nI truly believe the men who come to us often just need that extra little lift — and Devon is proof of what that lift can spark.\n\nWith God, we can do more — and Eric’s story is proof of that."
+    "Graduate alert!! Our first graduate!\n\nDevon’s story is such a clear picture of what can happen when someone is given stability, encouragement, and a safe place to breathe again.\n\nIn just one month, Devon made huge progress. He came to us after living in a tent for quite some time — carrying the weight, exhaustion, and isolation that come with long-term homelessness. But little by little, things began to shift.\n\nBy the time he graduated, he was smiling, laughing, working in a field he enjoys, and living in a stable place. That transformation is exactly why we do what we do.\n\nI truly believe the men who come to us often just need that extra little lift — some help while they get a chance to breathe, collect themselves, and then move on to bigger and better things.\n\nThank you, God, for guiding Devon to us, and for allowing us to be that lift that he needed."
   );
 });
 
@@ -148,7 +152,7 @@ test("homepage story cards preserve paragraph breaks and hide empty date rows", 
   const stories = await read("../../components/Stories.jsx");
   const styles = await read("../../app/globals.css");
 
-  assert.match(stories, /Array\.from\(\{ length: 12 \}/);
+  assert.match(stories, /Array\.from\(\{ length: STORY_SLOT_COUNT \}/);
   assert.match(stories, /\{s\.meta && <span>\{s\.meta\}<\/span>\}/);
   assert.match(styles, /\.story-body\s*\{[^}]*white-space:\s*pre-line;/s);
 });

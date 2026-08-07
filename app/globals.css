@@ -1415,14 +1415,9 @@ header.floating-header {
   transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.story-media img.story-media-img--devon {
-  object-position: 50% 12%;
-}
-
-.story-media img.story-media-img--chris {
-  object-position: 50% 14%;
-}
-
+/* Graduate photos sourced from the client's resident history are pre-cropped to
+   16:10 around the subject, so they need no object-position correction. Only
+   full-frame portraits still carried at their original aspect ratio do. */
 .story-media img.story-media-img--eric-goddard {
   object-position: 50% 34%;
 }
