@@ -345,7 +345,7 @@ export default function CaseDetailsPage({ params }) {
                   style={{ padding: "0.4rem 0.6rem", fontSize: "0.82rem", minWidth: "160px" }}
                 >
                   <option value="">Unassigned</option>
-                  {profiles.filter(p => p.role === "admissions_coordinator").map(p => (
+                  {profiles.map(p => (
                     <option key={p.id} value={p.id}>{p.first_name} {p.last_name}</option>
                   ))}
                 </select>
@@ -359,7 +359,7 @@ export default function CaseDetailsPage({ params }) {
                   style={{ padding: "0.4rem 0.6rem", fontSize: "0.82rem", minWidth: "160px" }}
                 >
                   <option value="">Unassigned</option>
-                  {profiles.filter(p => p.role === "admissions_interviewer").map(p => (
+                  {profiles.map(p => (
                     <option key={p.id} value={p.id}>{p.first_name} {p.last_name}</option>
                   ))}
                 </select>
