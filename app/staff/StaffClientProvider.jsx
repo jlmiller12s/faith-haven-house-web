@@ -65,6 +65,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
   return (
     <StaffSessionContext.Provider value={{ activeStaff, setActiveStaff, handleLogout }}>
       <div
+        className="staff-portal-shell"
         style={{
           minHeight: "100vh",
           backgroundColor: "#FAF8EF",
@@ -79,6 +80,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
         )}
         {/* RAP PORTAL HEADER */}
         <header
+          className="staff-portal-header"
           style={{
             backgroundColor: "#294C60",
             color: "#FAF8EF",
@@ -93,8 +95,9 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
           }}
         >
           {/* Left: Brand + Nav */}
-          <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
+          <div className="staff-portal-header-main" style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
             <Link
+              className="staff-portal-brand"
               href="/staff"
               style={{ textDecoration: "none" }}
               aria-label="RAP Portal dashboard"
@@ -108,8 +111,9 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                   height={36}
                   style={{ objectFit: "contain" }}
                 />
-                <div>
+                <div className="staff-portal-brand-copy">
                   <div
+                    className="staff-portal-brand-title"
                     style={{
                       fontSize: "1.05rem",
                       fontWeight: "800",
@@ -122,6 +126,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                     RAP Portal
                   </div>
                   <div
+                    className="staff-portal-brand-subtitle"
                     style={{
                       fontSize: "0.65rem",
                       color: "rgba(250,248,239,0.65)",
@@ -137,7 +142,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
             </Link>
 
             {/* Navigation */}
-            <nav style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
+            <nav className="staff-portal-nav" style={{ display: "flex", gap: "1.25rem", alignItems: "center" }}>
               {[
                 { href: "/staff", label: "Dashboard", match: pathname === "/staff" },
                 {
@@ -225,7 +230,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
           </div>
 
           {/* Right: Staff name + Sign Out */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+          <div className="staff-portal-tools" style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
             <button
               type="button"
               className="rap-tour-replay"
@@ -236,7 +241,7 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
               Tour
             </button>
             {activeStaff && (
-              <div style={{ textAlign: "right" }}>
+              <div className="staff-portal-user" style={{ textAlign: "right" }}>
                 <div
                   style={{
                     fontSize: "0.875rem",

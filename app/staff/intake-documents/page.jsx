@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useStaffSession } from "../StaffClientProvider";
+import { getElectronicFormDefinition } from "@/lib/electronicIntakeForms.mjs";
 
 const INTAKE_DOCUMENTS = [
   {
@@ -321,33 +323,23 @@ export default function IntakeDocumentsPage() {
                 </p>
               </div>
 
-              {/* Action row: Download button */}
-              <a
-                href={doc.customPath || `/intake-documents/${doc.filename}`}
-                download={doc.filename}
-                className="btn"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  backgroundColor: "var(--color-slate)",
-                  color: "#FFFFFF",
-                  padding: "0.65rem 1rem",
-                  fontSize: "0.85rem",
-                  fontWeight: "600",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  textDecoration: "none",
-                  transition: "opacity 0.15s ease",
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
-                onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-              >
-                {doc.category === "Presentation Templates" ? "Download PowerPoint Template" : "Download Form"}
-              </a>
+              <div className="intake-document-actions">
+                {getElectronicFormDefinition(doc.id) && (
+                  <Link
+                    href={`/staff/intake-documents/${doc.id}`}
+                    className="btn btn-primary intake-document-online"
+                  >
+                    Complete online
+                  </Link>
+                )}
+                <a
+                  href={doc.customPath || `/intake-documents/${doc.filename}`}
+                  download={doc.filename}
+                  className="btn intake-document-download"
+                >
+                  {doc.category === "Presentation Templates" ? "Download PowerPoint template" : "Download Word form"}
+                </a>
+              </div>
             </div>
           ))}
         </div>

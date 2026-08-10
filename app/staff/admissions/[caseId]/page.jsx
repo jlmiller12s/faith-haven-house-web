@@ -37,6 +37,9 @@ export default function CaseDetailsPage({ params }) {
   const [newTaskAssigned, setNewTaskAssigned] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState("medium");
   const [newTaskDueDate, setNewTaskDueDate] = useState("");
+  const [taskStatusMessage, setTaskStatusMessage] = useState(null);
+  const [taskSaving, setTaskSaving] = useState(false);
+  const [taskUpdatingId, setTaskUpdatingId] = useState("");
 
   const [statusUpdateNote, setStatusUpdateNote] = useState("");
   const [documentActionKey, setDocumentActionKey] = useState("");
@@ -163,28 +166,47 @@ export default function CaseDetailsPage({ params }) {
   // Handle add task
   const handleAddTaskSubmit = async (e) => {
     e.preventDefault();
-    const res = await saveTask({
-      caseId,
-      title: newTaskTitle,
-      description: newTaskDesc,
-      assignedTo: newTaskAssigned || undefined,
-      priority: newTaskPriority,
-      dueDate: newTaskDueDate || undefined,
-      createdBy: activeStaff.id
-    }, activeStaff.id);
+    setTaskSaving(true);
+    setTaskStatusMessage(null);
+    try {
+      const res = await saveTask({
+        caseId,
+        title: newTaskTitle,
+        description: newTaskDesc,
+        assignedTo: newTaskAssigned || undefined,
+        priority: newTaskPriority,
+        dueDate: newTaskDueDate ? new Date(`${newTaskDueDate}T17:00:00`).toISOString() : undefined,
+        createdBy: activeStaff.id
+      }, activeStaff.id);
 
-    if (res.success) {
+      if (!res.success) throw new Error(typeof res.error === "string" ? res.error : "The task could not be created.");
       setNewTaskTitle("");
       setNewTaskDesc("");
+      setNewTaskAssigned("");
       setNewTaskDueDate("");
-      loadDetails();
+      setTaskStatusMessage({ type: "success", text: "Task added to the applicant file." });
+      await loadDetails();
+    } catch (error) {
+      setTaskStatusMessage({ type: "error", text: error?.message || "The task could not be created." });
+    } finally {
+      setTaskSaving(false);
     }
   };
 
   // Handle complete task toggle
   const handleToggleTask = async (id) => {
-    await toggleTaskComplete(id, activeStaff.id);
-    loadDetails();
+    setTaskUpdatingId(id);
+    setTaskStatusMessage(null);
+    try {
+      const result = await toggleTaskComplete(id, activeStaff.id);
+      if (!result.success) throw new Error(result.error || "The task could not be updated.");
+      setTaskStatusMessage({ type: "success", text: result.status === "completed" ? "Task marked complete." : "Task reopened." });
+      await loadDetails();
+    } catch (error) {
+      setTaskStatusMessage({ type: "error", text: error?.message || "The task could not be updated." });
+    } finally {
+      setTaskUpdatingId("");
+    }
   };
 
   // Handle document status modification
@@ -275,6 +297,7 @@ export default function CaseDetailsPage({ params }) {
   const isAuditor = activeStaff?.role === "read_only_auditor";
   const isCommittee = activeStaff?.role === "admissions_committee_member";
   const isClinician = activeStaff?.role === "behavioral_health_clinician";
+  const canManageTasks = activeStaff?.role !== "read_only_auditor";
 
   // Filter notes and timeline events based on role-level privacy rules
   const visibleNotes = notes.filter(n => {
@@ -403,7 +426,8 @@ export default function CaseDetailsPage({ params }) {
                       <strong style={{ color: "var(--color-slate-dark)" }}>Current Shelter:</strong> {applicant.current_housing_situation}
                     </div>
                     <div>
-                      <strong style={{ color: "var(--color-slate-dark)" }}>Urgency:</strong> {applicant.housing_urgency.toUpperCase()}
+                      <strong style={{ color: "var(--color-slate-dark)" }}>Urgency:</strong>{" "}
+                      {(applicant.housing_urgency || "Not recorded").toUpperCase()}
                     </div>
                   </div>
                 )}
@@ -643,7 +667,13 @@ export default function CaseDetailsPage({ params }) {
               Case Follow-Up Tasks
             </h3>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "3.5rem" }}>
+            {taskStatusMessage && (
+              <div className={`crm-alert-banner ${taskStatusMessage.type}`} role={taskStatusMessage.type === "error" ? "alert" : "status"} style={{ padding: "0.75rem 1rem", marginBottom: "1rem" }}>
+                {taskStatusMessage.text}
+              </div>
+            )}
+
+            <div className="crm-task-layout">
               {/* Task list */}
               <div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -668,6 +698,8 @@ export default function CaseDetailsPage({ params }) {
                             type="checkbox" 
                             checked={task.status === "completed"} 
                             onChange={() => handleToggleTask(task.id)}
+                            disabled={!canManageTasks || taskUpdatingId === task.id}
+                            aria-label={`${task.status === "completed" ? "Reopen" : "Complete"} task: ${task.title}`}
                             style={{ width: "1.1rem", height: "1.1rem", cursor: "pointer", marginTop: "0.2rem" }}
                           />
                           <div>
@@ -694,7 +726,7 @@ export default function CaseDetailsPage({ params }) {
               </div>
 
               {/* Add Task Form */}
-              <div className="crm-card" style={{ padding: "1.75rem", backgroundColor: "var(--color-cloud)" }}>
+              {canManageTasks && <div className="crm-card" style={{ padding: "1.75rem", backgroundColor: "var(--color-cloud)" }}>
                 <h4 style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1.25rem", color: "var(--color-slate-dark)" }}>
                   Create Follow-Up Task
                 </h4>
@@ -749,11 +781,16 @@ export default function CaseDetailsPage({ params }) {
                     </select>
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
-                    Add Task to File
+                  <div className="crm-form-group">
+                    <label className="crm-label" htmlFor="task-due-date" style={{ fontSize: "0.75rem" }}>Due date</label>
+                    <input id="task-due-date" type="date" value={newTaskDueDate} onChange={(e) => setNewTaskDueDate(e.target.value)} className="crm-input" />
+                  </div>
+
+                  <button type="submit" disabled={taskSaving} className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
+                    {taskSaving ? "Adding task…" : "Add Task to File"}
                   </button>
                 </form>
-              </div>
+              </div>}
             </div>
           </div>
         )}
