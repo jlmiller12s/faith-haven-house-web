@@ -12,7 +12,8 @@ import {
   saveCommitteeDecision, 
   saveWelcomeDay,
   updateAssignments,
-  getStaffProfiles
+  getStaffProfiles,
+  deleteCaseNote
 } from "@/lib/crmService";
 import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
@@ -33,6 +34,8 @@ export default function CaseDetailsPage({ params }) {
   const [newNoteVisibility, setNewNoteVisibility] = useState("general_staff");
   const [noteStatusMessage, setNoteStatusMessage] = useState(null);
   const [noteSaving, setNoteSaving] = useState(false);
+  const [noteDeleteConfirmId, setNoteDeleteConfirmId] = useState("");
+  const [noteDeletingId, setNoteDeletingId] = useState("");
 
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDesc, setNewTaskDesc] = useState("");
@@ -178,6 +181,22 @@ export default function CaseDetailsPage({ params }) {
       setNoteStatusMessage({ type: "error", text: error?.message || "The note could not be saved." });
     } finally {
       setNoteSaving(false);
+    }
+  };
+
+  const handleDeleteNote = async (noteId) => {
+    setNoteDeletingId(noteId);
+    setNoteStatusMessage(null);
+    try {
+      const result = await deleteCaseNote(noteId, activeStaff.id);
+      if (!result.success) throw new Error(result.error || "The note could not be deleted.");
+      setNoteDeleteConfirmId("");
+      setNoteStatusMessage({ type: "success", text: "The note was deleted from the case file." });
+      await loadDetails();
+    } catch (error) {
+      setNoteStatusMessage({ type: "error", text: error?.message || "The note could not be deleted." });
+    } finally {
+      setNoteDeletingId("");
     }
   };
 
@@ -860,6 +879,7 @@ export default function CaseDetailsPage({ params }) {
                   ) : (
                     visibleNotes.map(note => {
                       const author = profiles.find(s => s.id === note.author_id);
+                      const canDeleteNote = note.author_id === activeStaff?.id || ["super_admin", "executive_director"].includes(activeStaff?.role);
                       return (
                         <div 
                           key={note.id}
@@ -874,9 +894,45 @@ export default function CaseDetailsPage({ params }) {
                             <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--color-slate-dark)" }}>
                               {author ? `${author.first_name} ${author.last_name}` : "System"}
                             </span>
-                            <span className="crm-badge slate">
-                              {note.visibility.replace(/_/g, " ")}
-                            </span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                              <span className="crm-badge slate">
+                                {note.visibility.replace(/_/g, " ")}
+                              </span>
+                              {canDeleteNote && noteDeleteConfirmId !== note.id && (
+                                <button
+                                  type="button"
+                                  onClick={() => setNoteDeleteConfirmId(note.id)}
+                                  disabled={Boolean(noteDeletingId)}
+                                  className="btn btn-outline"
+                                  style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem", color: "var(--color-terracotta-dark)", borderColor: "var(--color-terracotta-dark)" }}
+                                  aria-label={`Delete note from ${author ? `${author.first_name} ${author.last_name}` : "System"}`}
+                                >
+                                  Delete note
+                                </button>
+                              )}
+                              {canDeleteNote && noteDeleteConfirmId === note.id && (
+                                <div role="group" aria-label="Confirm note deletion" style={{ display: "flex", gap: "0.35rem" }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteNote(note.id)}
+                                    disabled={noteDeletingId === note.id}
+                                    className="btn btn-primary"
+                                    style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem", backgroundColor: "var(--color-terracotta-dark)", borderColor: "var(--color-terracotta-dark)" }}
+                                  >
+                                    {noteDeletingId === note.id ? "Deleting…" : "Confirm delete"}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setNoteDeleteConfirmId("")}
+                                    disabled={noteDeletingId === note.id}
+                                    className="btn btn-outline"
+                                    style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem" }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                           <p style={{ fontSize: "0.9rem", color: "var(--color-charcoal)", lineHeight: "1.5", margin: 0 }}>{note.content}</p>
                           <span style={{ fontSize: "0.72rem", color: "var(--color-steel)", display: "block", marginTop: "0.5rem" }}>
