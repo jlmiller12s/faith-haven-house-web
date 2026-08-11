@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
 import { ADMISSIONS_DOCUMENT_TYPES } from "@/lib/documentStatus.mjs";
+import { FOLLOW_UP_TASK_TITLES } from "@/lib/caseWorkflowPersistence.mjs";
 
 export default function CaseDetailsPage({ params }) {
   const resolvedParams = use(params);
@@ -30,7 +31,8 @@ export default function CaseDetailsPage({ params }) {
   // Form states
   const [newNoteContent, setNewNoteContent] = useState("");
   const [newNoteVisibility, setNewNoteVisibility] = useState("general_staff");
-  const [noteStatusMessage, setNoteStatusMessage] = useState("");
+  const [noteStatusMessage, setNoteStatusMessage] = useState(null);
+  const [noteSaving, setNoteSaving] = useState(false);
 
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDesc, setNewTaskDesc] = useState("");
@@ -42,6 +44,8 @@ export default function CaseDetailsPage({ params }) {
   const [taskUpdatingId, setTaskUpdatingId] = useState("");
 
   const [statusUpdateNote, setStatusUpdateNote] = useState("");
+  const [workflowStatusMessage, setWorkflowStatusMessage] = useState(null);
+  const [statusSaving, setStatusSaving] = useState(false);
   const [documentActionKey, setDocumentActionKey] = useState("");
   const [documentStatusMessage, setDocumentStatusMessage] = useState(null);
 
@@ -132,34 +136,48 @@ export default function CaseDetailsPage({ params }) {
 
   // Handle Workflow Status transition
   const handleStatusChange = async (nextStatus) => {
-    const res = await updateCaseStatus({
-      caseId,
-      status: nextStatus,
-      actorId: activeStaff.id,
-      reason: statusUpdateNote
-    }, activeStaff.id);
+    setStatusSaving(true);
+    setWorkflowStatusMessage(null);
+    try {
+      const res = await updateCaseStatus({
+        caseId,
+        status: nextStatus,
+        actorId: activeStaff.id,
+        reason: statusUpdateNote
+      }, activeStaff.id);
 
-    if (res.success) {
+      if (!res.success) throw new Error(typeof res.error === "string" ? res.error : "The workflow status could not be saved.");
       setStatusUpdateNote("");
-      loadDetails();
+      setWorkflowStatusMessage({ type: "success", text: "Workflow status and reason / notes saved to the activity history." });
+      await loadDetails();
+    } catch (error) {
+      setWorkflowStatusMessage({ type: "error", text: error?.message || "The workflow status could not be saved." });
+    } finally {
+      setStatusSaving(false);
     }
   };
 
   // Handle add note
   const handleAddNoteSubmit = async (e) => {
     e.preventDefault();
-    setNoteStatusMessage("");
-    const res = await addCaseNote({
-      caseId,
-      authorId: activeStaff.id,
-      visibility: newNoteVisibility,
-      content: newNoteContent
-    }, activeStaff.id);
+    setNoteSaving(true);
+    setNoteStatusMessage(null);
+    try {
+      const res = await addCaseNote({
+        caseId,
+        authorId: activeStaff.id,
+        visibility: newNoteVisibility,
+        content: newNoteContent
+      }, activeStaff.id);
 
-    if (res.success) {
+      if (!res.success) throw new Error(typeof res.error === "string" ? res.error : "The note could not be saved.");
       setNewNoteContent("");
-      setNoteStatusMessage("✓ Internal note recorded successfully.");
-      loadDetails();
+      setNoteStatusMessage({ type: "success", text: "Internal note saved to the case file." });
+      await loadDetails();
+    } catch (error) {
+      setNoteStatusMessage({ type: "error", text: error?.message || "The note could not be saved." });
+    } finally {
+      setNoteSaving(false);
     }
   };
 
@@ -306,6 +324,7 @@ export default function CaseDetailsPage({ params }) {
     if (n.visibility === "restricted_admissions") return ["super_admin", "executive_director", "admissions_coordinator"].includes(activeStaff?.role);
     return true; // General staff visibility
   });
+  const latestStatusEvent = timeline.find(event => event.event_type === "status_changed");
 
   return (
     <main className="crm-container">
@@ -495,6 +514,12 @@ export default function CaseDetailsPage({ params }) {
               Admissions decisions must remain human-managed decisions. Transitioning statuses updates case logs, activity timelines, and assigns notifications.
             </p>
 
+            {workflowStatusMessage && (
+              <div className={`crm-alert-banner ${workflowStatusMessage.type}`} role={workflowStatusMessage.type === "error" ? "alert" : "status"} style={{ padding: "0.75rem 1rem", marginBottom: "1rem" }}>
+                {workflowStatusMessage.text}
+              </div>
+            )}
+
             <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "3rem" }}>
               <div>
                 <label className="crm-label">
@@ -520,6 +545,7 @@ export default function CaseDetailsPage({ params }) {
                     <button
                       key={stage}
                       onClick={() => handleStatusChange(stage)}
+                      disabled={statusSaving}
                       style={{
                         padding: "0.4rem 0.8rem",
                         fontSize: "0.8rem",
@@ -561,6 +587,19 @@ export default function CaseDetailsPage({ params }) {
                   <li>Assigned Interviewer: <strong>{caseObj.assignedInterviewerId ? "Assigned" : "Unassigned"}</strong></li>
                   <li>Welcome Day Scheduled: <strong>{caseObj.welcomeDayDate ? new Date(caseObj.welcomeDayDate).toLocaleDateString() : "No"}</strong></li>
                 </ul>
+                {latestStatusEvent && (
+                  <div style={{ borderTop: "1px solid var(--color-border)", marginTop: "1rem", paddingTop: "1rem" }}>
+                    <strong style={{ display: "block", color: "var(--color-slate-dark)", fontSize: "0.82rem", marginBottom: "0.35rem" }}>
+                      Latest Saved Workflow Update
+                    </strong>
+                    <p style={{ color: "var(--color-steel)", fontSize: "0.82rem", lineHeight: 1.5, margin: 0 }}>
+                      {latestStatusEvent.summary}
+                    </p>
+                    <span style={{ display: "block", color: "var(--color-steel)", fontSize: "0.72rem", marginTop: "0.35rem" }}>
+                      {new Date(latestStatusEvent.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -732,15 +771,19 @@ export default function CaseDetailsPage({ params }) {
                 </h4>
                 <form onSubmit={handleAddTaskSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <div className="crm-form-group">
-                    <label className="crm-label" style={{ fontSize: "0.75rem" }}>Title</label>
-                    <input 
-                      type="text" 
-                      required 
+                    <label className="crm-label" htmlFor="follow-up-task-title" style={{ fontSize: "0.75rem" }}>Next Step</label>
+                    <select
+                      id="follow-up-task-title"
+                      required
                       value={newTaskTitle}
                       onChange={(e) => setNewTaskTitle(e.target.value)}
-                      placeholder="Task action summary..."
-                      className="crm-input"
-                    />
+                      className="crm-select"
+                    >
+                      <option value="">Select a follow-up step...</option>
+                      {FOLLOW_UP_TASK_TITLES.map(title => (
+                        <option key={title} value={title}>{title}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="crm-form-group">
@@ -803,8 +846,8 @@ export default function CaseDetailsPage({ params }) {
             </h3>
 
             {noteStatusMessage && (
-              <div className="crm-alert-banner info" style={{ padding: "0.75rem 1rem", marginBottom: "1rem" }}>
-                {noteStatusMessage}
+              <div className={`crm-alert-banner ${noteStatusMessage.type}`} role={noteStatusMessage.type === "error" ? "alert" : "status"} style={{ padding: "0.75rem 1rem", marginBottom: "1rem" }}>
+                {noteStatusMessage.text}
               </div>
             )}
 
@@ -888,8 +931,8 @@ export default function CaseDetailsPage({ params }) {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
-                    Add Note to File
+                  <button type="submit" disabled={noteSaving} className="btn btn-primary" style={{ padding: "0.6rem", fontSize: "0.85rem", width: "100%" }}>
+                    {noteSaving ? "Saving note…" : "Add Note to File"}
                   </button>
                 </form>
               </div>
