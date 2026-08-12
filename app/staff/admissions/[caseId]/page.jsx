@@ -13,12 +13,17 @@ import {
   saveWelcomeDay,
   updateAssignments,
   getStaffProfiles,
-  deleteCaseNote
+  deleteCaseNote,
+  deleteWorkflowStatusNote
 } from "@/lib/crmService";
 import Link from "next/link";
 import CrmIcon from "@/lib/crmIcons";
 import { ADMISSIONS_DOCUMENT_TYPES } from "@/lib/documentStatus.mjs";
-import { FOLLOW_UP_TASK_TITLES } from "@/lib/caseWorkflowPersistence.mjs";
+import {
+  FOLLOW_UP_TASK_TITLES,
+  getWorkflowStatusNote,
+  stripWorkflowStatusNote
+} from "@/lib/caseWorkflowPersistence.mjs";
 
 export default function CaseDetailsPage({ params }) {
   const resolvedParams = use(params);
@@ -49,6 +54,8 @@ export default function CaseDetailsPage({ params }) {
   const [statusUpdateNote, setStatusUpdateNote] = useState("");
   const [workflowStatusMessage, setWorkflowStatusMessage] = useState(null);
   const [statusSaving, setStatusSaving] = useState(false);
+  const [workflowNoteDeleteConfirmId, setWorkflowNoteDeleteConfirmId] = useState("");
+  const [workflowNoteDeletingId, setWorkflowNoteDeletingId] = useState("");
   const [documentActionKey, setDocumentActionKey] = useState("");
   const [documentStatusMessage, setDocumentStatusMessage] = useState(null);
 
@@ -200,6 +207,25 @@ export default function CaseDetailsPage({ params }) {
     }
   };
 
+  const handleDeleteWorkflowNote = async (eventId) => {
+    setWorkflowNoteDeletingId(eventId);
+    setWorkflowStatusMessage(null);
+    try {
+      const result = await deleteWorkflowStatusNote(eventId, activeStaff.id);
+      if (!result.success) throw new Error(result.error || "The workflow note could not be deleted.");
+      setWorkflowNoteDeleteConfirmId("");
+      setWorkflowStatusMessage({
+        type: "success",
+        text: "The reason / note was deleted. The status-change record was preserved."
+      });
+      await loadDetails();
+    } catch (error) {
+      setWorkflowStatusMessage({ type: "error", text: error?.message || "The workflow note could not be deleted." });
+    } finally {
+      setWorkflowNoteDeletingId("");
+    }
+  };
+
   // Handle add task
   const handleAddTaskSubmit = async (e) => {
     e.preventDefault();
@@ -344,6 +370,14 @@ export default function CaseDetailsPage({ params }) {
     return true; // General staff visibility
   });
   const latestStatusEvent = timeline.find(event => event.event_type === "status_changed");
+  const workflowStatusNotes = timeline
+    .filter(event => event.event_type === "status_changed")
+    .map(event => ({
+      ...event,
+      note: getWorkflowStatusNote(event.summary),
+      statusChangeSummary: stripWorkflowStatusNote(event.summary)
+    }))
+    .filter(event => event.note);
 
   return (
     <main className="crm-container">
@@ -594,6 +628,82 @@ export default function CaseDetailsPage({ params }) {
                     className="crm-textarea"
                   />
                 </div>
+
+                <section aria-labelledby="saved-workflow-notes-heading" style={{ marginTop: "2rem" }}>
+                  <h4 id="saved-workflow-notes-heading" style={{ fontSize: "1rem", color: "var(--color-slate-dark)", marginBottom: "0.35rem" }}>
+                    Saved Reason / Notes
+                  </h4>
+                  <p style={{ color: "var(--color-steel)", fontSize: "0.82rem", margin: "0 0 1rem" }}>
+                    Notes entered with a status change appear here. Removing a note keeps the status-change history intact.
+                  </p>
+
+                  {workflowStatusNotes.length === 0 ? (
+                    <p style={{ color: "var(--color-steel)", fontSize: "0.88rem" }}>
+                      No reason / notes have been saved for a workflow status change.
+                    </p>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      {workflowStatusNotes.map(event => {
+                        const author = profiles.find(profile => profile.id === event.actor_id);
+                        const canDeleteWorkflowNote = event.actor_id === activeStaff?.id || ["super_admin", "executive_director"].includes(activeStaff?.role);
+
+                        return (
+                          <article key={event.id} style={{ border: "1px solid var(--color-border)", borderRadius: "8px", backgroundColor: "#FFFFFF", padding: "1rem" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
+                              <div>
+                                <strong style={{ display: "block", color: "var(--color-slate-dark)", fontSize: "0.82rem" }}>
+                                  {event.statusChangeSummary}
+                                </strong>
+                                <span style={{ color: "var(--color-steel)", fontSize: "0.72rem" }}>
+                                  {author ? `${author.first_name} ${author.last_name}` : "Staff member"} · {new Date(event.created_at).toLocaleString()}
+                                </span>
+                              </div>
+
+                              {canDeleteWorkflowNote && workflowNoteDeleteConfirmId !== event.id && (
+                                <button
+                                  type="button"
+                                  onClick={() => setWorkflowNoteDeleteConfirmId(event.id)}
+                                  disabled={Boolean(workflowNoteDeletingId)}
+                                  className="btn btn-outline"
+                                  style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem", color: "var(--color-terracotta-dark)", borderColor: "var(--color-terracotta-dark)" }}
+                                  aria-label="Delete workflow note"
+                                >
+                                  Delete note
+                                </button>
+                              )}
+
+                              {canDeleteWorkflowNote && workflowNoteDeleteConfirmId === event.id && (
+                                <div role="group" aria-label="Confirm workflow note deletion" style={{ display: "flex", gap: "0.35rem" }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteWorkflowNote(event.id)}
+                                    disabled={workflowNoteDeletingId === event.id}
+                                    className="btn btn-primary"
+                                    style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem", backgroundColor: "var(--color-terracotta-dark)", borderColor: "var(--color-terracotta-dark)" }}
+                                  >
+                                    {workflowNoteDeletingId === event.id ? "Deleting…" : "Confirm delete"}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setWorkflowNoteDeleteConfirmId("")}
+                                    disabled={workflowNoteDeletingId === event.id}
+                                    className="btn btn-outline"
+                                    style={{ padding: "0.25rem 0.55rem", fontSize: "0.72rem" }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <p style={{ color: "var(--color-charcoal)", fontSize: "0.88rem", lineHeight: 1.55, margin: "0.75rem 0 0", whiteSpace: "pre-wrap" }}>
+                              {event.note}
+                            </p>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
               </div>
 
               <div className="crm-card" style={{ padding: "1.5rem", height: "fit-content", backgroundColor: "var(--color-cloud)" }}>
@@ -609,10 +719,10 @@ export default function CaseDetailsPage({ params }) {
                 {latestStatusEvent && (
                   <div style={{ borderTop: "1px solid var(--color-border)", marginTop: "1rem", paddingTop: "1rem" }}>
                     <strong style={{ display: "block", color: "var(--color-slate-dark)", fontSize: "0.82rem", marginBottom: "0.35rem" }}>
-                      Latest Saved Workflow Update
+                      Latest Status Change
                     </strong>
                     <p style={{ color: "var(--color-steel)", fontSize: "0.82rem", lineHeight: 1.5, margin: 0 }}>
-                      {latestStatusEvent.summary}
+                      {stripWorkflowStatusNote(latestStatusEvent.summary)}
                     </p>
                     <span style={{ display: "block", color: "var(--color-steel)", fontSize: "0.72rem", marginTop: "0.35rem" }}>
                       {new Date(latestStatusEvent.created_at).toLocaleString()}
