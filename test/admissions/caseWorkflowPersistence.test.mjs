@@ -146,6 +146,19 @@ test("the workflow screen shows saved reason notes and deletion controls", async
   assert.match(page, /Confirm delete/);
 });
 
+test("workflow changes require an explicit save button", async () => {
+  const page = await readFile(
+    new URL("../../app/staff/admissions/[caseId]/page.jsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(page, /selectedWorkflowStage/);
+  assert.match(page, /onClick=\{\(\) => setSelectedWorkflowStage\(stage\)\}/);
+  assert.doesNotMatch(page, /onClick=\{\(\) => handleStatusChange\(stage\)\}/);
+  assert.match(page, /onClick=\{\(\) => handleStatusChange\(selectedWorkflowStage\)\}/);
+  assert.match(page, /"Save Status & Note"/);
+});
+
 test("the database limits workflow-note removal to the author or leadership", async () => {
   const migration = await readFile(
     new URL(

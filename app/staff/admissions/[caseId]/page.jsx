@@ -52,6 +52,7 @@ export default function CaseDetailsPage({ params }) {
   const [taskUpdatingId, setTaskUpdatingId] = useState("");
 
   const [statusUpdateNote, setStatusUpdateNote] = useState("");
+  const [selectedWorkflowStage, setSelectedWorkflowStage] = useState("");
   const [workflowStatusMessage, setWorkflowStatusMessage] = useState(null);
   const [statusSaving, setStatusSaving] = useState(false);
   const [workflowNoteDeleteConfirmId, setWorkflowNoteDeleteConfirmId] = useState("");
@@ -87,6 +88,7 @@ export default function CaseDetailsPage({ params }) {
     setProfiles(staffList || []);
     if (details) {
       setData(details);
+      setSelectedWorkflowStage(currentStage => currentStage || details.case?.status || "");
       // Initialize Welcome day form states from db
       if (details.welcome) {
         setWdRoom(details.welcome.room_assignment || "");
@@ -597,16 +599,18 @@ export default function CaseDetailsPage({ params }) {
                   ].map(stage => (
                     <button
                       key={stage}
-                      onClick={() => handleStatusChange(stage)}
+                      type="button"
+                      onClick={() => setSelectedWorkflowStage(stage)}
                       disabled={statusSaving}
+                      aria-pressed={selectedWorkflowStage === stage}
                       style={{
                         padding: "0.4rem 0.8rem",
                         fontSize: "0.8rem",
                         fontWeight: "600",
                         borderRadius: "20px",
                         border: "1px solid var(--color-border)",
-                        backgroundColor: caseObj.status === stage ? "var(--color-slate)" : "#FFFFFF",
-                        color: caseObj.status === stage ? "#FFFFFF" : "var(--color-charcoal)",
+                        backgroundColor: selectedWorkflowStage === stage ? "var(--color-slate)" : "#FFFFFF",
+                        color: selectedWorkflowStage === stage ? "#FFFFFF" : "var(--color-charcoal)",
                         cursor: "pointer",
                         transition: "var(--transition)"
                       }}
@@ -627,6 +631,20 @@ export default function CaseDetailsPage({ params }) {
                     rows={3}
                     className="crm-textarea"
                   />
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", marginTop: "0.75rem" }}>
+                    <span style={{ color: "var(--color-steel)", fontSize: "0.8rem" }}>
+                      Selected status: <strong>{selectedWorkflowStage ? selectedWorkflowStage.replace(/_/g, " ").toUpperCase() : "Choose a status above"}</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleStatusChange(selectedWorkflowStage)}
+                      disabled={statusSaving || !selectedWorkflowStage}
+                      className="btn btn-primary"
+                      style={{ minWidth: "190px" }}
+                    >
+                      {statusSaving ? "Saving…" : "Save Status & Note"}
+                    </button>
+                  </div>
                 </div>
 
                 <section aria-labelledby="saved-workflow-notes-heading" style={{ marginTop: "2rem" }}>
