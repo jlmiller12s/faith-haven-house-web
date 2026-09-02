@@ -9,8 +9,8 @@ test("the admissions board uses clear resident-centered stages", async () => {
     ADMISSIONS_STAGES.map(({ id, label }) => ({ id, label })),
     [
       { id: "pre_screen", label: "Pre-screen" },
-      { id: "background_check", label: "Background check" },
       { id: "interview", label: "Interview & intake" },
+      { id: "background_check", label: "Background check" },
       { id: "committee", label: "Committee review" },
       { id: "welcome_day", label: "Welcome Day" },
       { id: "admitted", label: "Admitted" },
