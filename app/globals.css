@@ -7532,16 +7532,14 @@ footer {
 }
 
 .admissions-board-scroll-controls {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(94, 120, 144, 0.45);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 14px rgba(23, 50, 71, 0.08);
+  gap: 3px;
+  margin: 0 0 0.85rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  width: 100%;
 }
 
 .admissions-board-scroll-controls button,
@@ -7549,117 +7547,80 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  border: 1px solid rgba(94, 120, 144, 0.55);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: var(--color-slate-dark);
-  font-size: 1.2rem;
-  font-weight: 700;
+  width: 18px;
+  height: 14px;
+  min-width: 18px;
+  border: none;
+  background: transparent;
+  color: var(--color-steel, #5e7890);
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 0;
   cursor: pointer;
   user-select: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 100ms ease;
+  position: relative;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+/* Ensure 44px accessible touch target while keeping visually compact */
+.admissions-board-scroll-controls button::before,
+.admissions-board-nav-arrow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 44px;
+  min-height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .admissions-board-scroll-controls button:hover:not(:disabled),
 .admissions-board-nav-arrow:hover:not(:disabled) {
-  background: var(--color-teal-soft, rgba(92, 158, 173, 0.15));
-  border-color: var(--color-teal);
-  color: var(--color-slate-dark);
-}
-
-.admissions-board-scroll-controls button:active:not(:disabled),
-.admissions-board-nav-arrow:active:not(:disabled) {
-  transform: scale(0.96);
+  color: var(--color-teal);
 }
 
 .admissions-board-scroll-controls button:disabled,
 .admissions-board-nav-arrow:disabled {
   cursor: default;
-  opacity: 0.35;
-  border-color: rgba(94, 120, 144, 0.25);
-  background: rgba(240, 244, 248, 0.6);
+  opacity: 0.25;
 }
 
 .admissions-board-scroll-controls button:focus-visible,
 .admissions-board-nav-arrow:focus-visible,
 .admissions-board-top-scroll:focus-visible {
-  outline: 3px solid rgba(92, 158, 173, 0.45);
+  outline: 2px solid var(--color-teal);
   outline-offset: 2px;
 }
 
-/* Highly visible interactive track */
 .admissions-board-top-scroll {
   position: relative;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  padding: 3px;
-  border: 1px solid rgba(94, 120, 144, 0.35);
-  border-radius: 999px;
+  flex: 1;
+  height: 12px;
   background: rgba(41, 76, 96, 0.08);
+  border-radius: 6px;
   cursor: pointer;
   user-select: none;
   touch-action: none;
 }
 
-/* Stage tick marks */
-.admissions-board-track-ticks {
-  position: absolute;
-  inset: 0 12px;
-  pointer-events: none;
-}
-
-.admissions-board-track-tick {
-  position: absolute;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(94, 120, 144, 0.4);
-  transform: translate(-50%, -50%);
-}
-
-/* Prominent draggable thumb */
 .admissions-board-scroll-thumb {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
-  min-width: 36px;
-  border-radius: 999px;
-  background: var(--color-teal, #2d7a8c);
-  box-shadow: 0 2px 6px rgba(23, 50, 71, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  top: 1px;
+  bottom: 1px;
+  min-width: 24px;
+  border-radius: 5px;
+  background: var(--color-teal, #5c9ead);
   cursor: grab;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 150ms ease, box-shadow 150ms ease;
+  transition: background-color 150ms ease;
 }
 
 .admissions-board-scroll-thumb:hover {
-  background: var(--color-slate-dark, #173247);
-  box-shadow: 0 3px 8px rgba(23, 50, 71, 0.35);
+  background: #478493;
 }
 
 .admissions-board-scroll-thumb:active {
   cursor: grabbing;
   background: var(--color-slate-dark, #173247);
-  box-shadow: 0 1px 3px rgba(23, 50, 71, 0.4);
-}
-
-/* Grip indicator dots */
-.admissions-board-thumb-grip {
-  display: flex;
-  gap: 3px;
-  pointer-events: none;
-}
-
-.admissions-board-thumb-grip span {
-  width: 3px;
-  height: 10px;
-  border-radius: 1.5px;
-  background: rgba(255, 255, 255, 0.75);
 }
 
 .admissions-board-scroll {
@@ -7670,21 +7631,21 @@ footer {
 }
 
 .admissions-board-scroll::-webkit-scrollbar {
-  height: 10px;
+  height: 12px;
 }
 
 .admissions-board-scroll::-webkit-scrollbar-track {
-  background: rgba(41, 76, 96, 0.06);
-  border-radius: 5px;
+  background: rgba(41, 76, 96, 0.08);
+  border-radius: 6px;
 }
 
 .admissions-board-scroll::-webkit-scrollbar-thumb {
-  background: var(--color-teal, #2d7a8c);
-  border-radius: 5px;
+  background: var(--color-teal, #5c9ead);
+  border-radius: 6px;
 }
 
 .admissions-board-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--color-slate-dark, #173247);
+  background: #478493;
 }
 
 .admissions-board-rail {

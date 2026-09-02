@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 
 const EDGE_TOLERANCE = 2;
 const STAGE_SCROLL_DISTANCE = 290;
-const TOTAL_STAGES = 7;
 
 export default function AdmissionsBoardScrollControls({ targetRef }) {
   const trackRef = useRef(null);
@@ -187,7 +186,7 @@ export default function AdmissionsBoardScrollControls({ targetRef }) {
         disabled={metrics.atStart}
         onClick={() => move(-1)}
       >
-        <span aria-hidden="true">←</span>
+        <span aria-hidden="true">◀</span>
       </button>
 
       <div
@@ -204,18 +203,6 @@ export default function AdmissionsBoardScrollControls({ targetRef }) {
         onPointerDown={handleTrackPointerDown}
         onKeyDown={handleKeyDown}
       >
-        {/* Visual stage tick indicators */}
-        <div className="admissions-board-track-ticks" aria-hidden="true">
-          {Array.from({ length: TOTAL_STAGES }).map((_, index) => (
-            <span
-              key={index}
-              className="admissions-board-track-tick"
-              style={{ left: `${(index / (TOTAL_STAGES - 1)) * 100}%` }}
-            />
-          ))}
-        </div>
-
-        {/* Prominent draggable thumb pill */}
         <div
           className="admissions-board-scroll-thumb"
           style={{
@@ -226,13 +213,7 @@ export default function AdmissionsBoardScrollControls({ targetRef }) {
           onPointerMove={handleThumbPointerMove}
           onPointerUp={handleThumbPointerUp}
           onPointerCancel={handleThumbPointerUp}
-        >
-          <span className="admissions-board-thumb-grip" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
-        </div>
+        />
       </div>
 
       <button
@@ -242,7 +223,7 @@ export default function AdmissionsBoardScrollControls({ targetRef }) {
         disabled={metrics.atEnd}
         onClick={() => move(1)}
       >
-        <span aria-hidden="true">→</span>
+        <span aria-hidden="true">▶</span>
       </button>
     </nav>
   );
