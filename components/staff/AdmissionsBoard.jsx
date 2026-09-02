@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   deleteCases,
@@ -16,9 +16,11 @@ import {
   statusForStage,
 } from "@/lib/admissionsWorkflow.mjs";
 import { useStaffSession } from "@/app/staff/StaffClientProvider";
+import AdmissionsBoardScrollControls from "@/components/staff/AdmissionsBoardScrollControls";
 
 export default function AdmissionsBoard() {
   const { activeStaff } = useStaffSession();
+  const boardScrollRef = useRef(null);
   const [queue, setQueue] = useState([]);
   const [search, setSearch] = useState("");
   const [assignedFilter, setAssignedFilter] = useState("all");
@@ -169,7 +171,9 @@ export default function AdmissionsBoard() {
       {loading ? (
         <div className="admissions-board-loading" role="status">Loading admissions board…</div>
       ) : (
-        <div className="admissions-board-scroll" data-tour="admissions-board">
+        <>
+          <AdmissionsBoardScrollControls targetRef={boardScrollRef} />
+          <div className="admissions-board-scroll" ref={boardScrollRef} data-tour="admissions-board">
           <div className="admissions-board-rail" aria-label="Admissions workflow stages">
             {ADMISSIONS_STAGES.map((stage, stageIndex) => {
               const cases = filteredQueue.filter((item) => stageForStatus(item.status) === stage.id);
@@ -238,7 +242,8 @@ export default function AdmissionsBoard() {
             })}
           </div>
         </div>
-      )}
+      </>
+    )}
     </main>
   );
 }

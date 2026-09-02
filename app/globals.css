@@ -7531,6 +7531,63 @@ footer {
   text-align: center;
 }
 
+.admissions-board-scroll-controls {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  padding: 0.45rem;
+  border: 1px solid rgba(94, 120, 144, 0.45);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 14px rgba(23, 50, 71, 0.07);
+}
+
+.admissions-board-scroll-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid rgba(94, 120, 144, 0.55);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--color-slate-dark);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.admissions-board-scroll-controls button:hover:not(:disabled) {
+  background: var(--color-teal-soft, rgba(92, 158, 173, 0.15));
+  border-color: var(--color-teal);
+  color: var(--color-slate-dark);
+}
+
+.admissions-board-scroll-controls button:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
+.admissions-board-scroll-controls button:focus-visible,
+.admissions-board-top-scroll:focus-visible {
+  outline: 3px solid rgba(92, 158, 173, 0.35);
+  outline-offset: 2px;
+}
+
+.admissions-board-top-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-height: 18px;
+  border-radius: 4px;
+  scrollbar-color: var(--color-teal) rgba(41, 76, 96, 0.1);
+}
+
+.admissions-board-top-scroll > div {
+  height: 1px;
+}
+
 .admissions-board-scroll {
   overflow-x: auto;
   padding-bottom: 1rem;
@@ -7764,6 +7821,11 @@ footer {
   .admissions-stage,
   .admissions-case-card {
     transition: none;
+  }
+
+  .admissions-board-scroll,
+  .admissions-board-top-scroll {
+    scroll-behavior: auto;
   }
 }
 
