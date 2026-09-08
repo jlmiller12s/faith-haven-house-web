@@ -41,6 +41,9 @@ function AccordionItem({ title, isOpen, onToggle, children }) {
 export default function Volunteer() {
   const [openIndex, setOpenIndex] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const submittingRef = useRef(false);
   const ref = useRef(null);
 
   useScrollReveal(ref, "[data-reveal]", { stagger: 0.13, y: 28, start: "top 87%" });
@@ -49,6 +52,11 @@ export default function Volunteer() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
+    setSubmitError("");
+    setSubmitted(false);
     const form = e.currentTarget;
     const formData = new FormData(form);
     const payload = {
@@ -61,15 +69,23 @@ export default function Volunteer() {
       availability: formData.get("availability"),
     };
     try {
-      await fetch("/api/volunteer", {
+      const response = await fetch("/api/volunteer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-    } catch { /* silent */ }
-    form.reset();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4500);
+      const result = await response.json();
+      if (!response.ok || result.ok !== true) {
+        throw new Error(result.error || "We could not save your application. Please try again.");
+      }
+      form.reset();
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error.message || "We could not save your application. Please try again.");
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -166,21 +182,21 @@ export default function Volunteer() {
               <div className="form-grid-2">
                 <div className="form-group">
                   <label htmlFor="firstname">FIRST_NAME</label>
-                  <input type="text" id="firstname" name="firstname" required />
+                  <input type="text" id="firstname" name="firstname" maxLength={100} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="lastname">LAST_NAME</label>
-                  <input type="text" id="lastname" name="lastname" required />
+                  <input type="text" id="lastname" name="lastname" maxLength={100} required />
                 </div>
               </div>
               <div className="form-grid-2">
                 <div className="form-group">
                   <label htmlFor="email">EMAIL_ADDRESS</label>
-                  <input type="email" id="email" name="email" required />
+                  <input type="email" id="email" name="email" maxLength={254} required />
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">PHONE_NUMBER</label>
-                  <input type="tel" id="phone" name="phone" required />
+                  <input type="tel" id="phone" name="phone" maxLength={50} required />
                 </div>
               </div>
               <div className="form-group">
@@ -196,16 +212,17 @@ export default function Volunteer() {
               </div>
               <div className="form-group">
                 <label htmlFor="skills">SPECIAL_SKILLS_OR_BACKGROUND</label>
-                <textarea id="skills" name="skills" rows={3}
+                <textarea id="skills" name="skills" maxLength={5000} rows={3}
                   placeholder="List any non-profit, medical, security, counseling, or teaching background..." />
               </div>
               <div className="form-group">
                 <label htmlFor="availability">AVAILABILITY</label>
-                <textarea id="availability" name="availability" rows={2}
+                <textarea id="availability" name="availability" maxLength={2000} rows={2}
                   placeholder="e.g., Tuesday mornings, weekend shifts..." />
               </div>
+              {submitError && <p role="alert">{submitError}</p>}
               {submitted ? (
-                <div className="form-success-msg">✓ Application Submitted! Thank you for saying YES.</div>
+                <div className="form-success-msg" role="status">✓ Application Submitted! Thank you for saying YES.</div>
               ) : (
                 <button type="submit" className="form-submit-btn">
                   Submit Volunteer Application →

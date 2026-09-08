@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { VOLUNTEER_ROLES } from "@/lib/volunteer.mjs";
 import RapPortalTour from "@/components/staff/RapPortalTour";
 
 // Context for Staff Session
@@ -150,6 +151,9 @@ export function StaffClientProvider({ children, initialActiveStaff }) {
                   label: "Admissions",
                   match: pathname.startsWith("/staff/admissions"),
                 },
+                ...(VOLUNTEER_ROLES.includes(activeStaff?.role)
+                  ? [{ href: "/staff/volunteers", label: "Volunteers", match: pathname.startsWith("/staff/volunteers") }]
+                  : []),
                 {
                   href: "/staff/intake-documents",
                   label: "Intake Documents",

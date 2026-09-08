@@ -1,20 +1,16 @@
 import { NextResponse } from "next/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { saveVolunteerApplication } from "@/lib/volunteer.mjs";
 
 // Volunteer application intake.
-// TODO (Week 2): wire to email delivery (e.g., Resend) or a secure inbox
-// per project guardrails — submissions must route to a monitored, secure destination.
+// Persist applications to the protected staff volunteer inbox.
 export async function POST(request) {
   try {
-    const data = await request.json();
-
-    if (!data.firstname || !data.lastname || !data.email) {
-      return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
-    }
-
-    console.log("[volunteer application]", JSON.stringify(data));
-
-    return NextResponse.json({ ok: true });
+    const data = await request.json().catch(() => null);
+    const result = await saveVolunteerApplication(data, createSupabaseAdminClient());
+    return NextResponse.json({ ok: result.ok, error: result.error }, { status: result.status });
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid request" }, { status: 400 });
+    console.error("[VOLUNTEER_SAVE_FAILED] Application persistence failed");
+    return NextResponse.json({ ok: false, error: "We could not save your application. Please try again or call 636-697-3872." }, { status: 500 });
   }
 }
