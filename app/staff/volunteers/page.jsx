@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentStaffUser, checkStaffAccess } from "@/lib/rapAuth";
 import { POSITION_LABELS, VOLUNTEER_ROLES } from "@/lib/volunteer.mjs";
 import styles from "./volunteers.module.css";
+import DeleteApplication from "./DeleteApplication";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,10 @@ export default async function VolunteersPage({ searchParams }) {
     .order("created_at", { ascending: false }).order("id", { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
+  if (!error && page > 1 && !data?.length) {
+    redirect(`/staff/volunteers?page=${Math.max(1, Math.ceil(count / pageSize))}`);
+  }
+
   return (
     <main className={styles.page}>
       <h1 className="crm-title">Volunteer applications</h1>
@@ -39,6 +44,7 @@ export default async function VolunteersPage({ searchParams }) {
               <div><dt>Skills and background</dt><dd>{application.skills || "Not provided"}</dd></div>
               <div><dt>Availability</dt><dd>{application.availability || "Not provided"}</dd></div>
             </dl>
+            <DeleteApplication id={application.id} name={`${application.firstname} ${application.lastname}`} />
           </details>
         ))}
         <nav aria-label="Application pages" className={styles.pagination}>
